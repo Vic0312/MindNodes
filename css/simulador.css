@@ -8,7 +8,7 @@
     margin: 28px 0;
     padding: 50px;
     border-radius: var(--radius);
-    background: var(--white);
+    background: var(--ash-grey);
     box-shadow: var(--shadow);
 }
 
@@ -19,7 +19,7 @@
     place-items: center;
     border-radius: 50%;
     background: linear-gradient(135deg, var(--cyan), var(--purple));
-    color: var(--white);
+    color: var(--soft-white);
     font-size: 1.25rem;
     font-weight: 800;
     box-shadow: 0 0 26px rgba(67, 217, 232, 0.35);
@@ -28,4 +28,82 @@
 .simulacao strong {
     color: var(--white);
     font-size: 2rem;
+}
+
+.simulador-area {
+    margin: 25px 25px;
+}
+
+.controles-simulador {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+}
+
+.controles-simulador input {
+    padding: 12px 16px;
+    border-radius: 12px;
+    border: 1px solid rgba(0, 255, 191, 0.22);
+    font-size: 1rem;
+    outline: none;
+}
+
+.controles-simulador button {
+    padding: 12px 18px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--cyan), var(--purple));
+    color: var(--white);
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.controles-simulador button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px rgba(67, 217, 232, 0.25);
+}
+
+.null {
+    background: #4a5459 !important;
+    font-size: 1rem !important;
+}
+
+.lista-vazia {
+    color: var(--deep-teal);
+    font-weight: 700;
+    font-size: 1.2rem;
+}
+
+.no-destaque {
+    transform: scale(1.15);
+    box-shadow: 0 0 30px rgba(67, 217, 232, 0.8) !important;
+}
+
+.no-encontrado {
+    background: linear-gradient(135deg, #39d98a, #2f9e44) !important;
+}
+
+.box-explicacao,
+.box-experiencia {
+    margin-top: 20px;
+    padding: 20px;
+    border-radius: var(--radius);
+    background: var(--white);
+    box-shadow: var(--shadow);
+    border-left: 10px solid var(--dark-slate);
+}
+
+.box-explicacao h2,
+.box-experiencia h2 {
+    color: var(--deep-teal);
+    margin-bottom: 12px;
+}
+
+.box-explicacao p,
+.box-experiencia p {
+    line-height: 1.7;
+    margin-bottom: 12px;
 }

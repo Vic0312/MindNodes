@@ -1,6 +1,6 @@
 .area-codigo {
     display: grid;
-    grid-template-columns: 220px 1fr;
+    grid-template-columns: 220px 1fr 330px;
     gap: 18px;
     margin: 28px 0;
 }
@@ -44,3 +44,35 @@ pre {
     line-height: 1.7;
     color: #8fe8f7;
 }
+
+ .quiz-card {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    background: rgba(255, 255, 255, 0.74);
+    border: 1px solid rgba(82, 121, 111, 0.18);
+    border-radius: var(--radius);
+    box-shadow: 0 14px 30px rgba(47, 62, 70, 0.08);
+ }
+        
+ .quiz-card h2 {
+    color: #142d5c;
+ }
+        
+.quiz-card p {
+    line-height: 1.6;
+}
+        
+.quiz-card label {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid rgba(82, 121, 111, 0.22);
+}
+        
+.quiz-card strong {
+    color: var(--deep-teal);
+    font-size: 1.35rem;
+}    
