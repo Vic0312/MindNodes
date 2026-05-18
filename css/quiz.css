@@ -1,0 +1,28 @@
+.quiz-card {
+    padding: 24px;
+    display: grid;
+    gap: 14px;
+    background: rgba(255, 255, 255, 0.74);
+    border: 1px solid rgba(82, 121, 111, 0.18);
+    border-radius: var(--radius);
+    box-shadow: 0 14px 30px rgba(47, 62, 70, 0.08);
+}
+
+.quiz-card h2 {
+    color: #142d5c;
+}
+
+.quiz-card p {
+    line-height: 1.6;
+}
+
+.quiz-card label {
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid rgba(82, 121, 111, 0.22);
+}
+
+.quiz-card strong {
+    color: var(--deep-teal);
+    font-size: 1.35rem;
+}

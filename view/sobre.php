@@ -1,7 +1,12 @@
 <?php $pagina = 'sobre'; ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>MindNodes | Sobre</title><link rel="stylesheet" href="style.css"></head>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindNodes | Sobre</title>
+    <link rel="stylesheet" href="../css/style.css"></head>
+    <link rel="stylesheet" href="../css/sobre.css"></head>
 <body>
 <header class="topo">
     <a class="marca" href="index.php">

@@ -1,0 +1,76 @@
+.painel-conceito {
+    display: grid;
+    grid-template-columns: 0.9fr 1.3fr;
+    gap: 22px;
+    margin-top: -28px;
+    position: relative;
+    z-index: 2;
+}
+
+.coluna-info {
+    display: grid;
+    gap: 16px;
+}
+
+.coluna-info article {
+    padding: 22px;
+    background: rgba(255, 255, 255, 0.74);
+    border: 1px solid rgba(82, 121, 111, 0.18);
+    border-radius: var(--radius);
+    box-shadow: 0 14px 30px rgba(47, 62, 70, 0.08);
+}
+
+.coluna-info h2 {
+    color: #142d5c;
+}
+
+.coluna-info p {
+    line-height: 1.6;
+}
+
+.coluna-info span {
+    float: left;
+    width: 64px;
+    height: 64px;
+    margin-right: 16px;
+    display: grid;
+    place-items: center;
+    border-radius: 18px;
+    background: rgba(108, 61, 217, 0.12);
+    color: var(--purple);
+    font-size: 1.8rem;
+    font-weight: 800;
+}
+
+.diagrama {
+    padding: 32px;
+    background: linear-gradient(135deg, #071735, #101e52);
+    color: var(--white);
+    border-radius: var(--radius);
+}
+
+.diagrama h2 {
+    text-align: center;
+    margin-bottom: 28px;
+}
+
+.linha-diagrama {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.linha-diagrama ul {
+    list-style: none;
+    width: min(250px, 100%);
+    padding: 18px;
+    border: 1px solid rgba(67, 217, 232, 0.3);
+    border-radius: 18px;
+}
+
+.linha-diagrama li {
+    padding: 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.12);
+}

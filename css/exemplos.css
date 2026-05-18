@@ -1,0 +1,46 @@
+.area-codigo {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 18px;
+    margin: 28px 0;
+}
+
+.menu-lateral {
+    padding: 14px;
+    display: grid;
+    align-content: start;
+    gap: 12px;
+    background: rgba(47, 62, 70, 0.96);
+    border-radius: var(--radius);
+}
+
+.menu-lateral a {
+    padding: 14px;
+    border-radius: 14px;
+    color: var(--white);
+    background: rgba(255,255,255,0.05);
+}
+
+.menu-lateral .ativo {
+    background: linear-gradient(135deg, var(--cyan), var(--blue));
+}
+
+.codigo-box {
+    overflow: hidden;
+    background: #101820;
+    color: #e6edf0;
+    border-radius: var(--radius);
+}
+
+.codigo-box h2 {
+    padding: 20px;
+    color: var(--white);
+    background: rgba(255,255,255,0.04);
+}
+
+pre {
+    padding: 24px;
+    overflow-x: auto;
+    line-height: 1.7;
+    color: #8fe8f7;
+}

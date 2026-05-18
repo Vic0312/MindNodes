@@ -1,0 +1,31 @@
+.simulacao {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    min-height: 320px;
+    margin: 28px 0;
+    padding: 50px;
+    border-radius: var(--radius);
+    background: var(--white);
+    box-shadow: var(--shadow);
+}
+
+.simulacao span {
+    width: 64px;
+    height: 64px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--cyan), var(--purple));
+    color: var(--white);
+    font-size: 1.25rem;
+    font-weight: 800;
+    box-shadow: 0 0 26px rgba(67, 217, 232, 0.35);
+}
+
+.simulacao strong {
+    color: var(--white);
+    font-size: 2rem;
+}
