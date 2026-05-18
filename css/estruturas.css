@@ -1,3 +1,5 @@
+/* ESTRUTURAS - CONTEÚDO ESPECÍFICO */
+
 .painel-conceito {
     display: grid;
     grid-template-columns: 0.9fr 1.3fr;
@@ -13,15 +15,16 @@
 }
 
 .coluna-info article {
-    padding: 22px;
     background: rgba(255, 255, 255, 0.74);
     border: 1px solid rgba(82, 121, 111, 0.18);
     border-radius: var(--radius);
     box-shadow: 0 14px 30px rgba(47, 62, 70, 0.08);
+    padding: 22px;
 }
 
 .coluna-info h2 {
     color: #142d5c;
+    line-height: 1.18;
 }
 
 .coluna-info p {
@@ -47,6 +50,7 @@
     background: linear-gradient(135deg, #071735, #101e52);
     color: var(--white);
     border-radius: var(--radius);
+    box-shadow: 0 14px 30px rgba(47, 62, 70, 0.08);
 }
 
 .diagrama h2 {
@@ -73,4 +77,46 @@
 .linha-diagrama li {
     padding: 12px;
     border-bottom: 1px solid rgba(255,255,255,0.12);
+}
+
+.conteudos {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin: 28px 0;
+}
+
+.conteudos article {
+    background: rgba(255, 255, 255, 0.74);
+    border: 1px solid rgba(82, 121, 111, 0.18);
+    border-radius: var(--radius);
+    box-shadow: 0 14px 30px rgba(47, 62, 70, 0.08);
+    padding: 28px;
+}
+
+.conteudos h2 {
+    color: #142d5c;
+    line-height: 1.18;
+    margin-bottom: 10px;
+}
+
+.conteudos p {
+    line-height: 1.6;
+}
+
+
+@media (max-width: 980px) {
+    .painel-conceito {
+        grid-template-columns: 1fr;
+    }
+
+    .conteudos {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 680px) {
+    .conteudos {
+        grid-template-columns: 1fr;
+    }
 }
