@@ -1,6 +1,6 @@
 <?php
 if(isset($_POST['entrar'])){
-    header("Location: home.php");
+    header("Location: view/home.php");
     exit();
 }
 ?>
@@ -13,7 +13,6 @@ if(isset($_POST['entrar'])){
     <title>MindNodes - Login</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/index.css">
-    <link rel="stylesheet" href="">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
 <body class="login-body">
@@ -51,9 +50,7 @@ if(isset($_POST['entrar'])){
                 Entrar
             </button>
 
-            <button type="submit" name="entrar" class="login-btn">
-                Cadastre-se
-            </button>
+            <a href="cadastrar_usuario.php" id="cadastro_funcionario">Cadastre-se</a>
 
         </form>
 
