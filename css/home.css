@@ -80,3 +80,45 @@
     background: rgba(67, 217, 232, 0.14);
     font-size: 1.7rem;
 }
+
+
+
+.foto-perfil-nav {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid #84A98C;
+    object-fit: cover;
+    cursor: pointer;
+    transition: transform 0.3s;
+}
+.foto-perfil-nav:hover { transform: scale(1.1); }
+
+
+.toast-notificacao {
+    position: fixed;
+    top: 20px;
+    right: -400px; 
+    background: rgba(47, 62, 70, 0.95); 
+    border-left: 5px solid #84A98C;
+    padding: 15px 25px;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    color: white;
+    z-index: 1000;
+    transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.toast-notificacao.mostrar { right: 20px; }
+
+.toast-icon {
+    font-size: 24px;
+    color: #84A98C;
+}
+
+.toast-texto h4 { margin: 0; font-size: 16px; color: #84A98C; }
+.toast-texto p { margin: 0; font-size: 13px; color: #CAD2C5; }

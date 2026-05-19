@@ -34,16 +34,20 @@ if(isset($_POST['entrar'])){
             </p>
         </section>
 
-        <form method="POST">
+        <form method="POST" action="../processamento/processamento.php">
 
             <section class="input-box">
                 <i class="fa-solid fa-envelope"></i>
-                <input type="email" placeholder="Digite seu e-mail" required>
+                <input type="email" placeholder="Digite seu e-mail" name="inputEmailLog" required>
             </section>
 
             <section class="input-box">
                 <i class="fa-solid fa-lock"></i>
-                <input type="password" placeholder="Digite sua senha" required>
+                <input type="password" placeholder="Digite sua senha" name="inputSenhaLog" required>
+            </section>
+
+            <section class="links_esquecisenha">
+                    <a href="redefinir_senha.php" id="esqueci_senha">Esqueci minha senha</a>
             </section>
 
             <button type="submit" name="entrar" class="login-btn">

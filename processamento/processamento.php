@@ -7,16 +7,23 @@ require_once("../controller/controlador.php");
 $controlador = new Controlador();
 
 //Login
+// No processamento.php, altere o bloco do Login para:
 if(isset($_POST['inputEmailLog']) && isset($_POST['inputSenhaLog'])){
     $email = $_POST['inputEmailLog'];
     $senha = $_POST['inputSenhaLog'];
 
-    $sucesso = $controlador->efetuarLogin($email, $senha);
+    // Aqui está o segredo: a variável deve receber os DADOS do usuário
+    $usuario = $controlador->efetuarLogin($email, $senha); 
 
-    if($sucesso){
+    if($usuario){ // Se o login retornar os dados (sucesso)
+        $_SESSION['usuario_id'] = $usuario['id_usuario'];
+        $_SESSION['usuario_nome'] = $usuario['nome'];
+        $_SESSION['usuario_foto'] = $usuario['foto_perfil']; 
+        $_SESSION['login_sucesso'] = true; 
+        
         header('Location:../view/home.php');
     } else {
-        header('Location:../view/index.php?erro=1');
+        header('Location:../view/login.php?erro=1');
     }
     die();
 }
@@ -34,11 +41,11 @@ if(isset($_POST['inputNome']) && isset($_POST['inputSobrenome']) &&
     $telefone = $_POST['inputTelefone'];
     $email = $_POST['inputEmail'];
     $senha = $_POST['inputSenha'];
-    $foto_perfil = $_POST['inputFoto'];
+    $foto_perfil = (isset($_FILES['inputFoto']) && $_FILES['inputFoto']['error'] == 0) ? $_FILES['inputFoto']['name'] : null;
     
     $controlador->cadastrarUsuario($cpf, $nome, $sobrenome, $dataNasc, $telefone, $email, $senha, $foto_perfil);
 
-    header('Location:../view/cadastro_usuario.php');
+    header('Location:../view/login.php');
     die();
 }
 

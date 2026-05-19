@@ -42,14 +42,14 @@ class BancoDeDados{
         
         $conexao = $this->conectarBD();
         $consulta = "INSERT INTO usuario (cpf, nome, sobrenome, dataNasc, telefone, email, senha, foto_perfil) 
-                     VALUES ('{$cliente->get_Cpf()}',
-                             '{$cliente->get_Nome()}',
-                             '{$cliente->get_Sobrenome()}',
-                             '{$cliente->get_DataNasc()}',
-                             '{$cliente->get_Telefone()}',
-                             '{$cliente->get_Email()}',
-                             '{$cliente->get_Senha()}',
-                             '{$cliente->get_Foto()}')";
+                     VALUES ('{$usuario->get_Cpf()}',
+                             '{$usuario->get_Nome()}',
+                             '{$usuario->get_Sobrenome()}',
+                             '{$usuario->get_DataNasc()}',
+                             '{$usuario->get_Telefone()}',
+                             '{$usuario->get_Email()}',
+                             '{$usuario->get_Senha()}',
+                             '{$usuario->get_Foto()}')";
         mysqli_query($conexao,$consulta);
     }
 

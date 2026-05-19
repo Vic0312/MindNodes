@@ -8,17 +8,15 @@ class Controlador{
     private $bancoDeDados;
 
     function __construct(){
-        $this->bancoDeDados = new BancoDeDados("localhost","root","","xhoppi");
+        $this->bancoDeDados = new BancoDeDados("localhost","root","","mindnode");
     }
 
     public function efetuarLogin($email, $senha) {
-        $dadosFuncionario = $this->bancoDeDados->autenticarUsuario($email, $senha);
+        $dadosUsuario = $this->bancoDeDados->autenticarUsuario($email, $senha);
         
-        if ($dadosFuncionario) {
+        if ($dadosUsuario) {
             $_SESSION['estaLogado'] = true;
-            $_SESSION['usuario_id'] = $dadosFuncionario['cpf'];
-            $_SESSION['usuario_nome'] = $dadosFuncionario['nome'];
-            return true;
+            return $dadosUsuario; 
         } else {
             $_SESSION['estaLogado'] = false;
             return false;
@@ -27,7 +25,7 @@ class Controlador{
 
     public function cadastrarUsuario($cpf, $nome, $sobrenome, $dataNasc, $telefone, $email, $senha, $foto_perfil){
         
-        $cliente = new Cliente($cpf, $nome, $sobrenome, $dataNasc, $telefone, $email, $senha, $foto_perfil);
+        $usuario = new usuario($cpf, $nome, $sobrenome, $dataNasc, $telefone, $email, $senha, $foto_perfil);
         $this->bancoDeDados->inserirUsuario($usuario);
         
     }

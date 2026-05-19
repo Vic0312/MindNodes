@@ -2,7 +2,7 @@
 // Lógica simples para redirecionar ou processar (exemplo)
 if(isset($_POST['cadastrar'])){
     // Aqui viria sua lógica de INSERT
-    header("Location: home.php");
+    header("Location: login.php");
     exit();
 }
 ?>

@@ -1,5 +1,13 @@
 <?php
+session_start();
 $pagina = 'inicio';
+
+$fotoExibicao = "../img/default-img.avif"; // Tenha uma imagem padrão
+if(isset($_SESSION['usuario_foto']) && !empty($_SESSION['usuario_foto'])){
+    $tipo = "image/jpeg"; // Ou detecte o tipo dinamicamente
+    $base64 = base64_encode($_SESSION['usuario_foto']);
+    $fotoExibicao = "data:$tipo;base64,$base64";
+}
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -26,7 +34,10 @@ $pagina = 'inicio';
             <a href="sobre.php">Sobre</a>
         </nav>
 
-        <a class="botao-conta" href="#">👤</a>
+        
+            <div class="perfil-usuario">
+                <img src="<?php echo $fotoExibicao; ?>" alt="Foto de <?php echo $_SESSION['usuario_nome']; ?>" class="foto-perfil-nav">
+            </div>
     </header>
 
     <main>
@@ -105,5 +116,31 @@ $pagina = 'inicio';
             </article>
         </section>
     </main>
+
+    </style>
+
+    <div id="toast" class="toast-notificacao">
+        <div class="toast-icon">✔</div>
+        <div class="toast-texto">
+            <h4>Bem-vindo, <?php echo $_SESSION['usuario_nome'] ?? 'Usuário'; ?>!</h4>
+            <p>Login realizado com sucesso.</p>
+        </div>
+    </div>
+
+    <script>
+    window.onload = function() {
+        <?php if(isset($_SESSION['login_sucesso'])): ?>
+            const toast = document.getElementById('toast');
+            toast.classList.add('mostrar');
+            
+            // Remove a notificação após 4 segundos
+            setTimeout(() => {
+                toast.classList.remove('mostrar');
+            }, 4000);
+
+            <?php unset($_SESSION['login_sucesso']); // Limpa para não repetir ao atualizar a página ?>
+        <?php endif; ?>
+    };
+    </script>
 </body>
 </html>
