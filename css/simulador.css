@@ -1,3 +1,130 @@
+/* NAVBAR IGUAL AO HOME */
+
+.topo {
+    width: min(1180px, calc(100% - 36px));
+    min-height: 78px;
+    margin: 18px auto 0;
+    padding: 14px 24px;
+    border-radius: 24px;
+    background: #223138;
+    border: 1px solid rgba(202, 210, 197, 0.16);
+    box-shadow: 0 18px 38px rgba(34, 49, 56, 0.28);
+}
+
+.marca {
+    color: var(--white);
+}
+
+.marca span:not(.simbolo-logo) {
+    color: var(--muted-teal);
+}
+
+.simbolo-logo {
+    color: var(--muted-teal);
+    border-color: rgba(132, 169, 140, 0.95);
+    background: rgba(255, 255, 255, 0.06);
+    box-shadow: none;
+}
+
+.menu {
+    gap: 8px;
+}
+
+.menu a {
+    color: rgba(246, 248, 244, 0.78);
+    background: transparent;
+}
+
+.menu a:hover,
+.menu .ativo {
+    color: var(--white);
+    background: rgba(132, 169, 140, 0.22);
+    box-shadow: none;
+}
+
+.botao-conta,
+.perfil-usuario {
+    width: 50px;
+    height: 50px;
+    min-width: 50px;
+    padding: 3px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #84A98C, #CAD2C5);
+    color: var(--charcoal-blue);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.22);
+    transition: 0.25s ease;
+}
+
+.botao-conta:hover,
+.perfil-usuario:hover {
+    transform: translateY(-2px);
+}
+
+.foto-perfil-nav {
+    width: 100%;
+    height: 100%;
+    display: block;
+    border-radius: 50%;
+    object-fit: cover;
+    background: var(--charcoal-blue);
+    border: 2px solid rgba(255, 255, 255, 0.88);
+}
+
+
+/* BANNER INTERNO - NOVA PALETA */
+
+.banner-interno {
+    position: relative;
+    overflow: hidden;
+    padding: 52px;
+    border-radius: 34px;
+    background:
+        radial-gradient(circle at 90% 10%, rgba(132, 169, 140, 0.35), transparent 30%),
+        linear-gradient(135deg, #2F3E46 0%, #354F52 52%, #52796F 100%);
+    box-shadow: 0 24px 58px rgba(47, 62, 70, 0.32);
+}
+
+.banner-interno::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(255, 255, 255, 0.13) 1px, transparent 1px);
+    background-size: 28px 28px;
+    opacity: 0.22;
+    pointer-events: none;
+}
+
+.banner-interno > * {
+    position: relative;
+    z-index: 1;
+}
+
+.banner-interno .etiqueta {
+    background: rgba(255, 255, 255, 0.10);
+    color: var(--ash-grey);
+    border-color: rgba(255, 255, 255, 0.18);
+}
+
+.banner-interno h1 {
+    max-width: 1200px;
+    margin: 26px 0 18px;
+    color: var(--white);
+}
+
+.banner-interno h1 span {
+    color: #84A98C;
+}
+
+.banner-interno p {
+    max-width: 760px;
+    color: rgba(246, 248, 244, 0.82);
+}
+
+
+/* SIMULADOR - CONTEÚDO ESPECÍFICO */
+
 .simulacao {
     display: flex;
     align-items: center;
@@ -8,8 +135,9 @@
     margin: 28px 0;
     padding: 50px;
     border-radius: var(--radius);
-    background: var(--ash-grey);
-    box-shadow: var(--shadow);
+    background: #a5a5a59c;
+    border: 1px solid rgba(202, 210, 197, 0.75);
+    box-shadow: 0 14px 30px rgba(47, 62, 70, 0.10);
 }
 
 .simulacao span {
@@ -18,15 +146,15 @@
     display: grid;
     place-items: center;
     border-radius: 50%;
-    background: linear-gradient(135deg, var(--cyan), var(--purple));
-    color: var(--soft-white);
+    background: linear-gradient(135deg, #52796F, #84A98C);
+    color: var(--white);
     font-size: 1.25rem;
     font-weight: 800;
-    box-shadow: 0 0 26px rgba(67, 217, 232, 0.35);
+    box-shadow: 0 10px 22px rgba(47, 62, 70, 0.20);
 }
 
 .simulacao strong {
-    color: var(--white);
+    color: var(--deep-teal);
     font-size: 2rem;
 }
 
@@ -45,16 +173,27 @@
 .controles-simulador input {
     padding: 12px 16px;
     border-radius: 12px;
-    border: 1px solid rgba(0, 255, 191, 0.22);
+    border: 1px solid rgba(202, 210, 197, 0.75);
+    background: #ffffff;
+    color: var(--charcoal-blue);
     font-size: 1rem;
     outline: none;
+}
+
+.controles-simulador input:focus {
+    border-color: #84A98C;
+    box-shadow: 0 0 0 3px rgba(132, 169, 140, 0.18);
+}
+
+.controles-simulador input::placeholder {
+    color: rgba(47, 62, 70, 0.55);
 }
 
 .controles-simulador button {
     padding: 12px 18px;
     border: none;
     border-radius: 12px;
-    background: linear-gradient(135deg, var(--cyan), var(--purple));
+    background: #84A98C;
     color: var(--white);
     font-weight: 700;
     cursor: pointer;
@@ -63,11 +202,13 @@
 
 .controles-simulador button:hover {
     transform: translateY(-3px);
-    box-shadow: 0 10px 24px rgba(67, 217, 232, 0.25);
+    background: #6e9676;
+    box-shadow: 0 10px 24px rgba(47, 62, 70, 0.20);
 }
 
 .null {
-    background: #4a5459 !important;
+    background: #2F3E46 !important;
+    color: var(--white) !important;
     font-size: 1rem !important;
 }
 
@@ -79,11 +220,11 @@
 
 .no-destaque {
     transform: scale(1.15);
-    box-shadow: 0 0 30px rgba(67, 217, 232, 0.8) !important;
+    box-shadow: 0 0 30px rgba(132, 169, 140, 0.65) !important;
 }
 
 .no-encontrado {
-    background: linear-gradient(135deg, #39d98a, #2f9e44) !important;
+    background: linear-gradient(135deg, #01391d, #379849be) !important;
 }
 
 .box-explicacao,
@@ -91,9 +232,12 @@
     margin-top: 20px;
     padding: 20px;
     border-radius: var(--radius);
-    background: var(--white);
-    box-shadow: var(--shadow);
-    border-left: 10px solid var(--dark-slate);
+    background: #ffffff;
+    box-shadow: 0 14px 30px rgba(47, 62, 70, 0.10);
+    border-left: 10px solid #52796F;
+    border-top: 1px solid rgba(202, 210, 197, 0.75);
+    border-right: 1px solid rgba(202, 210, 197, 0.75);
+    border-bottom: 1px solid rgba(202, 210, 197, 0.75);
 }
 
 .box-explicacao h2,
@@ -106,4 +250,50 @@
 .box-experiencia p {
     line-height: 1.7;
     margin-bottom: 12px;
+    color: rgba(47, 62, 70, 0.75);
+}
+
+
+/* RESPONSIVIDADE */
+
+@media (max-width: 980px) {
+    .topo {
+        align-items: flex-start;
+        flex-direction: column;
+        position: relative;
+    }
+
+    .botao-conta,
+    .perfil-usuario {
+        position: absolute;
+        right: 24px;
+        top: 14px;
+    }
+}
+
+@media (max-width: 580px) {
+    .topo {
+        width: min(100% - 24px, 1180px);
+        padding: 16px;
+    }
+
+    .menu {
+        justify-content: flex-start;
+    }
+
+    .menu a {
+        padding: 10px 12px;
+    }
+
+    .banner-interno {
+        padding: 30px 22px;
+    }
+
+    .simulacao {
+        padding: 30px 22px;
+    }
+
+    .simulador-area {
+        margin: 25px 0;
+    }
 }

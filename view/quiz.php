@@ -21,9 +21,9 @@
         <a href="../view/estruturas.php">Estruturas</a>
         <a href="../view/exemplos.php">Exemplos em C#</a>
         <a href="../view/simulador.php">Simulador</a>
-        <a class="../view/ativo" href="quiz.php">Quiz</a>
+        <a class="ativo" href="../view/quiz.php">Quiz</a>
         <a href="../view/sobre.php">Sobre</a></nav>
-        <a class="../view/botao-conta" href="#">👤</a>
+        <a class="botao-conta" href="#">👤</a>
     </header>
 
 <main>
