@@ -70,13 +70,11 @@ if (!empty($fotoBanco)) {
             <section class="sobre-hero-conteudo">
                 <span class="etiqueta">Sobre o MindNodes</span>
 
-                <h1>Um espaço para aprender programação com mais clareza, prática e conexão.</h1>
+                <h1>Venha conhecer!</h1>
 
                 <p>
                     O MindNodes é um site educacional criado para auxiliar estudantes no aprendizado
-                    de conteúdos de programação, especialmente estruturas de dados. A proposta é apresentar
-                    temas como TAD, listas simplesmente encadeadas e listas duplamente encadeadas de uma forma
-                    mais organizada, visual e próxima da prática.
+                    de conteúdos de programação, especialmente estruturas de dados.
                 </p>
             </section>
 

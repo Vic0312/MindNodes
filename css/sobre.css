@@ -134,13 +134,14 @@ main {
 }
 
 .sobre-hero {
-    display: grid;
-    grid-template-columns: 1.12fr 0.88fr;
-    gap: 34px;
-    align-items: stretch;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
 }
 
 .sobre-hero-conteudo {
+    width: 100%;
     position: relative;
     overflow: hidden;
     padding: 52px;
@@ -186,40 +187,6 @@ main {
     color: rgba(246, 248, 244, 0.82);
     font-size: 1.05rem;
     line-height: 1.8;
-}
-
-.sobre-hero-card {
-    padding: 34px;
-    border-radius: 34px;
-    background: #ffffff;
-    border: 1px solid rgba(202, 210, 197, 0.78);
-    box-shadow: 0 18px 38px rgba(47, 62, 70, 0.12);
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-}
-
-.sobre-hero-card span {
-    width: 78px;
-    height: 78px;
-    display: grid;
-    place-items: center;
-    margin-bottom: 22px;
-    border-radius: 24px;
-    background: #2F3E46;
-    color: #84A98C;
-    font-size: 2.6rem;
-    font-weight: 800;
-}
-
-.sobre-hero-card h2 {
-    color: var(--charcoal-blue);
-    margin-bottom: 10px;
-    font-size: 1.7rem;
-}
-
-.sobre-hero-card p {
-    color: rgba(47, 62, 70, 0.70);
 }
 
 .sobre-introducao {
@@ -348,8 +315,9 @@ main {
 }
 
 .dev-card.destaque-dev {
-    background: #2F3E46;
-    border-color: #2F3E46;
+    background: #ffffff;
+    border-color: rgba(202, 210, 197, 0.75);
+    color: rgba(47, 62, 70, 0.70);
 }
 
 .avatar-dev {
@@ -381,11 +349,11 @@ main {
 }
 
 .destaque-dev h3 {
-    color: var(--white);
+    color: var(--charcoal-blue);
 }
 
 .destaque-dev p {
-    color: rgba(246, 248, 244, 0.76);
+    color: rgba(47, 62, 70, 0.70);
 }
 
 /* =========================
