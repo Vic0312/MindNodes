@@ -9,17 +9,17 @@
     <link rel="stylesheet" href="../css/sobre.css"></head>
 <body>
 <header class="topo">
-    <a class="marca" href="index.php">
+    <a class="marca" href="../index.php">
         <span class="simbolo-logo">∞</span>
         <strong>Mind<span>Nodes</span></strong>
     </a>
     <nav class="menu">
-        <a href="index.php">Início</a>
-        <a href="estruturas.php">Estruturas</a>
-        <a href="exemplos.php">Exemplos em C#</a>
-        <a href="simulador.php">Simulador</a>
-        <a href="quiz.php">Quiz</a>
-        <a class="ativo" href="sobre.php">Sobre</a></nav>
+        <a href="../index.php">Início</a>
+        <a href="../view/estruturas.php">Estruturas</a>
+        <a href="../view/exemplos.php">Exemplos em C#</a>
+        <a href="../view/simulador.php">Simulador</a>
+        <a href="../view/quiz.php">Quiz</a>
+        <a class="ativo" href="../view/sobre.php">Sobre</a></nav>
         <a class="botao-conta" href="#">👤</a>
 
 </header>

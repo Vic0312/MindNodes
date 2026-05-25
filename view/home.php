@@ -20,18 +20,18 @@ if(isset($_SESSION['usuario_foto']) && !empty($_SESSION['usuario_foto'])){
 </head>
 <body>
     <header class="topo">
-        <a class="marca" href="index.php" aria-label="MindNodes">
+        <a class="marca" href="../index.php" aria-label="MindNodes">
             <span class="simbolo-logo">∞</span>
             <strong>Mind<span>Nodes</span></strong>
         </a>
 
         <nav class="menu">
-            <a class="ativo" href="home.php">Início</a>
-            <a href="estruturas.php">Estruturas</a>
-            <a href="exemplos.php">Exemplos em C#</a>
-            <a href="simulador.php">Simulador</a>
-            <a href="quiz.php">Quiz</a>
-            <a href="sobre.php">Sobre</a>
+            <a class="ativo" href="../view/home.php">Início</a>
+            <a href="../view/estruturas.php">Estruturas</a>
+            <a href="../view/exemplos.php">Exemplos em C#</a>
+            <a href="../view/simulador.php">Simulador</a>
+            <a href="../view/quiz.php">Quiz</a>
+            <a href="../view/sobre.php">Sobre</a>
         </nav>
 
         
@@ -47,8 +47,8 @@ if(isset($_SESSION['usuario_foto']) && !empty($_SESSION['usuario_foto'])){
                 <h1>Aprenda Estruturas de Dados conectando ideias.</h1>
                 <p>Uma plataforma educacional para entender TAD, Listas Simplesmente Encadeadas e Listas Duplamente Encadeadas com teoria, exemplos, recursos visuais e prática em C#.</p>
                 <section class="acoes">
-                    <a class="botao primario" href="estruturas.php">Começar estudos</a>
-                    <a class="botao secundario" href="exemplos.php">Ver exemplos</a>
+                    <a class="botao primario" href="../view/estruturas.php">Começar estudos</a>
+                    <a class="botao secundario" href="../view/exemplos.php">Ver exemplos</a>
                 </section>
             </section>
 
@@ -75,21 +75,21 @@ if(isset($_SESSION['usuario_foto']) && !empty($_SESSION['usuario_foto'])){
                 <span class="icone">⬡</span>
                 <h2>TAD</h2>
                 <p>Entenda o conceito de Tipo Abstrato de Dados, suas operações e sua importância na organização da lógica.</p>
-                <a href="estruturas.php#tad">Explorar →</a>
+                <a href="../view/estruturas.php#tad">Explorar →</a>
             </article>
 
             <article class="card destaque-roxo">
                 <span class="mini-nos">10 → 20 → 30</span>
                 <h2>Lista Simplesmente Encadeada</h2>
                 <p>Aprenda como cada nó aponta para o próximo elemento da sequência.</p>
-                <a href="estruturas.php#lista-simples">Explorar →</a>
+                <a href="../view/estruturas.php#lista-simples">Explorar →</a>
             </article>
 
             <article class="card destaque-azul">
                 <span class="mini-nos">10 ⇄ 20 ⇄ 30</span>
                 <h2>Lista Duplamente Encadeada</h2>
                 <p>Veja como os nós se conectam em duas direções para facilitar navegação e remoção.</p>
-                <a href="estruturas.php#lista-dupla">Explorar →</a>
+                <a href="../view/estruturas.php#lista-dupla">Explorar →</a>
             </article>
         </section>
 

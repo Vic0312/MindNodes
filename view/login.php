@@ -47,14 +47,14 @@ if(isset($_POST['entrar'])){
             </section>
 
             <section class="links_esquecisenha">
-                    <a href="redefinir_senha.php" id="esqueci_senha">Esqueci minha senha</a>
+                    <a href="../view/redefinir_senha.php" id="esqueci_senha">Esqueci minha senha</a>
             </section>
 
             <button type="submit" name="entrar" class="login-btn">
                 Entrar
             </button>
 
-            <a href="cadastrar_usuario.php" id="cadastro_funcionario">Cadastre-se</a>
+            <a href="../view/cadastrar_usuario.php" id="cadastro_funcionario">Cadastre-se</a>
 
         </form>
 
