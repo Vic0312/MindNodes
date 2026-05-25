@@ -361,3 +361,11 @@
         padding: 30px 22px;
     }
 }
+
+/* CARDS CLICÁVEIS */
+
+.conteudos article,
+.conteudos article * {
+    cursor: pointer;
+}
+

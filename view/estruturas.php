@@ -30,6 +30,7 @@ $pagina = 'estruturas';
         <h1>O que são <span>Estruturas de Dados?</span></h1>
         <p>São formas de organizar, armazenar e manipular dados para que um programa funcione com mais clareza, eficiência e lógica.</p>
     </section>
+
     <section class="info-faixa">
     <div class="info-item">
         <div>
@@ -40,7 +41,9 @@ $pagina = 'estruturas';
             na velocidade das operações realizadas pelo programa.</p>
         </div>
     </div>
+
     <div class="divisor"></div>
+
     <div class="info-item">
         <div>
             <h2>Onde são usadas</h2>
@@ -53,7 +56,8 @@ $pagina = 'estruturas';
 </section>
 
     <section class="conteudos">
-        <article>
+
+        <article onclick="window.location.href='../view/exemplos.php?estrutura=tad'">
             <h2>TAD — Tipo Abstrato de Dados</h2>
             <p>O Tipo Abstrato de Dados (TAD) representa um modelo lógico que define
              quais dados existirão e quais operações poderão ser realizadas sobre eles,
@@ -61,7 +65,8 @@ $pagina = 'estruturas';
             o comportamento da estrutura da sua implementação.</p>
         </article>
 
-        <article id="lista-simples">
+        <article id="lista-simples"
+        onclick="window.location.href='../view/exemplos.php?estrutura=simples'">
             <h2>Lista Simplesmente Encadeada</h2>
             <p>Uma Lista Simplesmente Encadeada é composta por nós conectados entre si.
             Cada nó armazena um valor e uma referência para o próximo elemento da lista.
@@ -69,13 +74,15 @@ $pagina = 'estruturas';
             comparada a vetores tradicionais.</p>
         </article>
 
-        <article id="lista-dupla">
+        <article id="lista-dupla"
+        onclick="window.location.href='../view/exemplos.php?estrutura=dupla'">
             <h2>Lista Duplamente Encadeada</h2>
             <p>A Lista Duplamente Encadeada funciona de forma semelhante à lista simples,
             porém cada nó possui duas referências: uma para o próximo elemento e outra
             para o elemento anterior. Isso permite percorrer a estrutura em ambas as
             direções e facilita determinadas operações.</p>
         </article>
+
     </section>
 </main>
 </body>
