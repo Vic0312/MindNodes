@@ -25,62 +25,58 @@ $pagina = 'estruturas';
     </header>
 
     <main>
-        <section class="banner-interno">
-            <span class="etiqueta">Estruturas de Dados</span>
-            <h1>O que são <span>Estruturas de Dados?</span></h1>
-            <p>São formas de organizar, armazenar e manipular dados para que um programa funcione com mais clareza, eficiência e lógica.</p>
-        </section>
+    <section class="banner-interno">
+        <span class="etiqueta">Estruturas de Dados</span>
+        <h1>O que são <span>Estruturas de Dados?</span></h1>
+        <p>São formas de organizar, armazenar e manipular dados para que um programa funcione com mais clareza, eficiência e lógica.</p>
+    </section>
+    <section class="info-faixa">
+    <div class="info-item">
+        <div>
+            <h2>Importância</h2>
+            <p>Escolher a estrutura de dados correta melhora o desempenho do sistema,
+            reduz o consumo de memória e facilita a organização do código.
+            Cada estrutura possui características próprias e influencia diretamente
+            na velocidade das operações realizadas pelo programa.</p>
+        </div>
+    </div>
+    <div class="divisor"></div>
+    <div class="info-item">
+        <div>
+            <h2>Onde são usadas</h2>
+            <p>Estruturas de dados estão presentes em aplicações web, jogos,
+            redes sociais, sistemas bancários, bancos de dados e mecanismos
+            de busca. Elas ajudam no armazenamento, organização e acesso
+            eficiente às informações.</p>
+        </div>
+    </div>
+</section>
 
-        <section class="painel-conceito">
-            <section class="coluna-info">
-                <article>
-                    <span>⬡</span>
-                    <h2>Conceito</h2>
-                    <p>Estruturas de Dados definem como as informações serão guardadas e quais operações podem ser feitas sobre elas.</p>
-                </article>
-                <article>
-                    <span>✓</span>
-                    <h2>Importância</h2>
-                    <p>Escolher a estrutura correta ajuda a reduzir tempo de execução, economizar memória e deixar o código mais organizado.</p>
-                </article>
-                <article>
-                    <span>📍</span>
-                    <h2>Onde são usadas</h2>
-                    <p>Aplicações web, jogos, sistemas de cadastro, banco de dados, histórico de navegação e muito mais.</p>
-                </article>
-            </section>
+    <section class="conteudos">
+        <article>
+            <h2>TAD — Tipo Abstrato de Dados</h2>
+            <p>O Tipo Abstrato de Dados (TAD) representa um modelo lógico que define
+             quais dados existirão e quais operações poderão ser realizadas sobre eles,
+            sem mostrar como serão implementados internamente. O objetivo é separar
+            o comportamento da estrutura da sua implementação.</p>
+        </article>
 
-            <section class="diagrama">
-                <h2>Organizando dados para uso eficiente</h2>
-                <section class="linha-diagrama">
-                    <p>Dados brutos</p>
-                    <strong>→</strong>
-                    <ul>
-                        <li>Lista</li>
-                        <li>Fila</li>
-                        <li>Pilha</li>
-                        <li>Árvore</li>
-                    </ul>
-                    <strong>→</strong>
-                    <p>Aplicações</p>
-                </section>
-            </section>
-        </section>
+        <article id="lista-simples">
+            <h2>Lista Simplesmente Encadeada</h2>
+            <p>Uma Lista Simplesmente Encadeada é composta por nós conectados entre si.
+            Cada nó armazena um valor e uma referência para o próximo elemento da lista.
+            Essa estrutura permite inserções e remoções com maior flexibilidade quando
+            comparada a vetores tradicionais.</p>
+        </article>
 
-        <section class="conteudos" id="tad">
-            <article>
-                <h2>TAD — Tipo Abstrato de Dados</h2>
-                <p>Um TAD descreve um conjunto de dados e operações sem focar diretamente em como isso será implementado internamente.</p>
-            </article>
-            <article id="lista-simples">
-                <h2>Lista Simplesmente Encadeada</h2>
-                <p>É formada por nós, onde cada nó possui um dado e uma referência para o próximo nó da lista.</p>
-            </article>
-            <article id="lista-dupla">
-                <h2>Lista Duplamente Encadeada</h2>
-                <p>É semelhante à lista simples, mas cada nó aponta para o próximo e também para o anterior.</p>
-            </article>
-        </section>
-    </main>
+        <article id="lista-dupla">
+            <h2>Lista Duplamente Encadeada</h2>
+            <p>A Lista Duplamente Encadeada funciona de forma semelhante à lista simples,
+            porém cada nó possui duas referências: uma para o próximo elemento e outra
+            para o elemento anterior. Isso permite percorrer a estrutura em ambas as
+            direções e facilita determinadas operações.</p>
+        </article>
+    </section>
+</main>
 </body>
 </html>
