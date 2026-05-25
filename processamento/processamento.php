@@ -88,4 +88,67 @@ if (
 header("Location: ../index.php");
 exit();
 
+if (isset($_POST['acao']) && $_POST['acao'] === 'editarPerfil') {
+    $id_usuario = $_SESSION['usuario_id'] ?? null;
+
+    if (!$id_usuario) {
+        header("Location: ../view/login.php");
+        exit();
+    }
+
+    $nome = trim($_POST['inputNomePerfil'] ?? '');
+    $sobrenome = trim($_POST['inputSobrenomePerfil'] ?? '');
+    $email = trim($_POST['inputEmailPerfil'] ?? '');
+    $telefone = trim($_POST['inputTelefonePerfil'] ?? '');
+    $senha = trim($_POST['inputSenhaPerfil'] ?? '');
+
+    $foto_perfil = $_SESSION['usuario_foto'] ?? null;
+
+    if (isset($_FILES['inputFotoPerfil']) && $_FILES['inputFotoPerfil']['error'] === UPLOAD_ERR_OK) {
+        $arquivo = $_FILES['inputFotoPerfil'];
+
+        $extensao = strtolower(pathinfo($arquivo['name'], PATHINFO_EXTENSION));
+        $extensoesPermitidas = ['jpg', 'jpeg', 'png', 'webp', 'avif'];
+
+        if (in_array($extensao, $extensoesPermitidas)) {
+            $pastaFisica = "../uploads/usuarios/";
+
+            if (!is_dir($pastaFisica)) {
+                mkdir($pastaFisica, 0777, true);
+            }
+
+            $nomeArquivo = uniqid("perfil_", true) . "." . $extensao;
+            $destinoFisico = $pastaFisica . $nomeArquivo;
+
+            if (move_uploaded_file($arquivo['tmp_name'], $destinoFisico)) {
+                $foto_perfil = "uploads/usuarios/" . $nomeArquivo;
+            }
+        }
+    }
+
+    $atualizou = $controlador->editarPerfilUsuario(
+        $id_usuario,
+        $nome,
+        $sobrenome,
+        $email,
+        $telefone,
+        $senha,
+        $foto_perfil
+    );
+
+    if ($atualizou) {
+        $_SESSION['usuario_nome'] = $nome;
+        $_SESSION['usuario_sobrenome'] = $sobrenome;
+        $_SESSION['usuario_email'] = $email;
+        $_SESSION['usuario_telefone'] = $telefone;
+        $_SESSION['usuario_foto'] = $foto_perfil;
+
+        header("Location: ../view/perfil.php?sucesso=1");
+        exit();
+    }
+
+    header("Location: ../view/perfil.php?erro=1");
+    exit();
+}
+
 ?>

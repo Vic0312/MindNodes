@@ -53,6 +53,40 @@ class BancoDeDados{
         mysqli_query($conexao,$consulta);
     }
 
+    public function editarPerfilUsuario($id_usuario, $nome, $sobrenome, $email, $telefone, $senha, $foto_perfil) {
+        $conexao = $this->conectarBD();
+    
+        $id_usuario = mysqli_real_escape_string($conexao, $id_usuario);
+        $nome = mysqli_real_escape_string($conexao, $nome);
+        $sobrenome = mysqli_real_escape_string($conexao, $sobrenome);
+        $email = mysqli_real_escape_string($conexao, $email);
+        $telefone = mysqli_real_escape_string($conexao, $telefone);
+        $foto_perfil = mysqli_real_escape_string($conexao, $foto_perfil);
+    
+        if (!empty($senha)) {
+            $senha = mysqli_real_escape_string($conexao, $senha);
+    
+            $consulta = "UPDATE usuario
+                         SET nome = '$nome',
+                             sobrenome = '$sobrenome',
+                             email = '$email',
+                             telefone = '$telefone',
+                             senha = '$senha',
+                             foto_perfil = '$foto_perfil'
+                         WHERE id_usuario = '$id_usuario'";
+        } else {
+            $consulta = "UPDATE usuario
+                         SET nome = '$nome',
+                             sobrenome = '$sobrenome',
+                             email = '$email',
+                             telefone = '$telefone',
+                             foto_perfil = '$foto_perfil'
+                         WHERE id_usuario = '$id_usuario'";
+        }
+    
+        return mysqli_query($conexao, $consulta);
+    }
+
 }
 
 ?>

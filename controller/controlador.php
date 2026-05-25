@@ -30,6 +30,18 @@ class Controlador{
         
     }
 
+    public function editarPerfilUsuario($id_usuario, $nome, $sobrenome, $email, $telefone, $senha, $foto_perfil) {
+        return $this->banco->editarPerfilUsuario(
+            $id_usuario,
+            $nome,
+            $sobrenome,
+            $email,
+            $telefone,
+            $senha,
+            $foto_perfil
+        );
+    }
+
 }
 
 ?>
