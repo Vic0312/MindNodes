@@ -73,6 +73,8 @@ body.login-body{
 .login-container form{
     display: flex !important;
     flex-direction: column !important;
+    align-items: center;
+    justify-content: center;
     gap: 15px !important;
 }
 
