@@ -31,7 +31,7 @@ class Controlador{
     }
 
     public function editarPerfilUsuario($id_usuario, $nome, $sobrenome, $email, $telefone, $senha, $foto_perfil) {
-        return $this->banco->editarPerfilUsuario(
+        return $this->bancoDeDados->editarPerfilUsuario(
             $id_usuario,
             $nome,
             $sobrenome,
@@ -40,6 +40,30 @@ class Controlador{
             $senha,
             $foto_perfil
         );
+    }
+
+    public function listarAssuntosQuiz() {
+        return $this->bancoDeDados->listarAssuntosQuiz();
+    }
+
+    public function buscarAssuntoQuiz($slug) {
+        return $this->bancoDeDados->buscarAssuntoQuiz($slug);
+    }
+
+    public function buscarPerguntasQuiz($slug) {
+        return $this->bancoDeDados->buscarPerguntasQuiz($slug);
+    }
+
+    public function salvarTentativaQuiz($idUsuario, $slug, $respostas) {
+        return $this->bancoDeDados->salvarTentativaQuiz($idUsuario, $slug, $respostas);
+    }
+
+    public function buscarDesempenhoUsuario($idUsuario) {
+        return $this->bancoDeDados->buscarDesempenhoUsuario($idUsuario);
+    }
+
+    public function buscarTentativaQuiz($idTentativa, $idUsuario) {
+        return $this->bancoDeDados->buscarTentativaQuiz($idTentativa, $idUsuario);
     }
 
 }

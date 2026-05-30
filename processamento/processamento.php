@@ -7,6 +7,90 @@ require_once("../controller/controlador.php");
 
 $controlador = new Controlador();
 
+if (isset($_POST['acao']) && $_POST['acao'] === 'salvarQuiz') {
+    $idUsuario = isset($_SESSION['usuario_id']) ? $_SESSION['usuario_id'] : null;
+
+    if (!$idUsuario) {
+        header("Location: ../view/login.php");
+        exit();
+    }
+
+    $slug = trim(isset($_POST['assunto']) ? $_POST['assunto'] : '');
+    $respostas = isset($_POST['respostas']) ? $_POST['respostas'] : [];
+    $idTentativa = $controlador->salvarTentativaQuiz($idUsuario, $slug, $respostas);
+
+    if ($idTentativa) {
+        header("Location: ../view/desempenho.php?tentativa=" . $idTentativa);
+        exit();
+    }
+
+    header("Location: ../view/quiz.php?erro=1");
+    exit();
+}
+
+if (isset($_POST['acao']) && $_POST['acao'] === 'editarPerfil') {
+    $id_usuario = isset($_SESSION['usuario_id']) ? $_SESSION['usuario_id'] : null;
+
+    if (!$id_usuario) {
+        header("Location: ../view/login.php");
+        exit();
+    }
+
+    $nome = trim(isset($_POST['inputNomePerfil']) ? $_POST['inputNomePerfil'] : '');
+    $sobrenome = trim(isset($_POST['inputSobrenomePerfil']) ? $_POST['inputSobrenomePerfil'] : '');
+    $email = trim(isset($_POST['inputEmailPerfil']) ? $_POST['inputEmailPerfil'] : '');
+    $telefone = trim(isset($_POST['inputTelefonePerfil']) ? $_POST['inputTelefonePerfil'] : '');
+    $senha = trim(isset($_POST['inputSenhaPerfil']) ? $_POST['inputSenhaPerfil'] : '');
+
+    $foto_perfil = isset($_SESSION['usuario_foto']) ? $_SESSION['usuario_foto'] : null;
+
+    if (isset($_FILES['inputFotoPerfil']) && $_FILES['inputFotoPerfil']['error'] === UPLOAD_ERR_OK) {
+        $arquivo = $_FILES['inputFotoPerfil'];
+
+        $extensao = strtolower(pathinfo($arquivo['name'], PATHINFO_EXTENSION));
+        $extensoesPermitidas = ['jpg', 'jpeg', 'png', 'webp', 'avif'];
+
+        if (in_array($extensao, $extensoesPermitidas)) {
+            $pastaFisica = "../uploads/usuarios/";
+
+            if (!is_dir($pastaFisica)) {
+                mkdir($pastaFisica, 0777, true);
+            }
+
+            $nomeArquivo = uniqid("perfil_", true) . "." . $extensao;
+            $destinoFisico = $pastaFisica . $nomeArquivo;
+
+            if (move_uploaded_file($arquivo['tmp_name'], $destinoFisico)) {
+                $foto_perfil = "uploads/usuarios/" . $nomeArquivo;
+            }
+        }
+    }
+
+    $atualizou = $controlador->editarPerfilUsuario(
+        $id_usuario,
+        $nome,
+        $sobrenome,
+        $email,
+        $telefone,
+        $senha,
+        $foto_perfil
+    );
+
+    if ($atualizou) {
+        $_SESSION['usuario_nome'] = $nome;
+        $_SESSION['usuario_sobrenome'] = $sobrenome;
+        $_SESSION['usuario_email'] = $email;
+        $_SESSION['usuario_telefone'] = $telefone;
+        $_SESSION['usuario_foto'] = $foto_perfil;
+
+        header("Location: ../view/perfil.php?sucesso=1");
+        exit();
+    }
+
+    header("Location: ../view/perfil.php?erro=1");
+    exit();
+}
+
 if (isset($_POST['inputEmailLog']) && isset($_POST['inputSenhaLog'])) {
     $email = trim($_POST['inputEmailLog']);
     $senha = trim($_POST['inputSenhaLog']);
@@ -14,11 +98,11 @@ if (isset($_POST['inputEmailLog']) && isset($_POST['inputSenhaLog'])) {
     $usuario = $controlador->efetuarLogin($email, $senha);
 
     if ($usuario) {
-        $_SESSION['usuario_id'] = $usuario['id_usuario'] ?? $usuario['id'] ?? null;
-        $_SESSION['usuario_nome'] = $usuario['nome'] ?? 'Usuário';
-        $_SESSION['usuario_sobrenome'] = $usuario['sobrenome'] ?? '';
-        $_SESSION['usuario_email'] = $usuario['email'] ?? $email;
-        $_SESSION['usuario_foto'] = $usuario['foto_perfil'] ?? null;
+        $_SESSION['usuario_id'] = isset($usuario['id_usuario']) ? $usuario['id_usuario'] : (isset($usuario['id']) ? $usuario['id'] : null);
+        $_SESSION['usuario_nome'] = isset($usuario['nome']) ? $usuario['nome'] : 'Usuario';
+        $_SESSION['usuario_sobrenome'] = isset($usuario['sobrenome']) ? $usuario['sobrenome'] : '';
+        $_SESSION['usuario_email'] = isset($usuario['email']) ? $usuario['email'] : $email;
+        $_SESSION['usuario_foto'] = isset($usuario['foto_perfil']) ? $usuario['foto_perfil'] : null;
         $_SESSION['login_sucesso'] = true;
 
         header("Location: ../view/home.php");
@@ -87,68 +171,5 @@ if (
 
 header("Location: ../index.php");
 exit();
-
-if (isset($_POST['acao']) && $_POST['acao'] === 'editarPerfil') {
-    $id_usuario = $_SESSION['usuario_id'] ?? null;
-
-    if (!$id_usuario) {
-        header("Location: ../view/login.php");
-        exit();
-    }
-
-    $nome = trim($_POST['inputNomePerfil'] ?? '');
-    $sobrenome = trim($_POST['inputSobrenomePerfil'] ?? '');
-    $email = trim($_POST['inputEmailPerfil'] ?? '');
-    $telefone = trim($_POST['inputTelefonePerfil'] ?? '');
-    $senha = trim($_POST['inputSenhaPerfil'] ?? '');
-
-    $foto_perfil = $_SESSION['usuario_foto'] ?? null;
-
-    if (isset($_FILES['inputFotoPerfil']) && $_FILES['inputFotoPerfil']['error'] === UPLOAD_ERR_OK) {
-        $arquivo = $_FILES['inputFotoPerfil'];
-
-        $extensao = strtolower(pathinfo($arquivo['name'], PATHINFO_EXTENSION));
-        $extensoesPermitidas = ['jpg', 'jpeg', 'png', 'webp', 'avif'];
-
-        if (in_array($extensao, $extensoesPermitidas)) {
-            $pastaFisica = "../uploads/usuarios/";
-
-            if (!is_dir($pastaFisica)) {
-                mkdir($pastaFisica, 0777, true);
-            }
-
-            $nomeArquivo = uniqid("perfil_", true) . "." . $extensao;
-            $destinoFisico = $pastaFisica . $nomeArquivo;
-
-            if (move_uploaded_file($arquivo['tmp_name'], $destinoFisico)) {
-                $foto_perfil = "uploads/usuarios/" . $nomeArquivo;
-            }
-        }
-    }
-
-    $atualizou = $controlador->editarPerfilUsuario(
-        $id_usuario,
-        $nome,
-        $sobrenome,
-        $email,
-        $telefone,
-        $senha,
-        $foto_perfil
-    );
-
-    if ($atualizou) {
-        $_SESSION['usuario_nome'] = $nome;
-        $_SESSION['usuario_sobrenome'] = $sobrenome;
-        $_SESSION['usuario_email'] = $email;
-        $_SESSION['usuario_telefone'] = $telefone;
-        $_SESSION['usuario_foto'] = $foto_perfil;
-
-        header("Location: ../view/perfil.php?sucesso=1");
-        exit();
-    }
-
-    header("Location: ../view/perfil.php?erro=1");
-    exit();
-}
 
 ?>
