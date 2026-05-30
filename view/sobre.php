@@ -54,6 +54,7 @@ if (!empty($fotoBanco)) {
             <a href="../view/exemplos.php">Exemplos em C#</a>
             <a href="../view/simulador.php">Simulador</a>
             <a href="../view/quiz.php">Quiz</a>
+            <a href="../view/desempenho.php">Desempenho</a>
         </nav>
 
         <a class="perfil-usuario" href="../view/perfil.php" title="Perfil de <?php echo htmlspecialchars($nomeUsuario); ?>">
