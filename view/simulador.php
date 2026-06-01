@@ -1,4 +1,40 @@
-<?php $pagina = 'simulador'; ?>
+<?php
+
+session_start();
+
+if (!isset($_SESSION['usuario_id'])) {
+    header("Location: ../view/login.php");
+    exit();
+}
+
+$nomeUsuario = $_SESSION['usuario_nome'] ?? "Usuário";
+$fotoBanco = $_SESSION['usuario_foto'] ?? null;
+
+$fotoExibicao = "../img/default-img.avif";
+
+if (!empty($fotoBanco)) {
+    $fotoBanco = trim($fotoBanco);
+
+    if (str_starts_with($fotoBanco, "data:image")) {
+        $fotoExibicao = $fotoBanco;
+    } else {
+        $caminhosPossiveis = [
+            "../" . $fotoBanco,
+            "../uploads/usuarios/" . basename($fotoBanco),
+            "../img/" . basename($fotoBanco)
+        ];
+
+        foreach ($caminhosPossiveis as $caminho) {
+            if (file_exists(__DIR__ . "/" . $caminho)) {
+                $fotoExibicao = $caminho;
+                break;
+            }
+        }
+    }
+}
+
+$pagina = 'simulador';
+?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -11,13 +47,13 @@
 <body>
 <header class="topo">
 
-    <a class="marca" href="../index.php">
+    <a class="marca" href="../view/home.php">
         <span class="simbolo-logo">∞</span>
         <strong>Mind<span>Nodes</span></strong>
     </a>
     
     <nav class="menu">
-        <a href="../index.php">Início</a>
+        <a href="../view/home.php">Início</a>
         <a href="../view/sobre.php">Sobre</a>
         <a href="../view/estruturas.php">Estruturas</a>
         <a href="../view/exemplos.php">Exemplos</a>
@@ -27,7 +63,13 @@
         
     </nav>
     
-    <a class="botao-conta" href="#">👤</a>
+    <a class="perfil-usuario" href="../view/perfil.php" title="Perfil de <?php echo htmlspecialchars($nomeUsuario); ?>">
+            <img
+                src="<?php echo htmlspecialchars($fotoExibicao); ?>"
+                alt="Foto de perfil de <?php echo htmlspecialchars($nomeUsuario); ?>"
+                class="foto-perfil-nav"
+            >
+        </a>
 
 </header>
 <main>
