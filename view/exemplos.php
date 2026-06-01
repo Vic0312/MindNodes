@@ -115,8 +115,8 @@ public class Pilha
         return valor;
     }
 }`,
-                explicacao: "O TAD mostra o que a estrutura faz, sem obrigar o usuário a saber como ela funciona por dentro.",
-                dica: "Exemplo: quem usa Empilhar e Desempilhar não precisa saber como os dados estão guardados internamente."
+                explicacao: "O TAD, ou Tipo Abstrato de Dados, representa uma estrutura pelo seu comportamento, ou seja, pelas operações que ela oferece. Nesse exemplo, a classe Pilha permite empilhar e desempilhar valores, sem que quem usa a classe precise entender todos os detalhes internos de armazenamento.",
+                dica: "Exemplo: quem usa os métodos Empilhar e Desempilhar só precisa saber que eles adicionam e removem elementos da pilha. A forma como os dados são guardados dentro do vetor fica escondida na implementação."
             },
 
             simples: {
@@ -133,8 +133,8 @@ public class No
         Proximo = null;
     }
 }`,
-                explicacao: "Na lista simplesmente encadeada, cada nó guarda um valor e uma referência para o próximo nó.",
-                dica: "Ideia principal: a lista anda em uma direção só, sempre seguindo o próximo nó."
+                explicacao: "A lista simplesmente encadeada é formada por nós, e cada nó guarda um valor e uma referência para o próximo elemento da lista. Isso permite ligar vários dados em sequência, sem que eles precisem estar lado a lado na memória.",
+                dica: "Ideia principal: cada nó conhece apenas o próximo nó. Por isso, a navegação acontece em uma única direção, do início até o final da lista."
             },
 
             dupla: {
@@ -153,8 +153,8 @@ public class No
         Anterior = null;
     }
 }`,
-                explicacao: "Na lista duplamente encadeada, cada nó aponta para o próximo nó e também para o nó anterior.",
-                dica: "Ideia principal: dá para navegar para frente e para trás dentro da lista."
+                explicacao: "A lista duplamente encadeada também é formada por nós, mas cada nó possui uma referência para o próximo elemento e outra para o elemento anterior. Dessa forma, a lista se torna mais flexível, permitindo percorrer os dados nos dois sentidos.",
+                dica: "Ideia principal: como cada nó sabe quem vem antes e quem vem depois, é possível avançar e voltar dentro da lista com mais facilidade."
             }
         };
 

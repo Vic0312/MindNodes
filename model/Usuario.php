@@ -10,7 +10,7 @@ class Usuario{
     protected $telefone;
     protected $email;
     protected $senha;
-    protected $foto_prod;
+    protected $foto_perfil;
 
     //Construtor
     public function __construct($cpf, $nome, $sobrenome, $dataNasc, $telefone, $email, $senha, $foto_perfil){

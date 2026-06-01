@@ -42,28 +42,43 @@ if (isset($_POST['acao']) && $_POST['acao'] === 'editarPerfil') {
     $telefone = trim(isset($_POST['inputTelefonePerfil']) ? $_POST['inputTelefonePerfil'] : '');
     $senha = trim(isset($_POST['inputSenhaPerfil']) ? $_POST['inputSenhaPerfil'] : '');
 
+    if ($nome === '' || $email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        header("Location: ../view/perfil.php?erro=campos");
+        exit();
+    }
+
     $foto_perfil = isset($_SESSION['usuario_foto']) ? $_SESSION['usuario_foto'] : null;
 
-    if (isset($_FILES['inputFotoPerfil']) && $_FILES['inputFotoPerfil']['error'] === UPLOAD_ERR_OK) {
-        $arquivo = $_FILES['inputFotoPerfil'];
+    if (isset($_FILES['inputFotoPerfil']) && $_FILES['inputFotoPerfil']['error'] !== UPLOAD_ERR_NO_FILE) {
+        if ($_FILES['inputFotoPerfil']['error'] !== UPLOAD_ERR_OK) {
+            header("Location: ../view/perfil.php?erro=upload");
+            exit();
+        }
 
+        $arquivo = $_FILES['inputFotoPerfil'];
         $extensao = strtolower(pathinfo($arquivo['name'], PATHINFO_EXTENSION));
         $extensoesPermitidas = ['jpg', 'jpeg', 'png', 'webp', 'avif'];
 
-        if (in_array($extensao, $extensoesPermitidas)) {
-            $pastaFisica = "../uploads/usuarios/";
-
-            if (!is_dir($pastaFisica)) {
-                mkdir($pastaFisica, 0777, true);
-            }
-
-            $nomeArquivo = uniqid("perfil_", true) . "." . $extensao;
-            $destinoFisico = $pastaFisica . $nomeArquivo;
-
-            if (move_uploaded_file($arquivo['tmp_name'], $destinoFisico)) {
-                $foto_perfil = "uploads/usuarios/" . $nomeArquivo;
-            }
+        if (!in_array($extensao, $extensoesPermitidas)) {
+            header("Location: ../view/perfil.php?erro=tipo");
+            exit();
         }
+
+        $pastaFisica = __DIR__ . "/../uploads/usuarios/";
+
+        if (!is_dir($pastaFisica)) {
+            mkdir($pastaFisica, 0777, true);
+        }
+
+        $nomeArquivo = uniqid("perfil_", true) . "." . $extensao;
+        $destinoFisico = $pastaFisica . $nomeArquivo;
+
+        if (!move_uploaded_file($arquivo['tmp_name'], $destinoFisico)) {
+            header("Location: ../view/perfil.php?erro=upload");
+            exit();
+        }
+
+        $foto_perfil = "uploads/usuarios/" . $nomeArquivo;
     }
 
     $atualizou = $controlador->editarPerfilUsuario(
@@ -102,6 +117,7 @@ if (isset($_POST['inputEmailLog']) && isset($_POST['inputSenhaLog'])) {
         $_SESSION['usuario_nome'] = isset($usuario['nome']) ? $usuario['nome'] : 'Usuario';
         $_SESSION['usuario_sobrenome'] = isset($usuario['sobrenome']) ? $usuario['sobrenome'] : '';
         $_SESSION['usuario_email'] = isset($usuario['email']) ? $usuario['email'] : $email;
+        $_SESSION['usuario_telefone'] = isset($usuario['telefone']) ? $usuario['telefone'] : '';
         $_SESSION['usuario_foto'] = isset($usuario['foto_perfil']) ? $usuario['foto_perfil'] : null;
         $_SESSION['login_sucesso'] = true;
 
@@ -139,7 +155,7 @@ if (
         $extensoesPermitidas = ['jpg', 'jpeg', 'png', 'webp', 'avif'];
 
         if (in_array($extensao, $extensoesPermitidas)) {
-            $pastaFisica = "../uploads/usuarios/";
+            $pastaFisica = __DIR__ . "/../uploads/usuarios/";
 
             if (!is_dir($pastaFisica)) {
                 mkdir($pastaFisica, 0777, true);

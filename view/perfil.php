@@ -21,7 +21,8 @@ $fotoExibicao = "../img/default-img.avif";
 if (!empty($fotoBanco)) {
     $fotoBanco = trim($fotoBanco);
 
-    if (str_starts_with($fotoBanco, "data:image")) {
+    // Compatível com versões antigas do PHP, sem depender de str_starts_with().
+    if (substr($fotoBanco, 0, 10) === "data:image") {
         $fotoExibicao = $fotoBanco;
     } else {
         $caminhosPossiveis = [
@@ -63,7 +64,7 @@ $mensagemErro = $_GET['erro'] ?? null;
             <a href="../view/home.php">Início</a>
             <a href="../view/sobre.php">Sobre</a>
             <a href="../view/estruturas.php">Estruturas</a>
-            <a href="../view/exemplos.php">Exemplos em C#</a>
+            <a href="../view/exemplos.php">Exemplos</a>
             <a href="../view/simulador.php">Simulador</a>
             <a href="../view/quiz.php">Quiz</a>
             <a href="../view/desempenho.php">Desempenho</a>
@@ -71,6 +72,7 @@ $mensagemErro = $_GET['erro'] ?? null;
 
         <a class="perfil-usuario ativo-perfil" href="../view/perfil.php" title="Meu perfil">
             <img
+                id="previewFotoNav"
                 src="<?php echo htmlspecialchars($fotoExibicao); ?>"
                 alt="Foto de perfil de <?php echo htmlspecialchars($nomeUsuario); ?>"
                 class="foto-perfil-nav"
@@ -79,7 +81,6 @@ $mensagemErro = $_GET['erro'] ?? null;
     </header>
 
     <main>
-
         <?php if ($mensagemSucesso): ?>
             <section class="alerta sucesso">
                 Perfil atualizado com sucesso.
@@ -88,7 +89,17 @@ $mensagemErro = $_GET['erro'] ?? null;
 
         <?php if ($mensagemErro): ?>
             <section class="alerta erro">
-                Não foi possível atualizar o perfil. Verifique os dados e tente novamente.
+                <?php
+                    if ($mensagemErro === "tipo") {
+                        echo "Formato de imagem inválido. Use JPG, JPEG, PNG, WEBP ou AVIF.";
+                    } elseif ($mensagemErro === "upload") {
+                        echo "Não foi possível enviar a imagem. Tente novamente.";
+                    } elseif ($mensagemErro === "campos") {
+                        echo "Preencha nome e e-mail corretamente.";
+                    } else {
+                        echo "Não foi possível atualizar o perfil. Verifique os dados e tente novamente.";
+                    }
+                ?>
             </section>
         <?php endif; ?>
 
@@ -122,18 +133,17 @@ $mensagemErro = $_GET['erro'] ?? null;
 
                 <form method="POST" action="../processamento/processamento.php" enctype="multipart/form-data">
                     <input type="hidden" name="acao" value="editarPerfil">
-                    <input type="hidden" name="id_usuario" value="<?php echo htmlspecialchars($usuarioId); ?>">
 
                     <section class="campo-upload">
                         <label for="inputFotoPerfil">Alterar foto</label>
 
                         <div class="upload-box">
-                            <span>Selecionar nova imagem</span>
+                            <span id="nomeArquivoPerfil">Selecionar nova imagem</span>
                             <input
                                 type="file"
                                 id="inputFotoPerfil"
                                 name="inputFotoPerfil"
-                                accept="image/*"
+                                accept=".jpg,.jpeg,.png,.webp,.avif,image/jpeg,image/png,image/webp,image/avif"
                             >
                         </div>
                     </section>
@@ -206,23 +216,35 @@ $mensagemErro = $_GET['erro'] ?? null;
 
     <script>
         const inputFoto = document.getElementById("inputFotoPerfil");
-        const previewFoto = document.getElementById("previewFoto");
+        const previewFotoNav = document.getElementById("previewFotoNav");
         const previewFotoLateral = document.getElementById("previewFotoLateral");
+        const nomeArquivoPerfil = document.getElementById("nomeArquivoPerfil");
 
         if (inputFoto) {
             inputFoto.addEventListener("change", function () {
                 const arquivo = this.files[0];
 
-                if (arquivo) {
-                    const leitor = new FileReader();
-
-                    leitor.onload = function (evento) {
-                        previewFoto.src = evento.target.result;
-                        previewFotoLateral.src = evento.target.result;
-                    };
-
-                    leitor.readAsDataURL(arquivo);
+                if (!arquivo) {
+                    return;
                 }
+
+                if (nomeArquivoPerfil) {
+                    nomeArquivoPerfil.textContent = arquivo.name;
+                }
+
+                const leitor = new FileReader();
+
+                leitor.onload = function (evento) {
+                    if (previewFotoNav) {
+                        previewFotoNav.src = evento.target.result;
+                    }
+
+                    if (previewFotoLateral) {
+                        previewFotoLateral.src = evento.target.result;
+                    }
+                };
+
+                leitor.readAsDataURL(arquivo);
             });
         }
     </script>
