@@ -44,12 +44,13 @@ $aproveitamento = $totalPerguntas > 0 ? round(($totalAcertos / $totalPerguntas) 
 
         <nav class="menu">
             <a href="../view/home.php">Início</a>
+            <a href="../view/sobre.php">Sobre</a>
             <a href="../view/estruturas.php">Estruturas</a>
-            <a href="../view/exemplos.php">Exemplos em C#</a>
+            <a href="../view/exemplos.php">Exemplos</a>
             <a href="../view/simulador.php">Simulador</a>
             <a href="../view/quiz.php">Quiz</a>
             <a class="ativo" href="../view/desempenho.php">Desempenho</a>
-            <a href="../view/sobre.php">Sobre</a>
+            
         </nav>
 
         <a class="botao-conta" href="../view/perfil.php">👤</a>
