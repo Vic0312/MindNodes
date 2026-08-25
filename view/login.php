@@ -1,3 +1,14 @@
+<?php
+session_start();
+
+if (isset($_SESSION['usuario_id'])) {
+    header('Location: ../view/home.php');
+    exit();
+}
+
+$mensagemErro = isset($_GET['erro']);
+$cadastroConcluido = isset($_GET['cadastro']);
+?>
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -26,6 +37,12 @@
                 prática e interativa.
             </p>
         </section>
+
+        <?php if ($mensagemErro): ?>
+            <p>Não foi possível entrar. Verifique seu e-mail e sua senha.</p>
+        <?php elseif ($cadastroConcluido): ?>
+            <p>Cadastro realizado com sucesso. Faça seu login.</p>
+        <?php endif; ?>
 
         <form method="POST" action="../processamento/processamento.php">
 

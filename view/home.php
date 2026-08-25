@@ -2,6 +2,11 @@
 
 session_start();
 
+if (!isset($_SESSION['usuario_id'])) {
+    header("Location: ../view/login.php");
+    exit();
+}
+
 $pagina = "inicio";
 
 $nomeUsuario = $_SESSION['usuario_nome'] ?? "Usuário";

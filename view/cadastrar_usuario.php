@@ -1,3 +1,16 @@
+<?php
+$errosCadastro = [
+    'campos' => 'Preencha todos os campos obrigatórios.',
+    'email' => 'Informe um e-mail válido.',
+    'senha' => 'A senha deve possuir pelo menos 8 caracteres.',
+    'confirmacao' => 'A confirmação da senha não corresponde.',
+    'email_duplicado' => 'Este e-mail já está cadastrado.',
+    'cpf_duplicado' => 'Este CPF já está cadastrado.',
+    'banco' => 'Não foi possível concluir o cadastro.'
+];
+$codigoErro = $_GET['erro'] ?? null;
+$mensagemErro = $errosCadastro[$codigoErro] ?? null;
+?>
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -32,6 +45,10 @@
             <h2>Crie sua conta</h2>
             <p>Comece sua jornada nas estruturas de dados.</p>
         </section>
+
+        <?php if ($mensagemErro): ?>
+            <p><?php echo htmlspecialchars($mensagemErro); ?></p>
+        <?php endif; ?>
 
         <form method="POST" action="../processamento/processamento.php" enctype="multipart/form-data">
             
@@ -71,7 +88,12 @@
 
             <section class="input-box">
                 <i class="fa-solid fa-lock"></i>
-                <input type="password" name="inputSenha" placeholder="Crie uma senha" required>
+                <input type="password" name="inputSenha" placeholder="Crie uma senha" minlength="8" required>
+            </section>
+
+            <section class="input-box">
+                <i class="fa-solid fa-lock"></i>
+                <input type="password" name="inputConfirmarSenha" placeholder="Confirme sua senha" minlength="8" required>
             </section>
 
             <section class="input-box" style="height: auto; padding: 10px 15px;">

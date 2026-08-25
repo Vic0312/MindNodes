@@ -205,12 +205,14 @@ $mensagemErro = $_GET['erro'] ?? null;
                             type="password"
                             id="inputSenhaPerfil"
                             name="inputSenhaPerfil"
+                            minlength="8"
                             placeholder="Preencha somente se quiser alterar"
                         >
                     </section>
 
                     <section class="acoes-form">
                         <a class="botao cancelar" href="../view/home.php">Cancelar</a>
+                        <a class="botao cancelar" href="../processamento/logout.php">Sair</a>
                         <button type="submit" class="botao primario">Salvar alterações</button>
                     </section>
                 </form>

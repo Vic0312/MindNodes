@@ -18,7 +18,11 @@ class BancoDeDados
     }
 
     public function conectarBD() { return $this->conexao; }
-    public function autenticarUsuario($email, $senha) { return $this->usuarioModel->buscarPorEmailESenha($email, $senha); }
+    public function autenticarUsuario($email, $senha)
+    {
+        $usuario = $this->usuarioModel->buscarPorEmail($email);
+        return $usuario && password_verify($senha, $usuario['senha']) ? $usuario : false;
+    }
     public function inserirUsuario($usuario) { return $usuario->cadastrar(); }
     public function editarPerfilUsuario($id, $nome, $sobrenome, $email, $telefone, $senha, $foto) { return $this->usuarioModel->atualizar($id, $nome, $sobrenome, $email, $telefone, $senha, $foto); }
     public function listarAssuntosQuiz() { return $this->quizModel->listarAssuntos(); }

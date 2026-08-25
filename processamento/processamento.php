@@ -116,14 +116,6 @@ if (isset($_POST['inputEmailLog']) && isset($_POST['inputSenhaLog'])) {
     $usuario = $authController->efetuarLogin($email, $senha);
 
     if ($usuario) {
-        $_SESSION['usuario_id'] = isset($usuario['id_usuario']) ? $usuario['id_usuario'] : (isset($usuario['id']) ? $usuario['id'] : null);
-        $_SESSION['usuario_nome'] = isset($usuario['nome']) ? $usuario['nome'] : 'Usuario';
-        $_SESSION['usuario_sobrenome'] = isset($usuario['sobrenome']) ? $usuario['sobrenome'] : '';
-        $_SESSION['usuario_email'] = isset($usuario['email']) ? $usuario['email'] : $email;
-        $_SESSION['usuario_telefone'] = isset($usuario['telefone']) ? $usuario['telefone'] : '';
-        $_SESSION['usuario_foto'] = isset($usuario['foto_perfil']) ? $usuario['foto_perfil'] : null;
-        $_SESSION['login_sucesso'] = true;
-
         header("Location: ../view/home.php");
         exit();
     }
@@ -139,7 +131,8 @@ if (
     isset($_POST['inputDataNasc']) &&
     isset($_POST['inputTelefone']) &&
     isset($_POST['inputEmail']) &&
-    isset($_POST['inputSenha'])
+    isset($_POST['inputSenha']) &&
+    isset($_POST['inputConfirmarSenha'])
 ) {
     $nome = trim($_POST['inputNome']);
     $sobrenome = trim($_POST['inputSobrenome']);
@@ -148,6 +141,13 @@ if (
     $telefone = trim($_POST['inputTelefone']);
     $email = trim($_POST['inputEmail']);
     $senha = trim($_POST['inputSenha']);
+    $confirmacaoSenha = trim($_POST['inputConfirmarSenha']);
+
+    $erroCadastro = $authController->validarCadastro($cpf, $nome, $sobrenome, $dataNasc, $telefone, $email, $senha, $confirmacaoSenha);
+    if ($erroCadastro !== null) {
+        header("Location: ../view/cadastrar_usuario.php?erro=" . urlencode($erroCadastro));
+        exit();
+    }
 
     $foto_perfil = null;
 
@@ -173,7 +173,7 @@ if (
         }
     }
 
-    $authController->cadastrarUsuario(
+    $resultadoCadastro = $authController->cadastrarUsuario(
         $cpf,
         $nome,
         $sobrenome,
@@ -181,10 +181,16 @@ if (
         $telefone,
         $email,
         $senha,
-        $foto_perfil
+        $foto_perfil,
+        $confirmacaoSenha
     );
 
-    header("Location: ../view/login.php");
+    if (!$resultadoCadastro['sucesso']) {
+        header("Location: ../view/cadastrar_usuario.php?erro=" . urlencode($resultadoCadastro['erro']));
+        exit();
+    }
+
+    header("Location: ../view/login.php?cadastro=1");
     exit();
 }
 

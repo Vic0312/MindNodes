@@ -93,17 +93,17 @@ class Usuario{
         $this->foto_perfil = $foto_perfil;
     }
 
-    public function buscarPorEmailESenha($email, $senha){
-        $consulta = mysqli_prepare($this->conexao, 'SELECT * FROM usuario WHERE email = ? AND senha = ?');
-        mysqli_stmt_bind_param($consulta, 'ss', $email, $senha);
+    public function buscarPorEmail($email){
+        $consulta = mysqli_prepare($this->conexao, 'SELECT * FROM usuario WHERE email = ? LIMIT 1');
+        mysqli_stmt_bind_param($consulta, 's', $email);
         mysqli_stmt_execute($consulta);
         $resultado = mysqli_stmt_get_result($consulta);
         return $resultado && mysqli_num_rows($resultado) === 1 ? mysqli_fetch_assoc($resultado) : false;
     }
 
-    public function buscarPorEmail($email){
-        $consulta = mysqli_prepare($this->conexao, 'SELECT * FROM usuario WHERE email = ? LIMIT 1');
-        mysqli_stmt_bind_param($consulta, 's', $email);
+    public function buscarPorCPF($cpf){
+        $consulta = mysqli_prepare($this->conexao, 'SELECT * FROM usuario WHERE cpf = ? LIMIT 1');
+        mysqli_stmt_bind_param($consulta, 's', $cpf);
         mysqli_stmt_execute($consulta);
         $resultado = mysqli_stmt_get_result($consulta);
         return $resultado && mysqli_num_rows($resultado) === 1 ? mysqli_fetch_assoc($resultado) : false;
@@ -124,7 +124,13 @@ class Usuario{
         return mysqli_stmt_execute($consulta);
     }
 
-    public function atualizar($idUsuario, $nome, $sobrenome, $email, $telefone, $senha, $fotoPerfil){
+    public function atualizarSenha($idUsuario, $senhaHash){
+        $consulta = mysqli_prepare($this->conexao, 'UPDATE usuario SET senha = ? WHERE id_usuario = ?');
+        mysqli_stmt_bind_param($consulta, 'si', $senhaHash, $idUsuario);
+        return mysqli_stmt_execute($consulta);
+    }
+
+    public function atualizarDados($idUsuario, $nome, $sobrenome, $email, $telefone, $senha, $fotoPerfil){
         if ($senha !== '') {
             $sql = 'UPDATE usuario SET nome = ?, sobrenome = ?, email = ?, telefone = ?, senha = ?, foto_perfil = ? WHERE id_usuario = ?';
             $consulta = mysqli_prepare($this->conexao, $sql);
@@ -135,6 +141,10 @@ class Usuario{
             mysqli_stmt_bind_param($consulta, 'sssssi', $nome, $sobrenome, $email, $telefone, $fotoPerfil, $idUsuario);
         }
         return mysqli_stmt_execute($consulta);
+    }
+
+    public function atualizar($idUsuario, $nome, $sobrenome, $email, $telefone, $senha, $fotoPerfil){
+        return $this->atualizarDados($idUsuario, $nome, $sobrenome, $email, $telefone, $senha, $fotoPerfil);
     }
 
 }

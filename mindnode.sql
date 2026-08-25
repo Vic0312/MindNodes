@@ -196,7 +196,7 @@ CREATE TABLE `usuario` (
 
 INSERT INTO `usuario` (`id_usuario`, `cpf`, `nome`, `sobrenome`, `dataNasc`, `telefone`, `email`, `senha`, `foto_perfil`) VALUES
 (1, '11111111111', 'Maria', 'Brito', '2007-12-31', '18997289078', 'maria@gmail.com', '1234', 0x75706c6f6164732f7573756172696f732f70657266696c5f36613164626431666161373632332e31303834313636312e6a706567),
-(2, '11111111111', 'Bruno', 'Lima', '2000-04-13', '189945367', 'bru@gmail.com', '123', 0x75706c6f6164732f7573756172696f732f70657266696c5f36613164646138643166383763332e38343139343339312e6a706567);
+(2, '22222222222', 'Bruno', 'Lima', '2000-04-13', '189945367', 'bru@gmail.com', '123', 0x75706c6f6164732f7573756172696f732f70657266696c5f36613164646138643166383763332e38343139343339312e6a706567);
 
 -- --------------------------------------------------------
 
@@ -238,6 +238,18 @@ CREATE TABLE `usuario_item` (
   `data_compra` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Itens básicos disponíveis no inventário dos usuários existentes
+--
+
+INSERT INTO `usuario_item` (`id_usuario_item`, `id_usuario`, `id_item`, `data_compra`) VALUES
+(1, 1, 1, current_timestamp()),
+(2, 1, 2, current_timestamp()),
+(3, 1, 3, current_timestamp()),
+(4, 2, 1, current_timestamp()),
+(5, 2, 2, current_timestamp()),
+(6, 2, 3, current_timestamp());
+
 -- --------------------------------------------------------
 
 CREATE TABLE `avatar_usuario` (
@@ -248,6 +260,14 @@ CREATE TABLE `avatar_usuario` (
   `id_roupa` int(11) DEFAULT NULL,
   `id_acessorio` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Avatar inicial dos usuários existentes
+--
+
+INSERT INTO `avatar_usuario` (`id_avatar`, `id_usuario`, `id_cabelo`, `id_rosto`, `id_roupa`, `id_acessorio`) VALUES
+(1, 1, 1, 2, 3, NULL),
+(2, 2, 1, 2, 3, NULL);
 
 -- --------------------------------------------------------
 
@@ -310,9 +330,6 @@ ALTER TABLE `quiz_tentativa`
 ALTER TABLE `usuario`
   ADD PRIMARY KEY (`id_usuario`),
   ADD UNIQUE KEY `uk_usuario_email` (`email`);
-
--- O CPF 11111111111 aparece em dois usuários do dump atual.
--- A chave UNIQUE de CPF deve ser criada somente após a correção dos dados duplicados.
 
 ALTER TABLE `item`
   ADD PRIMARY KEY (`id_item`);
@@ -378,10 +395,10 @@ ALTER TABLE `item`
   MODIFY `id_item` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 ALTER TABLE `usuario_item`
-  MODIFY `id_usuario_item` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_usuario_item` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 ALTER TABLE `avatar_usuario`
-  MODIFY `id_avatar` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_avatar` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 ALTER TABLE `transacao_moeda`
   MODIFY `id_transacao` int(11) NOT NULL AUTO_INCREMENT;
