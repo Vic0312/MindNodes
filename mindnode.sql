@@ -99,7 +99,10 @@ CREATE TABLE `quiz_pergunta` (
   `id_pergunta` int(11) NOT NULL,
   `id_assunto` int(11) NOT NULL,
   `enunciado` text NOT NULL,
-  `explicacao` text NOT NULL
+  `explicacao` text NOT NULL,
+  `tipo` enum('teorica','codigo') NOT NULL DEFAULT 'teorica',
+  `codigo` text DEFAULT NULL,
+  `dica` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -156,6 +159,7 @@ CREATE TABLE `quiz_tentativa` (
   `id_assunto` int(11) NOT NULL,
   `total_perguntas` int(11) NOT NULL,
   `total_acertos` int(11) NOT NULL,
+  `moedas_ganhas` int(11) NOT NULL DEFAULT 0,
   `data_tentativa` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -181,8 +185,9 @@ CREATE TABLE `usuario` (
   `dataNasc` date NOT NULL,
   `telefone` varchar(15) NOT NULL,
   `email` varchar(50) NOT NULL,
-  `senha` varchar(20) NOT NULL,
-  `foto_perfil` longblob DEFAULT NULL
+  `senha` varchar(255) NOT NULL,
+  `foto_perfil` longblob DEFAULT NULL,
+  `moedas` int(11) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -192,6 +197,69 @@ CREATE TABLE `usuario` (
 INSERT INTO `usuario` (`id_usuario`, `cpf`, `nome`, `sobrenome`, `dataNasc`, `telefone`, `email`, `senha`, `foto_perfil`) VALUES
 (1, '11111111111', 'Maria', 'Brito', '2007-12-31', '18997289078', 'maria@gmail.com', '1234', 0x75706c6f6164732f7573756172696f732f70657266696c5f36613164626431666161373632332e31303834313636312e6a706567),
 (2, '11111111111', 'Bruno', 'Lima', '2000-04-13', '189945367', 'bru@gmail.com', '123', 0x75706c6f6164732f7573756172696f732f70657266696c5f36613164646138643166383763332e38343139343339312e6a706567);
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura da tabela `item`
+--
+
+CREATE TABLE `item` (
+  `id_item` int(11) NOT NULL,
+  `nome` varchar(100) NOT NULL,
+  `descricao` text DEFAULT NULL,
+  `categoria` enum('cabelo','rosto','roupa','acessorio') NOT NULL,
+  `preco` int(11) NOT NULL DEFAULT 0,
+  `imagem` varchar(255) NOT NULL,
+  `habilidade` varchar(100) DEFAULT NULL,
+  `descricao_habilidade` text DEFAULT NULL,
+  `valor_habilidade` int(11) NOT NULL DEFAULT 0,
+  `ativo` tinyint(1) NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dados iniciais da tabela `item`
+--
+
+INSERT INTO `item` (`id_item`, `nome`, `descricao`, `categoria`, `preco`, `imagem`, `habilidade`, `descricao_habilidade`, `valor_habilidade`, `ativo`) VALUES
+(1, 'Cabelo Padrão', 'Visual inicial gratuito para o cabelo do avatar.', 'cabelo', 0, 'img/avatar/cabelo-padrao.png', NULL, NULL, 0, 1),
+(2, 'Rosto Padrão', 'Visual inicial gratuito para o rosto do avatar.', 'rosto', 0, 'img/avatar/rosto-padrao.png', NULL, NULL, 0, 1),
+(3, 'Roupa Padrão', 'Visual inicial gratuito para a roupa do avatar.', 'roupa', 0, 'img/avatar/roupa-padrao.png', NULL, NULL, 0, 1),
+(4, 'Boné FIFO', 'Boné inspirado no princípio First In, First Out.', 'cabelo', 100, 'img/avatar/bone-fifo.png', 'bonus_fila', 'Concede um bônus relacionado a atividades de filas.', 5, 1),
+(5, 'Óculos Debug', 'Óculos para encontrar erros com mais estilo.', 'rosto', 120, 'img/avatar/oculos-debug.png', 'dica_extra', 'Concede uma ajuda adicional em atividades compatíveis.', 1, 1),
+(6, 'Camiseta Stack', 'Camiseta inspirada no princípio Last In, First Out.', 'roupa', 150, 'img/avatar/camiseta-stack.png', 'bonus_pilha', 'Concede um bônus relacionado a atividades de pilhas.', 5, 1);
+
+-- --------------------------------------------------------
+
+CREATE TABLE `usuario_item` (
+  `id_usuario_item` int(11) NOT NULL,
+  `id_usuario` int(11) NOT NULL,
+  `id_item` int(11) NOT NULL,
+  `data_compra` datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+CREATE TABLE `avatar_usuario` (
+  `id_avatar` int(11) NOT NULL,
+  `id_usuario` int(11) NOT NULL,
+  `id_cabelo` int(11) DEFAULT NULL,
+  `id_rosto` int(11) DEFAULT NULL,
+  `id_roupa` int(11) DEFAULT NULL,
+  `id_acessorio` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+CREATE TABLE `transacao_moeda` (
+  `id_transacao` int(11) NOT NULL,
+  `id_usuario` int(11) NOT NULL,
+  `tipo` enum('credito','debito') NOT NULL,
+  `valor` int(11) NOT NULL,
+  `origem` enum('quiz','loja','bonus') NOT NULL,
+  `descricao` varchar(255) DEFAULT NULL,
+  `data_transacao` datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Índices para tabelas despejadas
@@ -240,7 +308,31 @@ ALTER TABLE `quiz_tentativa`
 -- Índices para tabela `usuario`
 --
 ALTER TABLE `usuario`
-  ADD PRIMARY KEY (`id_usuario`);
+  ADD PRIMARY KEY (`id_usuario`),
+  ADD UNIQUE KEY `uk_usuario_email` (`email`);
+
+-- O CPF 11111111111 aparece em dois usuários do dump atual.
+-- A chave UNIQUE de CPF deve ser criada somente após a correção dos dados duplicados.
+
+ALTER TABLE `item`
+  ADD PRIMARY KEY (`id_item`);
+
+ALTER TABLE `usuario_item`
+  ADD PRIMARY KEY (`id_usuario_item`),
+  ADD KEY `id_usuario` (`id_usuario`),
+  ADD KEY `id_item` (`id_item`);
+
+ALTER TABLE `avatar_usuario`
+  ADD PRIMARY KEY (`id_avatar`),
+  ADD UNIQUE KEY `uk_avatar_usuario` (`id_usuario`),
+  ADD KEY `id_cabelo` (`id_cabelo`),
+  ADD KEY `id_rosto` (`id_rosto`),
+  ADD KEY `id_roupa` (`id_roupa`),
+  ADD KEY `id_acessorio` (`id_acessorio`);
+
+ALTER TABLE `transacao_moeda`
+  ADD PRIMARY KEY (`id_transacao`),
+  ADD KEY `id_usuario` (`id_usuario`);
 
 --
 -- AUTO_INCREMENT de tabelas despejadas
@@ -282,6 +374,18 @@ ALTER TABLE `quiz_tentativa`
 ALTER TABLE `usuario`
   MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
+ALTER TABLE `item`
+  MODIFY `id_item` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+ALTER TABLE `usuario_item`
+  MODIFY `id_usuario_item` int(11) NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `avatar_usuario`
+  MODIFY `id_avatar` int(11) NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `transacao_moeda`
+  MODIFY `id_transacao` int(11) NOT NULL AUTO_INCREMENT;
+
 --
 -- Restrições para despejos de tabelas
 --
@@ -313,6 +417,20 @@ ALTER TABLE `quiz_resposta`
 ALTER TABLE `quiz_tentativa`
   ADD CONSTRAINT `quiz_tentativa_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`) ON DELETE CASCADE,
   ADD CONSTRAINT `quiz_tentativa_ibfk_2` FOREIGN KEY (`id_assunto`) REFERENCES `quiz_assunto` (`id_assunto`) ON DELETE CASCADE;
+
+ALTER TABLE `usuario_item`
+  ADD CONSTRAINT `usuario_item_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`) ON DELETE CASCADE,
+  ADD CONSTRAINT `usuario_item_ibfk_2` FOREIGN KEY (`id_item`) REFERENCES `item` (`id_item`) ON DELETE CASCADE;
+
+ALTER TABLE `avatar_usuario`
+  ADD CONSTRAINT `avatar_usuario_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`) ON DELETE CASCADE,
+  ADD CONSTRAINT `avatar_usuario_ibfk_2` FOREIGN KEY (`id_cabelo`) REFERENCES `item` (`id_item`) ON DELETE SET NULL,
+  ADD CONSTRAINT `avatar_usuario_ibfk_3` FOREIGN KEY (`id_rosto`) REFERENCES `item` (`id_item`) ON DELETE SET NULL,
+  ADD CONSTRAINT `avatar_usuario_ibfk_4` FOREIGN KEY (`id_roupa`) REFERENCES `item` (`id_item`) ON DELETE SET NULL,
+  ADD CONSTRAINT `avatar_usuario_ibfk_5` FOREIGN KEY (`id_acessorio`) REFERENCES `item` (`id_item`) ON DELETE SET NULL;
+
+ALTER TABLE `transacao_moeda`
+  ADD CONSTRAINT `transacao_moeda_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
