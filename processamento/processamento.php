@@ -2,10 +2,13 @@
 
 session_start();
 
-require_once("../model/Usuario.php");
-require_once("../controller/controlador.php");
+require_once __DIR__ . '/../controller/AuthController.php';
+require_once __DIR__ . '/../controller/UsuarioController.php';
+require_once __DIR__ . '/../controller/QuizController.php';
 
-$controlador = new Controlador();
+$authController = new AuthController();
+$usuarioController = new UsuarioController();
+$quizController = new QuizController();
 
 if (isset($_POST['acao']) && $_POST['acao'] === 'salvarQuiz') {
     $idUsuario = isset($_SESSION['usuario_id']) ? $_SESSION['usuario_id'] : null;
@@ -17,7 +20,7 @@ if (isset($_POST['acao']) && $_POST['acao'] === 'salvarQuiz') {
 
     $slug = trim(isset($_POST['assunto']) ? $_POST['assunto'] : '');
     $respostas = isset($_POST['respostas']) ? $_POST['respostas'] : [];
-    $idTentativa = $controlador->salvarTentativaQuiz($idUsuario, $slug, $respostas);
+    $idTentativa = $quizController->salvarTentativaQuiz($idUsuario, $slug, $respostas);
 
     if ($idTentativa) {
         header("Location: ../view/desempenho.php?tentativa=" . $idTentativa);
@@ -81,7 +84,7 @@ if (isset($_POST['acao']) && $_POST['acao'] === 'editarPerfil') {
         $foto_perfil = "uploads/usuarios/" . $nomeArquivo;
     }
 
-    $atualizou = $controlador->editarPerfilUsuario(
+    $atualizou = $usuarioController->editarPerfilUsuario(
         $id_usuario,
         $nome,
         $sobrenome,
@@ -110,7 +113,7 @@ if (isset($_POST['inputEmailLog']) && isset($_POST['inputSenhaLog'])) {
     $email = trim($_POST['inputEmailLog']);
     $senha = trim($_POST['inputSenhaLog']);
 
-    $usuario = $controlador->efetuarLogin($email, $senha);
+    $usuario = $authController->efetuarLogin($email, $senha);
 
     if ($usuario) {
         $_SESSION['usuario_id'] = isset($usuario['id_usuario']) ? $usuario['id_usuario'] : (isset($usuario['id']) ? $usuario['id'] : null);
@@ -170,7 +173,7 @@ if (
         }
     }
 
-    $controlador->cadastrarUsuario(
+    $authController->cadastrarUsuario(
         $cpf,
         $nome,
         $sobrenome,

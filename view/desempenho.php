@@ -33,10 +33,10 @@ if (!empty($fotoBanco)) {
     }
 }
 
-require_once("../controller/controlador.php");
+require_once __DIR__ . '/../controller/QuizController.php';
 
 $pagina = 'desempenho';
-$controlador = new Controlador();
+$controlador = new QuizController();
 $idUsuario = $_SESSION['usuario_id'];
 $desempenho = $controlador->buscarDesempenhoUsuario($idUsuario);
 $resumo = $desempenho['resumo'];

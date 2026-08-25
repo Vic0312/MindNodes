@@ -10,11 +10,15 @@ if (!isset($_SESSION['usuario_id'])) {
 $pagina = "perfil";
 
 $usuarioId = $_SESSION['usuario_id'];
-$nomeUsuario = $_SESSION['usuario_nome'] ?? "";
-$sobrenomeUsuario = $_SESSION['usuario_sobrenome'] ?? "";
-$emailUsuario = $_SESSION['usuario_email'] ?? "";
-$telefoneUsuario = $_SESSION['usuario_telefone'] ?? "";
-$fotoBanco = $_SESSION['usuario_foto'] ?? null;
+require_once __DIR__ . '/../controller/UsuarioController.php';
+$usuarioController = new UsuarioController();
+$dadosUsuario = $usuarioController->buscarPerfil($usuarioId);
+
+$nomeUsuario = $dadosUsuario['nome'] ?? ($_SESSION['usuario_nome'] ?? "");
+$sobrenomeUsuario = $dadosUsuario['sobrenome'] ?? ($_SESSION['usuario_sobrenome'] ?? "");
+$emailUsuario = $dadosUsuario['email'] ?? ($_SESSION['usuario_email'] ?? "");
+$telefoneUsuario = $dadosUsuario['telefone'] ?? ($_SESSION['usuario_telefone'] ?? "");
+$fotoBanco = $dadosUsuario['foto_perfil'] ?? ($_SESSION['usuario_foto'] ?? null);
 
 $fotoExibicao = "../img/default-img.avif";
 

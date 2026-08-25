@@ -33,10 +33,10 @@ if (!empty($fotoBanco)) {
     }
 }
 
-require_once("../controller/controlador.php");
+require_once __DIR__ . '/../controller/QuizController.php';
 
 $pagina = 'quiz';
-$controlador = new Controlador();
+$controlador = new QuizController();
 $assuntos = $controlador->listarAssuntosQuiz();
 $assuntoSelecionado = isset($_GET['assunto']) ? $_GET['assunto'] : (isset($assuntos[0]['slug']) ? $assuntos[0]['slug'] : null);
 $assuntoAtual = $assuntoSelecionado ? $controlador->buscarAssuntoQuiz($assuntoSelecionado) : null;

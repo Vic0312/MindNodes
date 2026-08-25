@@ -1,71 +1,27 @@
 <?php
+// Fachada temporária para compatibilidade com páginas ainda não migradas.
+require_once __DIR__ . '/AuthController.php';
+require_once __DIR__ . '/UsuarioController.php';
+require_once __DIR__ . '/QuizController.php';
 
-require_once("../model/BancoDeDados.php");
-
-class Controlador{
-
-    //Atributo
-    private $bancoDeDados;
-
-    function __construct(){
-        $this->bancoDeDados = new BancoDeDados("localhost","root","","mindnode");
+class Controlador
+{
+    private $authController;
+    private $usuarioController;
+    private $quizController;
+    public function __construct()
+    {
+        $this->authController = new AuthController();
+        $this->usuarioController = new UsuarioController();
+        $this->quizController = new QuizController();
     }
-
-    public function efetuarLogin($email, $senha) {
-        $dadosUsuario = $this->bancoDeDados->autenticarUsuario($email, $senha);
-        
-        if ($dadosUsuario) {
-            $_SESSION['estaLogado'] = true;
-            return $dadosUsuario; 
-        } else {
-            $_SESSION['estaLogado'] = false;
-            return false;
-        }
-    }
-
-    public function cadastrarUsuario($cpf, $nome, $sobrenome, $dataNasc, $telefone, $email, $senha, $foto_perfil){
-        
-        $usuario = new usuario($cpf, $nome, $sobrenome, $dataNasc, $telefone, $email, $senha, $foto_perfil);
-        $this->bancoDeDados->inserirUsuario($usuario);
-        
-    }
-
-    public function editarPerfilUsuario($id_usuario, $nome, $sobrenome, $email, $telefone, $senha, $foto_perfil) {
-        return $this->bancoDeDados->editarPerfilUsuario(
-            $id_usuario,
-            $nome,
-            $sobrenome,
-            $email,
-            $telefone,
-            $senha,
-            $foto_perfil
-        );
-    }
-
-    public function listarAssuntosQuiz() {
-        return $this->bancoDeDados->listarAssuntosQuiz();
-    }
-
-    public function buscarAssuntoQuiz($slug) {
-        return $this->bancoDeDados->buscarAssuntoQuiz($slug);
-    }
-
-    public function buscarPerguntasQuiz($slug) {
-        return $this->bancoDeDados->buscarPerguntasQuiz($slug);
-    }
-
-    public function salvarTentativaQuiz($idUsuario, $slug, $respostas) {
-        return $this->bancoDeDados->salvarTentativaQuiz($idUsuario, $slug, $respostas);
-    }
-
-    public function buscarDesempenhoUsuario($idUsuario) {
-        return $this->bancoDeDados->buscarDesempenhoUsuario($idUsuario);
-    }
-
-    public function buscarTentativaQuiz($idTentativa, $idUsuario) {
-        return $this->bancoDeDados->buscarTentativaQuiz($idTentativa, $idUsuario);
-    }
-
+    public function efetuarLogin($email, $senha) { return $this->authController->efetuarLogin($email, $senha); }
+    public function cadastrarUsuario($cpf, $nome, $sobrenome, $dataNasc, $telefone, $email, $senha, $foto) { return $this->authController->cadastrarUsuario($cpf, $nome, $sobrenome, $dataNasc, $telefone, $email, $senha, $foto); }
+    public function editarPerfilUsuario($id, $nome, $sobrenome, $email, $telefone, $senha, $foto) { return $this->usuarioController->editarPerfilUsuario($id, $nome, $sobrenome, $email, $telefone, $senha, $foto); }
+    public function listarAssuntosQuiz() { return $this->quizController->listarAssuntosQuiz(); }
+    public function buscarAssuntoQuiz($slug) { return $this->quizController->buscarAssuntoQuiz($slug); }
+    public function buscarPerguntasQuiz($slug) { return $this->quizController->buscarPerguntasQuiz($slug); }
+    public function salvarTentativaQuiz($id, $slug, $respostas) { return $this->quizController->salvarTentativaQuiz($id, $slug, $respostas); }
+    public function buscarDesempenhoUsuario($id) { return $this->quizController->buscarDesempenhoUsuario($id); }
+    public function buscarTentativaQuiz($tentativa, $usuario) { return $this->quizController->buscarTentativaQuiz($tentativa, $usuario); }
 }
-
-?>
