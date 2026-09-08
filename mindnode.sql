@@ -331,6 +331,9 @@ ALTER TABLE `usuario`
   ADD PRIMARY KEY (`id_usuario`),
   ADD UNIQUE KEY `uk_usuario_email` (`email`);
 
+ALTER TABLE `usuario`
+ADD UNIQUE KEY `uk_usuario_cpf` (`cpf`);
+
 ALTER TABLE `item`
   ADD PRIMARY KEY (`id_item`);
 
