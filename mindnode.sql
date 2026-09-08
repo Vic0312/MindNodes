@@ -339,6 +339,7 @@ ALTER TABLE `item`
 
 ALTER TABLE `usuario_item`
   ADD PRIMARY KEY (`id_usuario_item`),
+  ADD UNIQUE KEY `uk_usuario_item` (`id_usuario`, `id_item`),
   ADD KEY `id_usuario` (`id_usuario`),
   ADD KEY `id_item` (`id_item`);
 

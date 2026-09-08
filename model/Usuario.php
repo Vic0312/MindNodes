@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/../config/Conexao.php';
+require_once __DIR__ . '/Inventario.php';
 
 class Usuario{
 
@@ -128,10 +129,32 @@ class Usuario{
     }
 
     public function cadastrar(){
-        $sql = 'INSERT INTO usuario (cpf, nome, sobrenome, dataNasc, telefone, email, senha, foto_perfil) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
-        $consulta = mysqli_prepare($this->conexao, $sql);
-        mysqli_stmt_bind_param($consulta, 'ssssssss', $this->cpf, $this->nome, $this->sobrenome, $this->dataNasc, $this->telefone, $this->email, $this->senha, $this->foto_perfil);
-        return mysqli_stmt_execute($consulta);
+        $estado = $this->conexao->query('SELECT @@in_transaction AS ativa, @@autocommit AS automatica');
+        if (!$estado) throw new RuntimeException('Falha ao consultar estado da transacao.');
+        $transacao = $estado->fetch_assoc();
+        $estado->free();
+        if ($transacao['ativa'] || !$transacao['automatica']) {
+            throw new LogicException('Cadastro exige conexao sem transacao externa e com autocommit ativo.');
+        }
+        if (!$this->conexao->begin_transaction()) throw new RuntimeException('Falha ao iniciar cadastro.');
+        try {
+            $padroes = (new Item($this->conexao))->buscarPadroes();
+            $sql = 'INSERT INTO usuario (cpf, nome, sobrenome, dataNasc, telefone, email, senha, foto_perfil) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
+            $consulta = mysqli_prepare($this->conexao, $sql);
+            if (!$consulta) throw new RuntimeException('Falha ao preparar cadastro.');
+            try {
+                if (!mysqli_stmt_bind_param($consulta, 'ssssssss', $this->cpf, $this->nome, $this->sobrenome, $this->dataNasc, $this->telefone, $this->email, $this->senha, $this->foto_perfil)
+                    || !mysqli_stmt_execute($consulta)) throw new RuntimeException('Falha ao cadastrar usuario.');
+                $idUsuario = mysqli_insert_id($this->conexao);
+            } finally { mysqli_stmt_close($consulta); }
+            $inventario = new Inventario($this->conexao);
+            foreach ($padroes as $item) $inventario->adicionarItem($idUsuario, $item['id_item']);
+            if (!$this->conexao->commit()) throw new RuntimeException('Falha ao confirmar cadastro.');
+            return true;
+        } catch (Throwable $erro) {
+            if (!$this->conexao->rollback()) throw new RuntimeException('Falha ao reverter cadastro.', 0, $erro);
+            throw $erro;
+        }
     }
 
     public function atualizarSenha($idUsuario, $senhaHash){

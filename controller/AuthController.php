@@ -74,7 +74,12 @@ class AuthController
         $this->usuarioModel->set_Email($email);
         $this->usuarioModel->set_Senha($senhaHash);
         $this->usuarioModel->set_Foto($fotoPerfil);
-        $cadastrou = $this->usuarioModel->cadastrar();
+        try {
+            $cadastrou = $this->usuarioModel->cadastrar();
+        } catch (RuntimeException $erro) {
+            error_log('Falha no cadastro: ' . $erro->getMessage());
+            return ['sucesso' => false, 'erro' => 'banco'];
+        }
         return ['sucesso' => $cadastrou, 'erro' => $cadastrou ? null : 'banco'];
     }
 
