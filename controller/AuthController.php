@@ -78,6 +78,77 @@ class AuthController
         return ['sucesso' => $cadastrou, 'erro' => $cadastrou ? null : 'banco'];
     }
 
+    public static function tokenRecuperacao()
+    {
+        if (empty($_SESSION['recuperacao_csrf'])) {
+            $_SESSION['recuperacao_csrf'] = bin2hex(random_bytes(32));
+        }
+        return $_SESSION['recuperacao_csrf'];
+    }
+
+    private function validarTokenRecuperacao($token)
+    {
+        return is_string($token) && isset($_SESSION['recuperacao_csrf'])
+            && hash_equals($_SESSION['recuperacao_csrf'], $token);
+    }
+
+    public static function recuperacaoValida()
+    {
+        if (!empty($_SESSION['recuperacao_usuario_id']) && ($_SESSION['recuperacao_expira'] ?? 0) > time()) {
+            return true;
+        }
+        unset($_SESSION['recuperacao_usuario_id'], $_SESSION['recuperacao_expira']);
+        return false;
+    }
+
+    public function iniciarRecuperacao($cpf, $email, $dataNascimento, $token)
+    {
+        if (!$this->validarTokenRecuperacao($token)) return 'sessao';
+        unset($_SESSION['recuperacao_usuario_id'], $_SESSION['recuperacao_expira']);
+        if (!is_string($cpf) || !is_string($email) || !is_string($dataNascimento)) return 'campos';
+        $cpf = preg_replace('/\D+/', '', $cpf);
+        $email = strtolower(trim($email));
+        $dataNascimento = trim($dataNascimento);
+        if ($cpf === '' || $email === '' || $dataNascimento === '') return 'campos';
+        $data = DateTime::createFromFormat('!Y-m-d', $dataNascimento);
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL) || !$data || $data->format('Y-m-d') !== $dataNascimento) return 'dados';
+        try {
+            $usuario = $this->usuarioModel->buscarParaRecuperacao($cpf, $email, $dataNascimento);
+        } catch (mysqli_sql_exception $e) {
+            return 'banco';
+        }
+        if (!$usuario) return 'dados';
+        session_regenerate_id(true);
+        $_SESSION['recuperacao_usuario_id'] = (int) $usuario['id_usuario'];
+        $_SESSION['recuperacao_expira'] = time() + 900;
+        unset($_SESSION['recuperacao_csrf']);
+        return null;
+    }
+
+    public function redefinirSenha($novaSenha, $confirmacao, $token)
+    {
+        if (!self::recuperacaoValida()) return 'sessao';
+        if (!$this->validarTokenRecuperacao($token)) return 'sessao';
+        if (!is_string($novaSenha) || !is_string($confirmacao)) return 'campos';
+        // O processamento atual de login e cadastro também remove espaços nas extremidades.
+        $novaSenha = trim($novaSenha);
+        $confirmacao = trim($confirmacao);
+        if (strlen($novaSenha) < 8) return 'senha';
+        if (!hash_equals($novaSenha, $confirmacao)) return 'confirmacao';
+        try {
+            $atualizou = $this->usuarioModel->atualizarSenha(
+                $_SESSION['recuperacao_usuario_id'], password_hash($novaSenha, PASSWORD_DEFAULT)
+            );
+        } catch (mysqli_sql_exception $e) {
+            return 'banco';
+        }
+        if (!$atualizou) return 'banco';
+        unset($_SESSION['recuperacao_usuario_id'], $_SESSION['recuperacao_expira'], $_SESSION['recuperacao_csrf']);
+        session_regenerate_id(true);
+        $_SESSION['recuperacao_sucesso'] = true;
+        return null;
+    }
+
     public function logout()
     {
         $_SESSION = [];

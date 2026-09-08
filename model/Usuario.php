@@ -109,6 +109,16 @@ class Usuario{
         return $resultado && mysqli_num_rows($resultado) === 1 ? mysqli_fetch_assoc($resultado) : false;
     }
 
+    public function buscarParaRecuperacao($cpf, $email, $dataNascimento){
+        $consulta = mysqli_prepare($this->conexao, 'SELECT id_usuario FROM usuario WHERE cpf = ? AND email = ? AND dataNasc = ? LIMIT 1');
+        mysqli_stmt_bind_param($consulta, 'sss', $cpf, $email, $dataNascimento);
+        mysqli_stmt_execute($consulta);
+        $resultado = mysqli_stmt_get_result($consulta);
+        $usuario = $resultado ? mysqli_fetch_assoc($resultado) : null;
+        mysqli_stmt_close($consulta);
+        return $usuario ?: false;
+    }
+
     public function buscarPerfil($idUsuario){
         $consulta = mysqli_prepare($this->conexao, 'SELECT * FROM usuario WHERE id_usuario = ? LIMIT 1');
         mysqli_stmt_bind_param($consulta, 'i', $idUsuario);

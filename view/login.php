@@ -8,6 +8,8 @@ if (isset($_SESSION['usuario_id'])) {
 
 $mensagemErro = isset($_GET['erro']);
 $cadastroConcluido = isset($_GET['cadastro']);
+$senhaAlterada = !empty($_SESSION['recuperacao_sucesso']);
+unset($_SESSION['recuperacao_sucesso']);
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -38,6 +40,9 @@ $cadastroConcluido = isset($_GET['cadastro']);
             </p>
         </section>
 
+        <?php if ($senhaAlterada): ?>
+            <p role="status">Senha alterada com sucesso. Faça login com sua nova senha.</p>
+        <?php endif; ?>
         <?php if ($mensagemErro): ?>
             <p>Não foi possível entrar. Verifique seu e-mail e sua senha.</p>
         <?php elseif ($cadastroConcluido): ?>
@@ -57,7 +62,7 @@ $cadastroConcluido = isset($_GET['cadastro']);
             </section>
 
             <section class="links_esquecisenha">
-                    <a href="../view/redefinir_senha.php" id="esqueci_senha">Esqueci minha senha</a>
+                    <a href="../view/recuperar_senha.php" id="esqueci_senha">Esqueci minha senha</a>
             </section>
 
             <button type="submit" name="entrar" class="login-btn">

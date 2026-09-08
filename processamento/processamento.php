@@ -6,6 +6,21 @@ require_once __DIR__ . '/../controller/AuthController.php';
 require_once __DIR__ . '/../controller/UsuarioController.php';
 require_once __DIR__ . '/../controller/QuizController.php';
 
+if (in_array($_POST['acao'] ?? null, ['recuperarSenha', 'redefinirSenha'], true)) {
+    $authController = new AuthController();
+    $token = $_POST['csrf'] ?? '';
+    if ($_POST['acao'] === 'recuperarSenha') {
+        $erro = $authController->iniciarRecuperacao($_POST['cpf'] ?? '', $_POST['email'] ?? '', $_POST['dataNascimento'] ?? '', $token);
+        $destino = $erro === null ? 'redefinir_senha.php' : 'recuperar_senha.php';
+    } else {
+        $erro = $authController->redefinirSenha($_POST['novaSenha'] ?? '', $_POST['confirmacao'] ?? '', $token);
+        $destino = $erro === null ? 'login.php' : ($erro === 'sessao' ? 'recuperar_senha.php' : 'redefinir_senha.php');
+    }
+    if ($erro !== null) $_SESSION['recuperacao_erro'] = $erro;
+    header('Location: ../view/' . $destino);
+    exit();
+}
+
 $authController = new AuthController();
 $usuarioController = new UsuarioController();
 $quizController = new QuizController();
