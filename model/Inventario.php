@@ -64,4 +64,13 @@ class Inventario
         $this->executar('INSERT INTO usuario_item (id_usuario, id_item) VALUES (?, ?) ON DUPLICATE KEY UPDATE id_usuario_item = id_usuario_item', 'ii', $idUsuario, $idItem);
         return true;
     }
+
+    /** Insercao estrita para compra: UNIQUE rejeita uma segunda aquisicao. */
+    public function registrarCompra($idUsuario, $idItem)
+    {
+        $idUsuario = $this->validarUsuario($idUsuario);
+        $idItem = Item::validarId($idItem);
+        $this->executar('INSERT INTO usuario_item (id_usuario, id_item) VALUES (?, ?)', 'ii', $idUsuario, $idItem);
+        return true;
+    }
 }

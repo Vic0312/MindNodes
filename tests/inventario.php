@@ -75,7 +75,7 @@ try {
     $id = $novo['id_usuario'];
     conferirInventario(password_verify('Senha123!', $novo['senha']) && $novo['senha'] !== 'Senha123!', '14 hash preservado');
     conferirInventario(array_column($controller->listarDoUsuario($id), 'nome') === array_column($iniciais, 'nome'), '14 tres itens padrao');
-    conferirInventario(!consultaInventario($db, 'SELECT * FROM avatar_usuario WHERE id_usuario = ?', 'i', $id), 'cadastro nao cria avatar');
+    conferirInventario(count(consultaInventario($db, 'SELECT * FROM avatar_usuario WHERE id_usuario = ?', 'i', $id)) === 1, 'cadastro cria avatar');
     $db->query("CREATE TRIGGER falha_inventario BEFORE INSERT ON usuario_item FOR EACH ROW BEGIN IF NEW.id_item = 2 THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'falha simulada'; END IF; END");
     conferirInventario($cadastro('98765432101', 'falha@example.test') === ['sucesso' => false, 'erro' => 'banco'], '15 falha na segunda concessao');
     conferirInventario(!$usuario->buscarPorEmail('falha@example.test') && count(consultaInventario($db, 'SELECT * FROM usuario_item')) === 10, '15 rollback usuario e primeiro item');
@@ -117,8 +117,8 @@ try {
         conferirInventario(proc_close($p) === 0 && $saida === 'sucesso' && $erro === '', 'adicao concorrente sem erro');
     }
     conferirInventario(count(consultaInventario($db, 'SELECT * FROM usuario_item WHERE id_usuario = ? AND id_item = ?', 'ii', 2, 4)) === 1, 'concorrencia sem duplicacao');
-    conferirInventario(count(consultaInventario($db, 'SELECT * FROM avatar_usuario')) === 2 && !consultaInventario($db, 'SELECT * FROM transacao_moeda') && (int) $usuario->buscarPerfil($id)['moedas'] === 0, 'avatar legado e moedas preservados');
-    conferirInventario($item->buscarPorId(1)['imagem'] === 'img/avatar/cabelo-padrao.png', 'imagem retornada sem reescrita');
+    conferirInventario(count(consultaInventario($db, 'SELECT * FROM avatar_usuario')) === 3 && !consultaInventario($db, 'SELECT * FROM transacao_moeda') && (int) $usuario->buscarPerfil($id)['moedas'] === 0, 'avatar legado e moedas preservados');
+    conferirInventario($item->buscarPorId(1)['imagem'] === 'img/avatar/cabelo/cabelo_padrao.png', 'imagem retornada sem reescrita');
     echo "PASSOU: $total verificacoes.\n";
 } finally {
     $db->rollback();

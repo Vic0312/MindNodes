@@ -72,6 +72,7 @@ $mensagemErro = $_GET['erro'] ?? null;
             <a href="../view/simulador.php">Simulador</a>
             <a href="../view/quiz.php">Quiz</a>
             <a href="../view/desempenho.php">Desempenho</a>
+            <a href="../view/loja.php">Loja</a>
         </nav>
 
         <a class="perfil-usuario ativo-perfil" href="../view/perfil.php" title="Meu perfil">
@@ -112,6 +113,8 @@ $mensagemErro = $_GET['erro'] ?? null;
                 <span class="subtitulo-secao">Foto de perfil</span>
 
                 <h2>Imagem da conta</h2>
+
+                <a class="botao primario" href="avatar.php">Personalizar Avatar</a>
 
                 <p>
                     Escolha uma imagem clara.

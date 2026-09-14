@@ -6,6 +6,60 @@ require_once __DIR__ . '/../controller/AuthController.php';
 require_once __DIR__ . '/../controller/UsuarioController.php';
 require_once __DIR__ . '/../controller/QuizController.php';
 
+if (($_POST['acao'] ?? null) === 'comprarItem') {
+    if (!isset($_SESSION['usuario_id']) || empty($_SESSION['estaLogado'])) {
+        header('Location: ../view/login.php');
+        exit();
+    }
+    if (!is_string($_POST['csrf'] ?? null) || !isset($_SESSION['loja_csrf'])
+        || !hash_equals($_SESSION['loja_csrf'], $_POST['csrf'])) {
+        $_SESSION['loja_mensagem'] = ['tipo' => 'erro', 'texto' => 'Sessão expirada. Atualize a página e tente novamente.'];
+    } else {
+        require_once __DIR__ . '/../controller/LojaController.php';
+        try {
+            $texto = (new LojaController())->comprar($_POST['id_item'] ?? null);
+            $_SESSION['loja_mensagem'] = ['tipo' => 'sucesso', 'texto' => $texto];
+        } catch (ItemJaPossuidoException $erro) {
+            $_SESSION['loja_mensagem'] = ['tipo' => 'erro', 'texto' => 'Você já possui este item.'];
+        } catch (ItemIndisponivelException | OutOfBoundsException | InvalidArgumentException $erro) {
+            $_SESSION['loja_mensagem'] = ['tipo' => 'erro', 'texto' => 'Item indisponível.'];
+        } catch (DomainException $erro) {
+            $_SESSION['loja_mensagem'] = ['tipo' => 'erro', 'texto' => 'Saldo insuficiente.'];
+        } catch (Throwable $erro) {
+            error_log('Falha na compra: ' . $erro->getMessage());
+            $_SESSION['loja_mensagem'] = ['tipo' => 'erro', 'texto' => 'Não foi possível concluir a compra.'];
+        }
+    }
+    header('Location: ../view/loja.php', true, 303);
+    exit();
+}
+
+if (($_POST['acao'] ?? null) === 'equiparAvatar') {
+    if (!isset($_SESSION['usuario_id']) || empty($_SESSION['estaLogado'])) {
+        header('Location: ../view/login.php');
+        exit();
+    }
+    if (!is_string($_POST['csrf'] ?? null) || !isset($_SESSION['avatar_csrf'])
+        || !hash_equals($_SESSION['avatar_csrf'], $_POST['csrf'])) {
+        $_SESSION['avatar_mensagem'] = ['tipo' => 'erro', 'texto' => 'Sessão expirada. Atualize a página e tente novamente.'];
+    } else {
+        require_once __DIR__ . '/../controller/AvatarController.php';
+        try {
+            (new AvatarController())->equiparItem($_POST['id_item'] ?? null);
+            $_SESSION['avatar_mensagem'] = ['tipo' => 'sucesso', 'texto' => 'Item equipado com sucesso.'];
+        } catch (DomainException $erro) {
+            $_SESSION['avatar_mensagem'] = ['tipo' => 'erro', 'texto' => 'Você não possui esse item.'];
+        } catch (InvalidArgumentException | OutOfBoundsException $erro) {
+            $_SESSION['avatar_mensagem'] = ['tipo' => 'erro', 'texto' => 'Item inválido ou indisponível.'];
+        } catch (Throwable $erro) {
+            error_log('Falha ao equipar avatar: ' . $erro->getMessage());
+            $_SESSION['avatar_mensagem'] = ['tipo' => 'erro', 'texto' => 'Não foi possível alterar o Avatar.'];
+        }
+    }
+    header('Location: ../view/avatar.php', true, 303);
+    exit();
+}
+
 if (in_array($_POST['acao'] ?? null, ['recuperarSenha', 'redefinirSenha'], true)) {
     $authController = new AuthController();
     $token = $_POST['csrf'] ?? '';

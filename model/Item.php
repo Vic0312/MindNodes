@@ -55,6 +55,12 @@ class Item
         return $this->consultar('SELECT * FROM item WHERE id_item = ?', 'i', self::validarId($idItem))[0] ?? null;
     }
 
+    /** Mantem preco e disponibilidade estaveis durante uma compra transacional. */
+    public function buscarPorIdBloqueado($idItem)
+    {
+        return $this->consultar('SELECT * FROM item WHERE id_item = ? FOR UPDATE', 'i', self::validarId($idItem))[0] ?? null;
+    }
+
     public function listarPorCategoria($categoria)
     {
         return $this->consultar('SELECT * FROM item WHERE categoria = ? ORDER BY nome, id_item', 's', self::validarCategoria($categoria));

@@ -16,11 +16,15 @@ class Conexao
     public static function obter()
     {
         if (self::$conexao === null) {
+            $banco = getenv('MINDNODES_DB') ?: self::BANCO;
+            if (!preg_match('/^[a-zA-Z0-9_]+$/D', $banco)) {
+                throw new RuntimeException('Nome de banco de dados invalido.');
+            }
             self::$conexao = mysqli_connect(
                 self::HOST,
                 self::USUARIO,
                 self::SENHA,
-                self::BANCO
+                $banco
             );
 
             if (!self::$conexao) {

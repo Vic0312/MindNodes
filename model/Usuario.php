@@ -2,6 +2,7 @@
 
 require_once __DIR__ . '/../config/Conexao.php';
 require_once __DIR__ . '/Inventario.php';
+require_once __DIR__ . '/Avatar.php';
 
 class Usuario{
 
@@ -149,6 +150,7 @@ class Usuario{
             } finally { mysqli_stmt_close($consulta); }
             $inventario = new Inventario($this->conexao);
             foreach ($padroes as $item) $inventario->adicionarItem($idUsuario, $item['id_item']);
+            (new Avatar($this->conexao))->criarAvatarPadrao($idUsuario);
             if (!$this->conexao->commit()) throw new RuntimeException('Falha ao confirmar cadastro.');
             return true;
         } catch (Throwable $erro) {

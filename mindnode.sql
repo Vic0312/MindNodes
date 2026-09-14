@@ -222,12 +222,12 @@ CREATE TABLE `item` (
 --
 
 INSERT INTO `item` (`id_item`, `nome`, `descricao`, `categoria`, `preco`, `imagem`, `habilidade`, `descricao_habilidade`, `valor_habilidade`, `ativo`) VALUES
-(1, 'Cabelo Padrão', 'Visual inicial gratuito para o cabelo do avatar.', 'cabelo', 0, 'img/avatar/cabelo-padrao.png', NULL, NULL, 0, 1),
-(2, 'Rosto Padrão', 'Visual inicial gratuito para o rosto do avatar.', 'rosto', 0, 'img/avatar/rosto-padrao.png', NULL, NULL, 0, 1),
-(3, 'Roupa Padrão', 'Visual inicial gratuito para a roupa do avatar.', 'roupa', 0, 'img/avatar/roupa-padrao.png', NULL, NULL, 0, 1),
-(4, 'Boné FIFO', 'Boné inspirado no princípio First In, First Out.', 'cabelo', 100, 'img/avatar/bone-fifo.png', 'bonus_fila', 'Concede um bônus relacionado a atividades de filas.', 5, 1),
-(5, 'Óculos Debug', 'Óculos para encontrar erros com mais estilo.', 'rosto', 120, 'img/avatar/oculos-debug.png', 'dica_extra', 'Concede uma ajuda adicional em atividades compatíveis.', 1, 1),
-(6, 'Camiseta Stack', 'Camiseta inspirada no princípio Last In, First Out.', 'roupa', 150, 'img/avatar/camiseta-stack.png', 'bonus_pilha', 'Concede um bônus relacionado a atividades de pilhas.', 5, 1);
+(1, 'Cabelo Padrão', 'Visual inicial gratuito para o cabelo do avatar.', 'cabelo', 0, 'img/avatar/cabelo/cabelo_padrao.png', NULL, NULL, 0, 1),
+(2, 'Rosto Padrão', 'Visual inicial gratuito para o rosto do avatar.', 'rosto', 0, 'img/avatar/rosto/rosto_padrao.png', NULL, NULL, 0, 1),
+(3, 'Roupa Padrão', 'Visual inicial gratuito para a roupa do avatar.', 'roupa', 0, 'img/avatar/roupa/roupa_padrao.png', NULL, NULL, 0, 1),
+(4, 'Boné FIFO', 'Boné inspirado no princípio First In, First Out.', 'cabelo', 100, 'img/avatar/cabelo/bone_fifo.png', 'bonus_fila', 'Concede um bônus relacionado a atividades de filas.', 5, 1),
+(5, 'Óculos Debug', 'Óculos para encontrar erros com mais estilo.', 'rosto', 120, 'img/avatar/rosto/oculos_debug.png', 'dica_extra', 'Concede uma ajuda adicional em atividades compatíveis.', 1, 1),
+(6, 'Camiseta Stack', 'Camiseta inspirada no princípio Last In, First Out.', 'roupa', 150, 'img/avatar/roupa/camiseta_stack.png', 'bonus_pilha', 'Concede um bônus relacionado a atividades de pilhas.', 5, 1);
 
 -- --------------------------------------------------------
 

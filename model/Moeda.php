@@ -54,6 +54,52 @@ class Moeda
         ));
     }
 
+    /** Uso interno por operacoes compostas: exige transacao aberta pelo chamador. */
+    public function obterSaldoBloqueado($idUsuario)
+    {
+        $idUsuario = $this->inteiroPositivo($idUsuario);
+        $estado = $this->executar('SELECT @@in_transaction AS ativa')[0];
+        if (!$estado['ativa']) throw new LogicException('Bloqueio de saldo exige transacao ativa.');
+        return $this->saldoDaLinha($this->executar(
+            'SELECT moedas FROM usuario WHERE id_usuario = ? FOR UPDATE', 'i', $idUsuario
+        ));
+    }
+
+    /** Debita e registra historico sem commit; o chamador reverte tudo se outra etapa falhar. */
+    public function debitarNaTransacao($idUsuario, $valor, $origem, $descricao = null)
+    {
+        $idUsuario = $this->inteiroPositivo($idUsuario);
+        $valor = $this->inteiroPositivo($valor);
+        $descricao = $this->validarDescricao($descricao);
+        if (!in_array($origem, ['quiz', 'loja', 'bonus'], true)) throw new InvalidArgumentException('Origem invalida.');
+        $saldo = $this->obterSaldoBloqueado($idUsuario);
+        if ($saldo < $valor) throw new DomainException('Saldo insuficiente.');
+        $novoSaldo = $saldo - $valor;
+        $this->executar('UPDATE usuario SET moedas = ? WHERE id_usuario = ?', 'ii', $novoSaldo, $idUsuario);
+        $tipo = 'debito';
+        $this->executar(
+            'INSERT INTO transacao_moeda (id_usuario, tipo, valor, origem, descricao) VALUES (?, ?, ?, ?, ?)',
+            'isiss', $idUsuario, $tipo, $valor, $origem, $descricao
+        );
+        return $novoSaldo;
+    }
+
+    private function validarDescricao($descricao)
+    {
+        if ($descricao !== null) {
+            if (!is_string($descricao) || !preg_match('//u', $descricao)
+                || preg_match('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', $descricao)) {
+                throw new InvalidArgumentException('Descricao invalida.');
+            }
+            $descricao = trim($descricao);
+            if (preg_match_all('/./us', $descricao) > 255) {
+                throw new InvalidArgumentException('Descricao deve ter no maximo 255 caracteres.');
+            }
+            $descricao = $descricao === '' ? null : $descricao;
+        }
+        return $descricao;
+    }
+
     /** Retorna o saldo confirmado; falhas sao comunicadas por excecoes. */
     public function creditar($idUsuario, $valor, $origem, $descricao = null)
     {
@@ -72,17 +118,7 @@ class Moeda
         if (!in_array($origem, ['quiz', 'loja', 'bonus'], true)) {
             throw new InvalidArgumentException('Origem invalida.');
         }
-        if ($descricao !== null) {
-            if (!is_string($descricao) || !preg_match('//u', $descricao)
-                || preg_match('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', $descricao)) {
-                throw new InvalidArgumentException('Descricao invalida.');
-            }
-            $descricao = trim($descricao);
-            if (preg_match_all('/./us', $descricao) > 255) {
-                throw new InvalidArgumentException('Descricao deve ter no maximo 255 caracteres.');
-            }
-            $descricao = $descricao === '' ? null : $descricao;
-        }
+        $descricao = $this->validarDescricao($descricao);
         // START TRANSACTION confirmaria implicitamente uma transacao externa.
         $estado = $this->executar('SELECT @@in_transaction AS ativa, @@autocommit AS automatica')[0];
         if ($estado['ativa'] || !$estado['automatica']) {
