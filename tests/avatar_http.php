@@ -107,6 +107,25 @@ try {
     [$corpo] = $pedir('/view/loja.php');
     if ($codigo !== 303 || !str_contains($corpo, 'Saldo insuficiente.') || !str_contains($corpo, '<strong>50</strong>')) throw new RuntimeException('Saldo insuficiente nao tratado.');
     echo "OK: compra repetida e saldo insuficiente sem novo debito\n";
+    [$corpo, $codigo] = $pedir('/view/quiz.php?assunto=tad');
+    if ($codigo !== 200 || !str_contains($corpo, 'public interface IPilha') || !str_contains($corpo, 'void Empilhar(int valor);')
+        || !str_contains($corpo, 'Questão 4') || str_contains($corpo, 'Observe que há apenas assinaturas de métodos.')) throw new RuntimeException('Quiz de codigo nao renderizou corretamente.');
+    if (!preg_match('~<article class="quiz-card">.*?</article>~s', $corpo, $primeira) || str_contains($primeira[0], 'codigo-questao')) throw new RuntimeException('Teorica exibiu bloco de codigo.');
+    echo "OK: quiz teorico e codigo sem dica automatica\n";
+    $codigoEspecial = "if (a < b && texto != \"<> &\")\n{\n    Console.WriteLine(texto);\n}";
+    $stmt = $db->prepare('UPDATE quiz_pergunta SET codigo = ? WHERE id_pergunta = 10');
+    $stmt->bind_param('s', $codigoEspecial); $stmt->execute(); $stmt->close();
+    [$corpo] = $pedir('/view/quiz.php?assunto=tad');
+    if (!str_contains($corpo, 'if (a &lt; b &amp;&amp; texto != &quot;&lt;&gt; &amp;&quot;)')
+        || !str_contains($corpo, "\n    Console.WriteLine(texto);\n")) throw new RuntimeException('Escape ou formatacao do codigo falhou.');
+    $respostasQuiz = [];
+    foreach ($db->query('SELECT id_pergunta, id_alternativa FROM quiz_alternativa WHERE correta = 1 AND id_pergunta IN (1,2,3,10)') as $linha) $respostasQuiz[$linha['id_pergunta']] = $linha['id_alternativa'];
+    [$corpo, $codigo, $destino] = $pedir('/processamento/processamento.php', ['acao' => 'salvarQuiz', 'assunto' => 'tad', 'respostas' => $respostasQuiz]);
+    if ($codigo !== 302 || !str_contains($destino, 'desempenho.php?tentativa=')) throw new RuntimeException('Tentativa de codigo nao salva.');
+    [$corpo, $codigo] = $pedir(parse_url($destino, PHP_URL_PATH) . '?' . parse_url($destino, PHP_URL_QUERY));
+    if ($codigo !== 200 || !str_contains($corpo, 'if (a &lt; b &amp;&amp; texto != &quot;&lt;&gt; &amp;&quot;)')
+        || !str_contains($corpo, 'A interface declara as operações públicas do TAD pilha')) throw new RuntimeException('Revisao perdeu codigo ou explicacao.');
+    echo "OK: codigo escapado, tentativa salva e revisao completa\n";
 } finally {
     if ($canal) curl_close($canal);
     if (is_resource($servidor)) { proc_terminate($servidor); foreach ([$pipes[1], $pipes[2]] as $pipe) fclose($pipe); proc_close($servidor); }

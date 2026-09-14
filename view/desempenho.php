@@ -167,6 +167,10 @@ $aproveitamento = $totalPerguntas > 0 ? round(($totalAcertos / $totalPerguntas) 
                                 <span><?php echo (int) $resposta['acertou'] === 1 ? 'Acertou' : 'Revisar'; ?></span>
                                 <h3><?php echo htmlspecialchars($resposta['enunciado']); ?></h3>
 
+                                <?php if ($resposta['tipo'] === 'codigo' && !empty($resposta['codigo'])): ?>
+                                    <div class="codigo-questao"><span>C#</span><pre><code><?php echo htmlspecialchars($resposta['codigo'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?></code></pre></div>
+                                <?php endif; ?>
+
                                 <p>
                                     Sua resposta:
                                     <strong><?php echo htmlspecialchars(isset($resposta['resposta_marcada']) ? $resposta['resposta_marcada'] : 'Não respondida'); ?></strong>

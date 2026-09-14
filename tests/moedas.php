@@ -134,7 +134,7 @@ try {
     $respostas = [];
     foreach ($quiz->buscarPerguntasQuiz('tad') as $p) foreach ($p['alternativas'] as $a) if ($a['correta']) $respostas[$p['id_pergunta']] = $a['id_alternativa'];
     $tentativa = $quiz->salvarTentativaQuiz($id, 'tad', $respostas);
-    verificar($tentativa && (int) $quiz->buscarTentativaQuiz($tentativa, $id)['total_acertos'] === 3, 'regressao quiz');
+    verificar($tentativa && (int) $quiz->buscarTentativaQuiz($tentativa, $id)['total_acertos'] === 4, 'regressao quiz');
     verificar((int) $quiz->buscarDesempenhoUsuario($id)['resumo']['total_tentativas'] === 1, 'regressao desempenho');
     verificar($moeda->obterSaldo($id) === 10 && count($moeda->listarHistorico($id)) === 4, 'quiz e perfil nao alteram moedas');
     $auth->logout();

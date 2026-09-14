@@ -334,6 +334,40 @@ main {
     font-weight: 800;
 }
 
+.codigo-questao {
+    min-width: 0;
+    overflow: hidden;
+    border-radius: 16px;
+    background: #223138;
+    border: 1px solid rgba(82, 121, 111, 0.55);
+    color: #e9f2e8;
+}
+
+.codigo-questao > span {
+    display: block;
+    padding: 10px 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    color: #a9d1b1;
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+}
+
+.codigo-questao pre {
+    margin: 0;
+    padding: 18px;
+    overflow-x: auto;
+    tab-size: 4;
+}
+
+.codigo-questao code {
+    color: inherit;
+    font-family: Consolas, 'Courier New', monospace;
+    font-size: 0.9rem;
+    line-height: 1.55;
+    white-space: pre;
+}
+
 .quiz-card h2,
 .quiz-card h3 {
 

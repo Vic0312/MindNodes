@@ -131,6 +131,10 @@ $mensagemErro = isset($_GET['erro']) ? $_GET['erro'] : null;
                                 <span class="numero-questao">Questão <?php echo $indice + 1; ?></span>
                                 <h3><?php echo htmlspecialchars($pergunta['enunciado']); ?></h3>
 
+                                <?php if ($pergunta['tipo'] === 'codigo' && !empty($pergunta['codigo'])): ?>
+                                    <div class="codigo-questao"><span>C#</span><pre><code><?php echo htmlspecialchars($pergunta['codigo'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?></code></pre></div>
+                                <?php endif; ?>
+
                                 <section class="alternativas">
                                     <?php foreach ($pergunta['alternativas'] as $alternativa): ?>
                                         <label>

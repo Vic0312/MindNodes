@@ -29,7 +29,7 @@ class Quiz
 
     public function buscarPerguntas($slug)
     {
-        $sql = 'SELECT qp.id_pergunta, qp.enunciado, qp.explicacao, qa.id_alternativa, qa.texto, qa.correta FROM quiz_assunto qas INNER JOIN quiz_pergunta qp ON qp.id_assunto = qas.id_assunto INNER JOIN quiz_alternativa qa ON qa.id_pergunta = qp.id_pergunta WHERE qas.slug = ? ORDER BY qp.id_pergunta, qa.id_alternativa';
+        $sql = "SELECT qp.id_pergunta, qp.enunciado, qp.explicacao, COALESCE(qp.tipo, 'teorica') AS tipo, qp.codigo, qp.dica, qa.id_alternativa, qa.texto, qa.correta FROM quiz_assunto qas INNER JOIN quiz_pergunta qp ON qp.id_assunto = qas.id_assunto INNER JOIN quiz_alternativa qa ON qa.id_pergunta = qp.id_pergunta WHERE qas.slug = ? ORDER BY qp.id_pergunta, qa.id_alternativa";
         $consulta = mysqli_prepare($this->conexao, $sql);
         mysqli_stmt_bind_param($consulta, 's', $slug);
         mysqli_stmt_execute($consulta);
@@ -38,7 +38,7 @@ class Quiz
         while ($resultado && $linha = mysqli_fetch_assoc($resultado)) {
             $id = $linha['id_pergunta'];
             if (!isset($perguntas[$id])) {
-                $perguntas[$id] = ['id_pergunta' => $id, 'enunciado' => $linha['enunciado'], 'explicacao' => $linha['explicacao'], 'alternativas' => []];
+                $perguntas[$id] = ['id_pergunta' => $id, 'enunciado' => $linha['enunciado'], 'explicacao' => $linha['explicacao'], 'tipo' => $linha['tipo'] ?? 'teorica', 'codigo' => $linha['codigo'], 'dica' => $linha['dica'], 'alternativas' => []];
             }
             $perguntas[$id]['alternativas'][] = ['id_alternativa' => $linha['id_alternativa'], 'texto' => $linha['texto'], 'correta' => (int) $linha['correta']];
         }
@@ -99,7 +99,7 @@ class Quiz
         $resultado = mysqli_stmt_get_result($consulta);
         if (!$resultado || mysqli_num_rows($resultado) !== 1) return false;
         $tentativa = mysqli_fetch_assoc($resultado);
-        $sql = 'SELECT qr.acertou, qp.enunciado, qp.explicacao, marcada.texto AS resposta_marcada, correta.texto AS resposta_correta FROM quiz_resposta qr INNER JOIN quiz_pergunta qp ON qp.id_pergunta = qr.id_pergunta LEFT JOIN quiz_alternativa marcada ON marcada.id_alternativa = qr.id_alternativa_marcada INNER JOIN quiz_alternativa correta ON correta.id_alternativa = qr.id_alternativa_correta WHERE qr.id_tentativa = ? ORDER BY qr.id_resposta';
+        $sql = "SELECT qr.acertou, qp.enunciado, qp.explicacao, COALESCE(qp.tipo, 'teorica') AS tipo, qp.codigo, qp.dica, marcada.texto AS resposta_marcada, correta.texto AS resposta_correta FROM quiz_resposta qr INNER JOIN quiz_pergunta qp ON qp.id_pergunta = qr.id_pergunta LEFT JOIN quiz_alternativa marcada ON marcada.id_alternativa = qr.id_alternativa_marcada INNER JOIN quiz_alternativa correta ON correta.id_alternativa = qr.id_alternativa_correta WHERE qr.id_tentativa = ? ORDER BY qr.id_resposta";
         $consulta = mysqli_prepare($this->conexao, $sql); mysqli_stmt_bind_param($consulta, 'i', $idTentativa); mysqli_stmt_execute($consulta);
         $resultado = mysqli_stmt_get_result($consulta);
         $tentativa['respostas'] = $resultado ? mysqli_fetch_all($resultado, MYSQLI_ASSOC) : [];

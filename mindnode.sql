@@ -65,7 +65,16 @@ INSERT INTO `quiz_alternativa` (`id_alternativa`, `id_pergunta`, `texto`, `corre
 (24, 8, 'Faz todos os nos ocuparem a mesma posicao.', 0),
 (25, 9, 'Anterior aponta para proximo, e proximo aponta para anterior.', 1),
 (26, 9, 'Apenas a cabeca da lista precisa mudar.', 0),
-(27, 9, 'Nenhuma ligacao precisa ser alterada.', 0);
+(27, 9, 'Nenhuma ligacao precisa ser alterada.', 0),
+(28, 10, 'Define as operacoes disponiveis sem impor a implementacao interna.', 1),
+(29, 10, 'Cria automaticamente uma pilha encadeada.', 0),
+(30, 10, 'Determina como os nos devem ser armazenados na memoria.', 0),
+(31, 11, 'Insere o novo no no inicio da lista.', 1),
+(32, 11, 'Remove o primeiro no da lista.', 0),
+(33, 11, 'Percorre a lista ate o ultimo no.', 0),
+(34, 12, 'Insere novo apos atual e ajusta as referencias anterior e proximo.', 1),
+(35, 12, 'Remove atual da lista.', 0),
+(36, 12, 'Troca apenas os valores de dois nos.', 0);
 
 -- --------------------------------------------------------
 
@@ -119,6 +128,27 @@ INSERT INTO `quiz_pergunta` (`id_pergunta`, `id_assunto`, `enunciado`, `explicac
 (7, 3, 'O que diferencia uma lista duplamente encadeada de uma lista simplesmente encadeada?', 'Na lista dupla, cada no possui referencia para o proximo no e tambem para o no anterior.'),
 (8, 3, 'Qual vantagem a referencia para o no anterior oferece?', 'Ela permite percorrer a lista nos dois sentidos e facilita algumas remocoes e insercoes.'),
 (9, 3, 'Ao remover um no do meio de uma lista duplamente encadeada, quais ligacoes precisam ser ajustadas?', 'O no anterior deve apontar para o proximo, e o proximo deve apontar de volta para o anterior.');
+
+-- Questões de código dos três assuntos existentes.
+INSERT INTO `quiz_pergunta` (`id_pergunta`, `id_assunto`, `enunciado`, `explicacao`, `tipo`, `codigo`, `dica`) VALUES
+(10, 1, 'O que a interface IPilha define neste trecho?', 'A interface declara as operações públicas do TAD pilha; ela não determina a estrutura interna usada para implementá-las.', 'codigo', 'public interface IPilha
+{
+    void Empilhar(int valor);
+    int Desempilhar();
+}', 'Observe que há apenas assinaturas de métodos.'),
+(11, 2, 'O que este método faz em uma lista simplesmente encadeada?', 'O novo nó aponta para o antigo início antes de se tornar o primeiro nó da lista.', 'codigo', 'public void InserirNoInicio(int valor)
+{
+    No novo = new No(valor);
+    novo.Proximo = inicio;
+    inicio = novo;
+}', 'Acompanhe o valor de inicio antes e depois da última linha.'),
+(12, 3, 'O que acontece com as ligações ao executar este trecho?', 'O novo nó entra após atual: aponta para seu antigo próximo, recebe atual como anterior e atualiza as referências dos nós vizinhos.', 'codigo', 'novo.Anterior = atual;
+novo.Proximo = atual.Proximo;
+if (atual.Proximo != null)
+{
+    atual.Proximo.Anterior = novo;
+}
+atual.Proximo = novo;', 'Observe as referências Anterior e Proximo dos nós vizinhos.');
 
 -- --------------------------------------------------------
 
@@ -363,7 +393,7 @@ ALTER TABLE `transacao_moeda`
 -- AUTO_INCREMENT de tabela `quiz_alternativa`
 --
 ALTER TABLE `quiz_alternativa`
-  MODIFY `id_alternativa` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+  MODIFY `id_alternativa` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
 
 --
 -- AUTO_INCREMENT de tabela `quiz_assunto`
@@ -375,7 +405,7 @@ ALTER TABLE `quiz_assunto`
 -- AUTO_INCREMENT de tabela `quiz_pergunta`
 --
 ALTER TABLE `quiz_pergunta`
-  MODIFY `id_pergunta` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id_pergunta` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT de tabela `quiz_resposta`
