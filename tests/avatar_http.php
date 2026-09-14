@@ -48,6 +48,8 @@ try {
     echo "OK: acesso anonimo redirecionado\n";
     [$corpo, $codigo] = $pedir('/view/fila_fifo.php');
     if ($codigo !== 302) throw new RuntimeException('Aula FIFO anonima nao redirecionou.');
+    [$corpo, $codigo] = $pedir('/view/fila_prioridade.php');
+    if ($codigo !== 302) throw new RuntimeException('Aula de prioridades anonima nao redirecionou.');
     [$corpo, $codigo] = $pedir('/view/loja.php');
     if ($codigo !== 302) throw new RuntimeException('Loja anonima nao redirecionou.');
     echo "OK: loja anonima redirecionada\n";
@@ -57,7 +59,8 @@ try {
     if ($codigoIndice !== 200 || !str_contains($indiceEstruturas, 'TAD — Tipo Abstrato de Dados')
         || !str_contains($indiceEstruturas, 'Lista Simplesmente Encadeada')
         || !str_contains($indiceEstruturas, 'Lista Duplamente Encadeada')
-        || !str_contains($indiceEstruturas, 'href="../view/fila_fifo.php"')) throw new RuntimeException('Indice de estruturas perdeu navegacao.');
+        || !str_contains($indiceEstruturas, 'href="../view/fila_fifo.php"')
+        || !str_contains($indiceEstruturas, 'href="../view/fila_prioridade.php"')) throw new RuntimeException('Indice de estruturas perdeu navegacao.');
     [$exemplos, $codigoExemplos] = $pedir('/view/exemplos.php?estrutura=simples');
     if ($codigoExemplos !== 200 || !str_contains($exemplos, 'Lista Simplesmente Encadeada')
         || !str_contains($exemplos, 'Lista Duplamente Encadeada')) throw new RuntimeException('Exemplos antigos nao carregaram.');
@@ -77,6 +80,23 @@ try {
     if ($codigoEstilo !== 200 || !str_contains($estiloAula, 'overflow-x: auto') || !str_contains($estiloAula, '@media (max-width: 520px)'))
         throw new RuntimeException('Estilos responsivos da aula ausentes.');
     echo "OK: aula FIFO, indice, codigo C# e regras responsivas\n";
+    [$aulaPrioridade, $statusPrioridade] = $pedir('/view/fila_prioridade.php');
+    foreach (['menor número = maior prioridade', 'FIFO no empate', 'Bruno → Ana → Carla',
+              'Valor', 'Prioridade', 'Proximo', 'public class No', 'public class FilaPrioridadeEncadeada',
+              'public void Enfileirar', 'public int Desenfileirar', 'public int Frente', 'public bool EstaVazia',
+              'atual.Proximo.Prioridade &lt;= prioridade', 'inicio = inicio.Proximo',
+              '20 → 30 → 50', 'Enfileirar(A, P2)', 'Enfileirar(D, P1)', 'O(n)', 'O(1)',
+              'Fila FIFO comum', 'estável', 'Vantagens', 'Desvantagens', 'Erros comuns',
+              '../view/quiz.php?assunto=fila-prioridade'] as $trechoPrioridade) {
+        if (!str_contains($aulaPrioridade, $trechoPrioridade)) throw new RuntimeException('Aula de prioridades incompleta: ' . $trechoPrioridade);
+    }
+    if ($statusPrioridade !== 200 || !str_contains($aulaPrioridade, "\n               atual.Proximo.Prioridade &lt;= prioridade")
+        || substr_count($aulaPrioridade, 'class="fila-diagrama"') < 2)
+        throw new RuntimeException('Codigo ou diagramas de prioridades ausentes.');
+    [$cssPrioridade, $statusCssPrioridade] = $pedir('/css/fila_prioridade.css');
+    if ($statusCssPrioridade !== 200 || !str_contains($cssPrioridade, '@media (max-width: 520px)')
+        || !str_contains($cssPrioridade, 'overflow-x: auto')) throw new RuntimeException('CSS mobile de prioridades ausente.');
+    echo "OK: aula de prioridades, regra estavel, navegacao e CSS mobile\n";
     $db->query('INSERT INTO usuario_item (id_usuario, id_item) VALUES (1, 5)');
     [$corpo, $codigo] = $pedir('/view/avatar.php');
     if ($codigo !== 200 || !str_contains($corpo, 'Meu Avatar') || !str_contains($corpo, 'Cabelo Padrão') || !str_contains($corpo, 'Nenhum acessório disponível.')) throw new RuntimeException('Pagina autenticada incompleta.');

@@ -1,0 +1,8 @@
+.aula-prioridade .fila-exemplo strong { width: auto; min-height: 48px; padding: 8px 15px; }
+.aula-prioridade .fila-diagrama { justify-content: flex-start; }
+.aula-prioridade .fila-no { min-width: 132px; }
+.aula-prioridade .prioridade-novo { border-color: #a15b18; background: #fff5de; }
+.aula-prioridade .prioridade-regra { border-left-color: #a15b18; background: #fff5de; }
+.aula-prioridade .prioridade-regra h3 { color: #694014; }
+@media (max-width: 760px) { .aula-prioridade .fila-diagrama { overflow-x: auto; flex-wrap: nowrap; } }
+@media (max-width: 520px) { .aula-prioridade .fila-exemplo { justify-content: flex-start; } .aula-prioridade .fila-no { min-width: 112px; } }

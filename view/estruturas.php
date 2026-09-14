@@ -130,6 +130,12 @@ $pagina = 'estruturas';
             <span>Estudar Fila Encadeada FIFO →</span>
         </a>
 
+        <a class="conteudo-link" id="fila-prioridade" href="../view/fila_prioridade.php">
+            <h2>Fila de Prioridades Encadeada FIFO</h2>
+            <p>Entenda como nós são ordenados por prioridade e por que a ordem de chegada continua valendo quando há empate.</p>
+            <span>Estudar Fila de Prioridades →</span>
+        </a>
+
     </section>
 </main>
 </body>
