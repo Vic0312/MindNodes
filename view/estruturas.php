@@ -124,6 +124,12 @@ $pagina = 'estruturas';
             direções e facilita determinadas operações.</p>
         </article>
 
+        <a class="conteudo-link" id="fila-fifo" href="../view/fila_fifo.php">
+            <h2>Fila Encadeada FIFO</h2>
+            <p>Aprenda a enfileirar no fim e desenfileirar no início com nós ligados, referências <code>inicio</code> e <code>fim</code> e exemplos completos em C#.</p>
+            <span>Estudar Fila Encadeada FIFO →</span>
+        </a>
+
     </section>
 </main>
 </body>

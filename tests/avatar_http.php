@@ -46,11 +46,37 @@ try {
     if (!$pronto) throw new RuntimeException('Servidor HTTP indisponivel.');
     if ($codigo !== 302) throw new RuntimeException('Acesso anonimo nao redirecionou.');
     echo "OK: acesso anonimo redirecionado\n";
+    [$corpo, $codigo] = $pedir('/view/fila_fifo.php');
+    if ($codigo !== 302) throw new RuntimeException('Aula FIFO anonima nao redirecionou.');
     [$corpo, $codigo] = $pedir('/view/loja.php');
     if ($codigo !== 302) throw new RuntimeException('Loja anonima nao redirecionou.');
     echo "OK: loja anonima redirecionada\n";
     [$corpo, $codigo] = $pedir('/processamento/processamento.php', ['inputEmailLog' => 'maria@gmail.com', 'inputSenhaLog' => '1234']);
     if ($codigo !== 302) throw new RuntimeException('Login falhou.');
+    [$indiceEstruturas, $codigoIndice] = $pedir('/view/estruturas.php');
+    if ($codigoIndice !== 200 || !str_contains($indiceEstruturas, 'TAD — Tipo Abstrato de Dados')
+        || !str_contains($indiceEstruturas, 'Lista Simplesmente Encadeada')
+        || !str_contains($indiceEstruturas, 'Lista Duplamente Encadeada')
+        || !str_contains($indiceEstruturas, 'href="../view/fila_fifo.php"')) throw new RuntimeException('Indice de estruturas perdeu navegacao.');
+    [$exemplos, $codigoExemplos] = $pedir('/view/exemplos.php?estrutura=simples');
+    if ($codigoExemplos !== 200 || !str_contains($exemplos, 'Lista Simplesmente Encadeada')
+        || !str_contains($exemplos, 'Lista Duplamente Encadeada')) throw new RuntimeException('Exemplos antigos nao carregaram.');
+    [$aula, $codigoAula] = $pedir('/view/fila_fifo.php');
+    foreach (['First In, First Out', 'inicio', 'fim', 'Proximo', 'public class No',
+              'public class FilaEncadeada', 'public void Enfileirar', 'public int Desenfileirar',
+              'public int Frente', 'public bool EstaVazia', 'fim.Proximo = novo',
+              'fim = null', 'O(1)', 'O(n)', 'Vantagens', 'Desvantagens', 'Fila com vetor',
+              'LIFO', 'Erros comuns', 'Enfileirar(10)', 'Enfileirar(20)', 'Enfileirar(30)',
+              '../view/quiz.php?assunto=fila-fifo'] as $trechoAula) {
+        if (!str_contains($aula, $trechoAula)) throw new RuntimeException('Aula FIFO incompleta: ' . $trechoAula);
+    }
+    if ($codigoAula !== 200 || !str_contains($aula, "\n        fim.Proximo = novo;")
+        || !str_contains($aula, 'class="fila-diagrama"') || !str_contains($aula, 'class="fila-tabela"'))
+        throw new RuntimeException('Codigo indentado ou componentes visuais da aula ausentes.');
+    [$estiloAula, $codigoEstilo] = $pedir('/css/fila_fifo.css');
+    if ($codigoEstilo !== 200 || !str_contains($estiloAula, 'overflow-x: auto') || !str_contains($estiloAula, '@media (max-width: 520px)'))
+        throw new RuntimeException('Estilos responsivos da aula ausentes.');
+    echo "OK: aula FIFO, indice, codigo C# e regras responsivas\n";
     $db->query('INSERT INTO usuario_item (id_usuario, id_item) VALUES (1, 5)');
     [$corpo, $codigo] = $pedir('/view/avatar.php');
     if ($codigo !== 200 || !str_contains($corpo, 'Meu Avatar') || !str_contains($corpo, 'Cabelo Padrão') || !str_contains($corpo, 'Nenhum acessório disponível.')) throw new RuntimeException('Pagina autenticada incompleta.');

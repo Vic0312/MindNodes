@@ -205,6 +205,12 @@
     padding: 28px;
 }
 
+.conteudos .conteudo-link { display: block; padding: 28px; border-radius: var(--radius); background: #fff; border: 1px solid rgba(202, 210, 197, .75); box-shadow: 0 14px 30px rgba(47, 62, 70, .10); color: var(--charcoal-blue); }
+.conteudos .conteudo-link:hover, .conteudos .conteudo-link:focus-visible { outline: 3px solid var(--deep-teal); outline-offset: 3px; }
+.conteudos .conteudo-link h2 { color: var(--charcoal-blue); margin-bottom: 10px; }
+.conteudos .conteudo-link p { line-height: 1.6; }
+.conteudos .conteudo-link span { display: inline-block; margin-top: 16px; color: #275a4f; font-weight: 700; }
+
 .conteudos h2 {
     color: var(--charcoal-blue);
     line-height: 1.18;
