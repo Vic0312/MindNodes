@@ -23,6 +23,11 @@ class AvatarController
         return $this->avatarModel->buscarDoUsuario($this->usuarioAtual());
     }
 
+    public function obterHabilidadesEquipadas()
+    {
+        return $this->avatarModel->obterHabilidadesEquipadas($this->usuarioAtual());
+    }
+
     public function criarAvatarPadrao()
     {
         return $this->avatarModel->criarAvatarPadrao($this->usuarioAtual());

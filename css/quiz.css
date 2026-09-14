@@ -368,6 +368,30 @@ main {
     white-space: pre;
 }
 
+.poderes-avatar {
+    margin-bottom: 22px;
+    padding: 22px 24px;
+    border-radius: 22px;
+    border: 1px solid rgba(82, 121, 111, 0.28);
+    background: #f2f7f1;
+}
+
+.poderes-cabecalho h3 { margin: 12px 0; color: var(--charcoal-blue); }
+.poderes-avatar > p { color: #52796f; }
+.poderes-lista { display: flex; flex-wrap: wrap; gap: 9px; margin: 14px 0; }
+.poder-indicador { padding: 8px 12px; border-radius: 12px; background: #fff; border: 1px solid #d7e5d8; color: #354f52; font-size: .88rem; }
+.acoes-habilidades { display: flex; flex-wrap: wrap; gap: 9px; }
+.quiz-habilidade-form button,.form-reiniciar button { padding: 9px 14px; border: 0; border-radius: 11px; background: #52796f; color: #fff; font: inherit; font-size: .87rem; font-weight: 800; cursor: pointer; }
+.quiz-habilidade-form button:hover:not(:disabled) { background: #354f52; }
+.quiz-habilidade-form button:disabled { background: #c5d1c8; color: #52685d; cursor: not-allowed; }
+.form-reiniciar { margin-top: 18px; }
+.form-reiniciar button { background: transparent; border: 1px solid #52796f; color: #354f52; }
+.painel-dica,.painel-resumo { padding: 14px 16px; border-radius: 14px; background: #e4f0e4; border: 1px solid #c8dfca; color: #2f5147; line-height: 1.55; }
+.painel-dica[hidden],.painel-resumo[hidden] { display: none; }
+.poderes-feedback:empty { display: none; }
+.poderes-feedback { margin: 12px 0 0; font-weight: 700; }
+.quiz-card label.alternativa-eliminada { opacity: .48; text-decoration: line-through; background: #e7eae7; cursor: not-allowed; }
+
 .quiz-card h2,
 .quiz-card h3 {
 

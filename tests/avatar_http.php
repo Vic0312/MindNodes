@@ -23,15 +23,16 @@ try {
     if (!mkdir($sessoes)) throw new RuntimeException('Diretorio de sessoes indisponivel.');
     $comando = [PHP_BINARY, '-d', 'session.save_path=' . $sessoes, '-S', '127.0.0.1:' . $porta, '-t', $raiz];
     $ambiente = array_merge(getenv(), ['MINDNODES_DB' => $banco]);
-    $servidor = proc_open($comando, [0 => ['pipe', 'r'], 1 => ['pipe', 'w'], 2 => ['pipe', 'w']], $pipes, $raiz, $ambiente);
+    $servidor = proc_open($comando, [0 => ['pipe', 'r'], 1 => ['file', $sessoes . '/servidor.log', 'a'], 2 => ['file', $sessoes . '/servidor.log', 'a']], $pipes, $raiz, $ambiente);
     if (!is_resource($servidor)) throw new RuntimeException('Servidor HTTP nao iniciou.');
     fclose($pipes[0]);
     $base = 'http://127.0.0.1:' . $porta;
     $canal = curl_init();
     curl_setopt_array($canal, [CURLOPT_RETURNTRANSFER => true, CURLOPT_COOKIEFILE => '', CURLOPT_FOLLOWLOCATION => false, CURLOPT_TIMEOUT => 5]);
-    $pedir = function ($caminho, $post = null) use ($canal, $base) {
+    $pedir = function ($caminho, $post = null, $json = false) use ($canal, $base) {
         curl_setopt($canal, CURLOPT_URL, $base . $caminho);
         curl_setopt($canal, CURLOPT_POST, $post !== null);
+        curl_setopt($canal, CURLOPT_HTTPHEADER, $json ? ['Accept: application/json'] : []);
         if ($post !== null) curl_setopt($canal, CURLOPT_POSTFIELDS, http_build_query($post));
         $corpo = curl_exec($canal);
         if ($corpo === false) throw new RuntimeException(curl_error($canal));
@@ -110,7 +111,7 @@ try {
     [$corpo, $codigo] = $pedir('/view/quiz.php?assunto=tad');
     if ($codigo !== 200 || !str_contains($corpo, 'public interface IPilha') || !str_contains($corpo, 'void Empilhar(int valor);')
         || !str_contains($corpo, 'Questão 4') || str_contains($corpo, 'Observe que há apenas assinaturas de métodos.')) throw new RuntimeException('Quiz de codigo nao renderizou corretamente.');
-    if (!preg_match('~<article class="quiz-card">.*?</article>~s', $corpo, $primeira) || str_contains($primeira[0], 'codigo-questao')) throw new RuntimeException('Teorica exibiu bloco de codigo.');
+    if (!preg_match('~<article class="quiz-card" id="questao-1">.*?</article>~s', $corpo, $primeira) || str_contains($primeira[0], 'codigo-questao')) throw new RuntimeException('Teorica exibiu bloco de codigo.');
     echo "OK: quiz teorico e codigo sem dica automatica\n";
     $codigoEspecial = "if (a < b && texto != \"<> &\")\n{\n    Console.WriteLine(texto);\n}";
     $stmt = $db->prepare('UPDATE quiz_pergunta SET codigo = ? WHERE id_pergunta = 10');
@@ -118,18 +119,45 @@ try {
     [$corpo] = $pedir('/view/quiz.php?assunto=tad');
     if (!str_contains($corpo, 'if (a &lt; b &amp;&amp; texto != &quot;&lt;&gt; &amp;&quot;)')
         || !str_contains($corpo, "\n    Console.WriteLine(texto);\n")) throw new RuntimeException('Escape ou formatacao do codigo falhou.');
+    if (!preg_match('~<form id="quiz-respostas".*?name="csrf" value="([a-f0-9]{64})"~s', $corpo, $tokenQuiz)) throw new RuntimeException('Token da tentativa ausente.');
     $respostasQuiz = [];
     foreach ($db->query('SELECT id_pergunta, id_alternativa FROM quiz_alternativa WHERE correta = 1 AND id_pergunta IN (1,2,3,10)') as $linha) $respostasQuiz[$linha['id_pergunta']] = $linha['id_alternativa'];
-    [$corpo, $codigo, $destino] = $pedir('/processamento/processamento.php', ['acao' => 'salvarQuiz', 'assunto' => 'tad', 'respostas' => $respostasQuiz]);
+    [$corpo, $codigo, $destino] = $pedir('/processamento/processamento.php', ['acao' => 'salvarQuiz', 'assunto' => 'tad', 'csrf' => $tokenQuiz[1], 'respostas' => $respostasQuiz]);
     if ($codigo !== 302 || !str_contains($destino, 'desempenho.php?tentativa=')) throw new RuntimeException('Tentativa de codigo nao salva.');
     [$corpo, $codigo] = $pedir(parse_url($destino, PHP_URL_PATH) . '?' . parse_url($destino, PHP_URL_QUERY));
     if ($codigo !== 200 || !str_contains($corpo, 'if (a &lt; b &amp;&amp; texto != &quot;&lt;&gt; &amp;&quot;)')
         || !str_contains($corpo, 'A interface declara as operações públicas do TAD pilha')) throw new RuntimeException('Revisao perdeu codigo ou explicacao.');
     echo "OK: codigo escapado, tentativa salva e revisao completa\n";
+    $db->query('INSERT INTO usuario_item (id_usuario, id_item) VALUES (1, 5)');
+    $db->query('UPDATE avatar_usuario SET id_cabelo = 4, id_rosto = 5, id_roupa = 6 WHERE id_usuario = 1');
+    [$corpo, $codigo] = $pedir('/view/quiz.php?assunto=tad');
+    if ($codigo !== 200 || !str_contains($corpo, 'Poderes do Avatar') || !str_contains($corpo, 'Eliminar alternativa')
+        || !str_contains($corpo, 'Resumo rápido') || str_contains($corpo, 'Observe que há apenas assinaturas de métodos.')) throw new RuntimeException('Poderes equipados nao aparecem corretamente.');
+    if (!preg_match('~<form id="quiz-respostas".*?name="csrf" value="([a-f0-9]{64})"~s', $corpo, $tokenPoder)) throw new RuntimeException('Token do poder ausente.');
+    $tokenPoder = $tokenPoder[1];
+    [$corpo, $codigo] = $pedir('/processamento/processamento.php', ['acao' => 'usarHabilidade', 'csrf' => $tokenPoder, 'habilidade' => 'dica', 'id_pergunta' => 2], true);
+    $dadosPoder = json_decode($corpo, true);
+    if ($codigo !== 422 || $dadosPoder['sucesso'] !== false) throw new RuntimeException('Dica ausente consumiu uso.');
+    [$corpo, $codigo] = $pedir('/processamento/processamento.php', ['acao' => 'usarHabilidade', 'csrf' => $tokenPoder, 'habilidade' => 'dica', 'id_pergunta' => 10, 'id_usuario' => 2], true);
+    $dadosPoder = json_decode($corpo, true);
+    if ($codigo !== 200 || $dadosPoder['restante'] !== 0 || !str_contains($dadosPoder['conteudo'], 'assinaturas')) throw new RuntimeException('Dica HTTP falhou.');
+    [$corpo, $codigo] = $pedir('/processamento/processamento.php', ['acao' => 'usarHabilidade', 'csrf' => $tokenPoder, 'habilidade' => 'dica', 'id_pergunta' => 1], true);
+    if ($codigo !== 422 || json_decode($corpo, true)['sucesso'] !== false) throw new RuntimeException('Uso extra de dica aceito.');
+    [$corpo, $codigo] = $pedir('/processamento/processamento.php', ['acao' => 'usarHabilidade', 'csrf' => $tokenPoder, 'habilidade' => 'eliminar_alternativa', 'id_pergunta' => 10], true);
+    $dadosPoder = json_decode($corpo, true);
+    if ($codigo !== 200 || $dadosPoder['restante'] !== 0) throw new RuntimeException('Eliminacao HTTP falhou.');
+    $idEliminada = (int) $dadosPoder['id_alternativa'];
+    if ((int) $db->query('SELECT correta FROM quiz_alternativa WHERE id_alternativa = ' . $idEliminada)->fetch_assoc()['correta'] !== 0) throw new RuntimeException('Alternativa correta eliminada.');
+    [$corpo, $codigo] = $pedir('/processamento/processamento.php', ['acao' => 'usarHabilidade', 'csrf' => $tokenPoder, 'habilidade' => 'resumo_rapido'], true);
+    $dadosPoder = json_decode($corpo, true);
+    if ($codigo !== 200 || $dadosPoder['restante'] !== 0 || !str_contains($dadosPoder['conteudo'], 'Tipo Abstrato')) throw new RuntimeException('Resumo HTTP falhou.');
+    [$corpo] = $pedir('/view/quiz.php?assunto=tad');
+    if (!str_contains($corpo, 'alternativa-eliminada') || !str_contains($corpo, 'assinaturas') || !str_contains($corpo, 'Tipo Abstrato')) throw new RuntimeException('Estado dos poderes nao persistiu no refresh.');
+    echo "OK: poderes via POST/JSON, limites e estado no refresh\n";
 } finally {
     if ($canal) curl_close($canal);
-    if (is_resource($servidor)) { proc_terminate($servidor); foreach ([$pipes[1], $pipes[2]] as $pipe) fclose($pipe); proc_close($servidor); }
-    if (is_dir($sessoes)) { foreach (glob($sessoes . '/sess_*') as $arquivo) unlink($arquivo); rmdir($sessoes); }
+    if (is_resource($servidor)) { proc_terminate($servidor); proc_close($servidor); }
+    if (is_dir($sessoes)) { foreach (glob($sessoes . '/sess_*') as $arquivo) unlink($arquivo); if (is_file($sessoes . '/servidor.log')) unlink($sessoes . '/servidor.log'); rmdir($sessoes); }
     $db->select_db('mysql');
     if ($criado) $db->query('DROP DATABASE `' . $banco . '`');
     $db->close();

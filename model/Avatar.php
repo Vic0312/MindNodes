@@ -82,6 +82,27 @@ class Avatar
         return $avatar;
     }
 
+    /** Apenas itens equipados contribuem; posse isolada nao concede habilidade. */
+    public function obterHabilidadesEquipadas($idUsuario)
+    {
+        $avatar = $this->buscarDoUsuario($idUsuario);
+        $habilidades = [];
+        foreach (['cabelo', 'rosto', 'roupa', 'acessorio'] as $slot) {
+            $item = $avatar[$slot];
+            if (!$item || !in_array($item['habilidade'], ['dica', 'eliminar_alternativa', 'resumo_rapido'], true)) continue;
+            $quantidade = (int) $item['valor_habilidade'];
+            if ($quantidade <= 0) continue;
+            $chave = $item['habilidade'];
+            if (!isset($habilidades[$chave])) {
+                $habilidades[$chave] = ['quantidade_total' => 0, 'quantidade_restante' => 0, 'itens' => []];
+            }
+            $habilidades[$chave]['quantidade_total'] += $quantidade;
+            $habilidades[$chave]['quantidade_restante'] += $quantidade;
+            $habilidades[$chave]['itens'][] = $item['nome'];
+        }
+        return $habilidades;
+    }
+
     public function equiparItem($idUsuario, $idItem)
     {
         $idUsuario = $this->validarUsuario($idUsuario);

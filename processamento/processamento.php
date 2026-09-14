@@ -6,6 +6,60 @@ require_once __DIR__ . '/../controller/AuthController.php';
 require_once __DIR__ . '/../controller/UsuarioController.php';
 require_once __DIR__ . '/../controller/QuizController.php';
 
+if (($_POST['acao'] ?? null) === 'usarHabilidade') {
+    $json = str_contains($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json');
+    $resposta = null;
+    $status = 200;
+    if (empty($_SESSION['estaLogado']) || !isset($_SESSION['usuario_id'])) {
+        $resposta = ['sucesso' => false, 'mensagem' => 'Autenticação necessária.'];
+        $status = 401;
+    } else {
+        try {
+            $controlador = new QuizController();
+            $token = $_POST['csrf'] ?? null;
+            $pergunta = $_POST['id_pergunta'] ?? null;
+            switch ($_POST['habilidade'] ?? null) {
+                case 'dica': $resposta = $controlador->usarDicaQuiz($token, $pergunta); break;
+                case 'eliminar_alternativa': $resposta = $controlador->eliminarAlternativaQuiz($token, $pergunta); break;
+                case 'resumo_rapido': $resposta = $controlador->usarResumoQuiz($token); break;
+                default: throw new DomainException('Habilidade indisponível.');
+            }
+        } catch (DomainException | OutOfBoundsException | InvalidArgumentException | LogicException $erro) {
+            $resposta = ['sucesso' => false, 'mensagem' => $erro->getMessage()];
+            $status = 422;
+        } catch (Throwable $erro) {
+            error_log('Falha ao usar habilidade: ' . $erro->getMessage());
+            $resposta = ['sucesso' => false, 'mensagem' => 'Não foi possível usar a habilidade.'];
+            $status = 500;
+        }
+    }
+    if ($json) {
+        http_response_code($status);
+        header('Content-Type: application/json; charset=UTF-8');
+        header('Cache-Control: no-store');
+        echo json_encode($resposta, JSON_UNESCAPED_UNICODE);
+    } else {
+        $_SESSION['quiz_habilidade_mensagem'] = $resposta['sucesso'] ? 'Habilidade utilizada.' : $resposta['mensagem'];
+        $slug = $_SESSION['quiz_tentativa_atual']['slug'] ?? null;
+        header('Location: ../view/quiz.php' . ($slug ? '?assunto=' . rawurlencode($slug) : ''), true, 303);
+    }
+    exit();
+}
+
+if (($_POST['acao'] ?? null) === 'reiniciarQuiz') {
+    if (empty($_SESSION['estaLogado']) || !isset($_SESSION['usuario_id'])) {
+        header('Location: ../view/login.php');
+        exit();
+    }
+    try {
+        $estado = (new QuizController())->reiniciarTentativaQuiz($_POST['csrf'] ?? null);
+        header('Location: ../view/quiz.php?assunto=' . rawurlencode($estado['slug']), true, 303);
+    } catch (Throwable $erro) {
+        header('Location: ../view/quiz.php?erro=1', true, 303);
+    }
+    exit();
+}
+
 if (($_POST['acao'] ?? null) === 'comprarItem') {
     if (!isset($_SESSION['usuario_id']) || empty($_SESSION['estaLogado'])) {
         header('Location: ../view/login.php');
@@ -87,9 +141,14 @@ if (isset($_POST['acao']) && $_POST['acao'] === 'salvarQuiz') {
         exit();
     }
 
-    $slug = trim(isset($_POST['assunto']) ? $_POST['assunto'] : '');
+    $slug = is_string($_POST['assunto'] ?? null) ? trim($_POST['assunto']) : '';
     $respostas = isset($_POST['respostas']) ? $_POST['respostas'] : [];
-    $idTentativa = $quizController->salvarTentativaQuiz($idUsuario, $slug, $respostas);
+    try {
+        $idTentativa = $quizController->finalizarTentativaQuiz($_POST['csrf'] ?? null, $slug, $respostas);
+    } catch (Throwable $erro) {
+        error_log('Falha ao finalizar Quiz: ' . $erro->getMessage());
+        $idTentativa = false;
+    }
 
     if ($idTentativa) {
         header("Location: ../view/desempenho.php?tentativa=" . $idTentativa);
