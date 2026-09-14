@@ -123,10 +123,18 @@ try {
     $respostasQuiz = [];
     foreach ($db->query('SELECT id_pergunta, id_alternativa FROM quiz_alternativa WHERE correta = 1 AND id_pergunta IN (1,2,3,10)') as $linha) $respostasQuiz[$linha['id_pergunta']] = $linha['id_alternativa'];
     [$corpo, $codigo, $destino] = $pedir('/processamento/processamento.php', ['acao' => 'salvarQuiz', 'assunto' => 'tad', 'csrf' => $tokenQuiz[1], 'respostas' => $respostasQuiz]);
-    if ($codigo !== 302 || !str_contains($destino, 'desempenho.php?tentativa=')) throw new RuntimeException('Tentativa de codigo nao salva.');
+    if ($codigo !== 303 || !str_contains($destino, 'desempenho.php?tentativa=')) throw new RuntimeException('Tentativa de codigo nao salva.');
+    $saldoQuiz = (int) $db->query('SELECT moedas FROM usuario WHERE id_usuario = 1')->fetch_assoc()['moedas'];
+    if ($saldoQuiz !== 115 || (int) $db->query("SELECT COUNT(*) AS total FROM transacao_moeda WHERE id_usuario = 1 AND origem = 'quiz'")->fetch_assoc()['total'] !== 1)
+        throw new RuntimeException('Recompensa HTTP nao creditada uma vez.');
     [$corpo, $codigo] = $pedir(parse_url($destino, PHP_URL_PATH) . '?' . parse_url($destino, PHP_URL_QUERY));
     if ($codigo !== 200 || !str_contains($corpo, 'if (a &lt; b &amp;&amp; texto != &quot;&lt;&gt; &amp;&quot;)')
-        || !str_contains($corpo, 'A interface declara as operações públicas do TAD pilha')) throw new RuntimeException('Revisao perdeu codigo ou explicacao.');
+        || !str_contains($corpo, 'A interface declara as operações públicas do TAD pilha') || !str_contains($corpo, '+65 moedas')) throw new RuntimeException('Revisao perdeu codigo, explicacao ou recompensa.');
+    [$corpo, $codigo] = $pedir('/processamento/processamento.php', ['acao' => 'salvarQuiz', 'assunto' => 'tad', 'csrf' => $tokenQuiz[1], 'respostas' => $respostasQuiz, 'moedas' => 1000]);
+    if ($codigo !== 303 || (int) $db->query('SELECT moedas FROM usuario WHERE id_usuario = 1')->fetch_assoc()['moedas'] !== $saldoQuiz)
+        throw new RuntimeException('Reenvio ou valor do navegador alterou saldo.');
+    [$corpo, $codigo] = $pedir('/view/loja.php');
+    if ($codigo !== 200 || !str_contains($corpo, '<strong>115</strong>')) throw new RuntimeException('Loja nao mostrou saldo do Quiz.');
     echo "OK: codigo escapado, tentativa salva e revisao completa\n";
     $db->query('INSERT INTO usuario_item (id_usuario, id_item) VALUES (1, 5)');
     $db->query('UPDATE avatar_usuario SET id_cabelo = 4, id_rosto = 5, id_roupa = 6 WHERE id_usuario = 1');

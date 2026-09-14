@@ -135,7 +135,7 @@ $aproveitamento = $totalPerguntas > 0 ? round(($totalAcertos / $totalPerguntas) 
                                     <span><?php echo date('d/m/Y H:i', strtotime($tentativa['data_tentativa'])); ?></span>
                                 </div>
 
-                                <b><?php echo (int) $tentativa['total_acertos']; ?>/<?php echo (int) $tentativa['total_perguntas']; ?> · <?php echo $percentual; ?>%</b>
+                                <b><?php echo (int) $tentativa['total_acertos']; ?>/<?php echo (int) $tentativa['total_perguntas']; ?> · <?php echo $percentual; ?>% · +<?php echo (int) $tentativa['moedas_ganhas']; ?> moedas</b>
                             </a>
                         <?php endforeach; ?>
                     </section>
@@ -160,6 +160,7 @@ $aproveitamento = $totalPerguntas > 0 ? round(($totalAcertos / $totalPerguntas) 
                         de <?php echo (int) $tentativaSelecionada['total_perguntas']; ?> acertos
                         (<?php echo $percentualTentativa; ?>%).
                     </p>
+                    <p class="recompensa-quiz">+<?php echo (int) $tentativaSelecionada['moedas_ganhas']; ?> moedas ganhas</p>
 
                     <section class="lista-revisao">
                         <?php foreach ($tentativaSelecionada['respostas'] as $resposta): ?>

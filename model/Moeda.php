@@ -106,6 +106,23 @@ class Moeda
         return $this->movimentar($idUsuario, $valor, $origem, $descricao, 'credito');
     }
 
+    /** Credita sem commit; a operacao composta controla a transacao. */
+    public function creditarNaTransacao($idUsuario, $valor, $origem, $descricao = null)
+    {
+        $idUsuario = $this->inteiroPositivo($idUsuario);
+        $valor = $this->inteiroPositivo($valor);
+        if (!in_array($origem, ['quiz', 'loja', 'bonus'], true)) throw new InvalidArgumentException('Origem invalida.');
+        $descricao = $this->validarDescricao($descricao);
+        $saldo = $this->obterSaldoBloqueado($idUsuario);
+        if ($valor > self::MAX_INTEIRO - $saldo) throw new OverflowException('Limite de saldo excedido.');
+        $novoSaldo = $saldo + $valor;
+        $this->executar('UPDATE usuario SET moedas = ? WHERE id_usuario = ?', 'ii', $novoSaldo, $idUsuario);
+        $tipo = 'credito';
+        $this->executar('INSERT INTO transacao_moeda (id_usuario, tipo, valor, origem, descricao) VALUES (?, ?, ?, ?, ?)',
+            'isiss', $idUsuario, $tipo, $valor, $origem, $descricao);
+        return $novoSaldo;
+    }
+
     public function debitar($idUsuario, $valor, $origem, $descricao = null)
     {
         return $this->movimentar($idUsuario, $valor, $origem, $descricao, 'debito');

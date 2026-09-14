@@ -80,6 +80,12 @@ try {
     foreach ($quiz->buscarPerguntas('tad') as $pergunta) foreach ($pergunta['alternativas'] as $alternativa) if ($alternativa['correta']) $respostas[$pergunta['id_pergunta']] = $alternativa['id_alternativa'];
     $tentativa = $controller->finalizarTentativaQuiz($estado['token'], 'tad', $respostas);
     okPoder($tentativa && !isset($_SESSION['quiz_tentativa_atual']) && (int) $quiz->buscarTentativa($tentativa, 1)['total_acertos'] === 4, 'finalizacao encerra estado e mantem correcao');
+    okPoder((int) $quiz->buscarTentativa($tentativa, 1)['moedas_ganhas'] === 65
+        && (int) sqlPoder($db, 'SELECT moedas FROM usuario WHERE id_usuario = ?', 'i', 1)[0]['moedas'] === $saldo + 65,
+        'habilidades usadas nao reduzem recompensa');
+    negarPoder(fn() => $controller->finalizarTentativaQuiz($estado['token'], 'tad', $respostas), LogicException::class, 'token finalizado nao pode pagar novamente');
+    okPoder((int) sqlPoder($db, 'SELECT COUNT(*) AS total FROM transacao_moeda WHERE id_usuario = ? AND origem = ?', 'is', 1, 'quiz')[0]['total'] === 1,
+        'reenvio nao duplica credito');
     okPoder(!isset($controller->iniciarTentativaQuiz('tad')['habilidades']['eliminar_alternativa']), 'nova tentativa reflete avatar atual');
     echo "PASSOU: habilidades do Quiz.\n";
 } finally {

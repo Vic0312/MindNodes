@@ -151,11 +151,11 @@ if (isset($_POST['acao']) && $_POST['acao'] === 'salvarQuiz') {
     }
 
     if ($idTentativa) {
-        header("Location: ../view/desempenho.php?tentativa=" . $idTentativa);
+        header("Location: ../view/desempenho.php?tentativa=" . $idTentativa, true, 303);
         exit();
     }
 
-    header("Location: ../view/quiz.php?erro=1");
+    header("Location: ../view/quiz.php?erro=1", true, 303);
     exit();
 }
 

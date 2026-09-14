@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/../config/Conexao.php';
+require_once __DIR__ . '/Moeda.php';
 
 class Quiz
 {
@@ -45,6 +46,15 @@ class Quiz
         return array_values($perguntas);
     }
 
+    public static function calcularRecompensa($totalPerguntas, $totalAcertos)
+    {
+        if (!is_int($totalPerguntas) || !is_int($totalAcertos) || $totalPerguntas <= 0
+            || $totalAcertos < 0 || $totalAcertos > $totalPerguntas) {
+            throw new InvalidArgumentException('Resultado do Quiz invalido.');
+        }
+        return 5 + $totalAcertos * 10 + ($totalAcertos === $totalPerguntas ? 20 : 0);
+    }
+
     public function salvarTentativa($idUsuario, $slug, $respostasUsuario)
     {
         $idUsuario = (int) $idUsuario;
@@ -79,13 +89,70 @@ class Quiz
         return $idTentativa;
     }
 
+    /** Finalizacao publica: tentativa, respostas e credito confirmados juntos. */
+    public function concluirTentativa($idUsuario, $slug, $respostasUsuario)
+    {
+        if (!is_array($respostasUsuario)) throw new InvalidArgumentException('Respostas invalidas.');
+        $assunto = $this->buscarAssunto($slug);
+        if (!$assunto) throw new OutOfBoundsException('Assunto inexistente.');
+        $perguntas = $this->buscarPerguntas($slug);
+        $total = count($perguntas);
+        if ($total === 0 || count($respostasUsuario) !== $total) throw new InvalidArgumentException('Responda todas as perguntas.');
+        $calculadas = [];
+        $acertos = 0;
+        foreach ($perguntas as $pergunta) {
+            $idPergunta = (int) $pergunta['id_pergunta'];
+            $marcada = $respostasUsuario[$idPergunta] ?? null;
+            if ((!is_int($marcada) && !is_string($marcada)) || !preg_match('/^[1-9][0-9]*$/D', (string) $marcada)) {
+                throw new InvalidArgumentException('Responda todas as perguntas.');
+            }
+            $marcada = (int) $marcada;
+            $correta = null;
+            $pertence = false;
+            foreach ($pergunta['alternativas'] as $alternativa) {
+                if ((int) $alternativa['id_alternativa'] === $marcada) $pertence = true;
+                if ((int) $alternativa['correta'] === 1) $correta = (int) $alternativa['id_alternativa'];
+            }
+            if (!$pertence || $correta === null) throw new InvalidArgumentException('Resposta invalida.');
+            $acertou = (int) ($marcada === $correta);
+            $acertos += $acertou;
+            $calculadas[] = [$idPergunta, $marcada, $correta, $acertou];
+        }
+        $recompensa = self::calcularRecompensa($total, $acertos);
+        $idUsuario = (int) $idUsuario;
+        $idAssunto = (int) $assunto['id_assunto'];
+        $moeda = new Moeda($this->conexao);
+        $estado = $this->conexao->query('SELECT @@in_transaction AS ativa, @@autocommit AS automatica')->fetch_assoc();
+        if ($estado['ativa'] || !$estado['automatica']) throw new LogicException('Quiz exige conexao sem transacao externa.');
+        if (!$this->conexao->begin_transaction()) throw new RuntimeException('Falha ao iniciar transacao do Quiz.');
+        try {
+            $consulta = $this->conexao->prepare('INSERT INTO quiz_tentativa (id_usuario, id_assunto, total_perguntas, total_acertos, moedas_ganhas) VALUES (?, ?, ?, ?, ?)');
+            $consulta->bind_param('iiiii', $idUsuario, $idAssunto, $total, $acertos, $recompensa);
+            if (!$consulta->execute()) throw new RuntimeException('Falha ao salvar tentativa.');
+            $idTentativa = $this->conexao->insert_id;
+            $consulta->close();
+            foreach ($calculadas as [$idPergunta, $marcada, $correta, $acertou]) {
+                $consulta = $this->conexao->prepare('INSERT INTO quiz_resposta (id_tentativa, id_pergunta, id_alternativa_marcada, id_alternativa_correta, acertou) VALUES (?, ?, ?, ?, ?)');
+                $consulta->bind_param('iiiii', $idTentativa, $idPergunta, $marcada, $correta, $acertou);
+                if (!$consulta->execute()) throw new RuntimeException('Falha ao salvar resposta.');
+                $consulta->close();
+            }
+            $moeda->creditarNaTransacao($idUsuario, $recompensa, 'quiz', 'Recompensa do Quiz: ' . $assunto['titulo']);
+            if (!$this->conexao->commit()) throw new RuntimeException('Falha ao confirmar Quiz.');
+            return $idTentativa;
+        } catch (Throwable $erro) {
+            $this->conexao->rollback();
+            throw $erro;
+        }
+    }
+
     public function buscarDesempenho($idUsuario)
     {
         $idUsuario = (int) $idUsuario;
         $consulta = mysqli_prepare($this->conexao, 'SELECT COUNT(*) AS total_tentativas, COALESCE(SUM(total_perguntas), 0) AS total_perguntas, COALESCE(SUM(total_acertos), 0) AS total_acertos FROM quiz_tentativa WHERE id_usuario = ?');
         mysqli_stmt_bind_param($consulta, 'i', $idUsuario); mysqli_stmt_execute($consulta);
         $resumo = mysqli_fetch_assoc(mysqli_stmt_get_result($consulta));
-        $sql = 'SELECT qt.id_tentativa, qt.total_perguntas, qt.total_acertos, qt.data_tentativa, qa.titulo, qa.slug FROM quiz_tentativa qt INNER JOIN quiz_assunto qa ON qa.id_assunto = qt.id_assunto WHERE qt.id_usuario = ? ORDER BY qt.data_tentativa DESC';
+        $sql = 'SELECT qt.id_tentativa, qt.total_perguntas, qt.total_acertos, qt.moedas_ganhas, qt.data_tentativa, qa.titulo, qa.slug FROM quiz_tentativa qt INNER JOIN quiz_assunto qa ON qa.id_assunto = qt.id_assunto WHERE qt.id_usuario = ? ORDER BY qt.data_tentativa DESC';
         $consulta = mysqli_prepare($this->conexao, $sql); mysqli_stmt_bind_param($consulta, 'i', $idUsuario); mysqli_stmt_execute($consulta);
         $resultado = mysqli_stmt_get_result($consulta);
         return ['resumo' => $resumo, 'tentativas' => $resultado ? mysqli_fetch_all($resultado, MYSQLI_ASSOC) : []];
@@ -94,7 +161,7 @@ class Quiz
     public function buscarTentativa($idTentativa, $idUsuario)
     {
         $idTentativa = (int) $idTentativa; $idUsuario = (int) $idUsuario;
-        $sql = 'SELECT qt.id_tentativa, qt.total_perguntas, qt.total_acertos, qt.data_tentativa, qa.titulo, qa.slug FROM quiz_tentativa qt INNER JOIN quiz_assunto qa ON qa.id_assunto = qt.id_assunto WHERE qt.id_tentativa = ? AND qt.id_usuario = ? LIMIT 1';
+        $sql = 'SELECT qt.id_tentativa, qt.total_perguntas, qt.total_acertos, qt.moedas_ganhas, qt.data_tentativa, qa.titulo, qa.slug FROM quiz_tentativa qt INNER JOIN quiz_assunto qa ON qa.id_assunto = qt.id_assunto WHERE qt.id_tentativa = ? AND qt.id_usuario = ? LIMIT 1';
         $consulta = mysqli_prepare($this->conexao, $sql); mysqli_stmt_bind_param($consulta, 'ii', $idTentativa, $idUsuario); mysqli_stmt_execute($consulta);
         $resultado = mysqli_stmt_get_result($consulta);
         if (!$resultado || mysqli_num_rows($resultado) !== 1) return false;

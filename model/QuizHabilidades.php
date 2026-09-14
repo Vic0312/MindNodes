@@ -133,7 +133,7 @@ class QuizHabilidades
         foreach ($estado['eliminadas'] as $idPergunta => $ids) {
             if (isset($respostas[$idPergunta]) && in_array((int) $respostas[$idPergunta], $ids, true)) unset($respostas[$idPergunta]);
         }
-        $idTentativa = $this->quiz->salvarTentativa($idUsuario, $slug, $respostas);
+        $idTentativa = $this->quiz->concluirTentativa($idUsuario, $slug, $respostas);
         if ($idTentativa) unset($_SESSION[self::CHAVE]);
         return $idTentativa;
     }
