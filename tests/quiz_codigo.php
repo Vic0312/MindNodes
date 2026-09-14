@@ -20,7 +20,7 @@ try {
     do { if ($r = $db->store_result()) $r->free(); } while ($db->more_results() && $db->next_result());
     $quiz = new QuizController(new Quiz($db));
     $assuntos = $quiz->listarAssuntosQuiz();
-    conferirQuiz(count($assuntos) === 3 && array_map('intval', array_column($assuntos, 'total_perguntas')) === [4, 4, 4], 'tres assuntos antigos com uma pergunta de codigo cada');
+    conferirQuiz(count($assuntos) === 6 && array_map('intval', array_column($assuntos, 'total_perguntas')) === [4, 4, 4, 6, 6, 6], 'seis assuntos, mantendo os tres antigos');
     foreach (['tad' => 10, 'lista-simples' => 11, 'lista-dupla' => 12] as $slug => $idCodigo) {
         $perguntas = $quiz->buscarPerguntasQuiz($slug);
         conferirQuiz(count($perguntas) === 4 && $perguntas[0]['tipo'] === 'teorica' && $perguntas[0]['codigo'] === null, 'teoricas antigas em ' . $slug);

@@ -96,7 +96,10 @@ CREATE TABLE `quiz_assunto` (
 INSERT INTO `quiz_assunto` (`id_assunto`, `titulo`, `slug`, `descricao`) VALUES
 (1, 'TAD - Tipo Abstrato de Dados', 'tad', 'Revise abstracao, operacoes e separacao entre comportamento e implementacao.'),
 (2, 'Lista Simplesmente Encadeada', 'lista-simples', 'Teste seu entendimento sobre nos, ponteiros para o proximo elemento e operacoes basicas.'),
-(3, 'Lista Duplamente Encadeada', 'lista-dupla', 'Pratique conceitos de navegacao em duas direcoes, referencias anterior/proximo e remocoes.');
+(3, 'Lista Duplamente Encadeada', 'lista-dupla', 'Pratique conceitos de navegacao em duas direcoes, referencias anterior/proximo e remocoes.'),
+(4, 'Fila Encadeada FIFO', 'fila-fifo', 'Explore inserções no fim, remoções no início e a ordem FIFO em nós encadeados.'),
+(5, 'Fila de Prioridades Encadeada FIFO', 'fila-prioridade', 'Atenda primeiro a menor prioridade numérica e preserve FIFO nos empates.'),
+(6, 'Pilha Encadeada', 'pilha-encadeada', 'Pratique LIFO com nós ligados por referências e operações concentradas no topo.');
 
 -- --------------------------------------------------------
 
@@ -153,6 +156,163 @@ atual.Proximo = novo;', 'Observe as referências Anterior e Proximo dos nós viz
 UPDATE `quiz_pergunta` SET `dica` = 'Pense na diferença entre comportamento público e detalhes internos.' WHERE `id_pergunta` = 1;
 UPDATE `quiz_pergunta` SET `dica` = 'Observe quantas referências cada nó precisa guardar.' WHERE `id_pergunta` = 4;
 UPDATE `quiz_pergunta` SET `dica` = 'Compare os caminhos disponíveis para percorrer a lista.' WHERE `id_pergunta` = 7;
+
+-- Três novos assuntos: três questões teóricas e três de código por assunto.
+-- Na fila de prioridades, menor valor numérico significa maior prioridade.
+INSERT INTO `quiz_pergunta` (`id_pergunta`, `id_assunto`, `enunciado`, `explicacao`, `tipo`, `codigo`, `dica`) VALUES
+(13, 4, 'Após Enfileirar(8), Enfileirar(3) e Enfileirar(5), quais valores são lidos por duas remoções sucessivas?', 'A fila remove pelo início. Como 8 entrou antes de 3 e 5, as duas primeiras remoções devolvem 8 e 3.', 'teorica', NULL, 'Acompanhe a ordem de entrada, não o tamanho dos valores.'),
+(14, 4, 'Em uma fila encadeada com referências inicio e fim, qual estado deve restar depois de remover seu único nó?', 'Depois da remoção, não há primeiro nem último nó; inicio e fim devem ser nulos para representar a fila vazia.', 'teorica', NULL, 'Considere se alguma referência ainda deve apontar para o nó removido.'),
+(15, 4, 'Por que inserir pelo fim e remover pelo início preserva FIFO sem percorrer todos os nós?', 'A referência fim permite anexar o novo nó diretamente; inicio aponta para o próximo nó a sair. Assim, ambas as operações usam as extremidades corretas.', 'teorica', NULL, 'Identifique qual extremidade recebe e qual extremidade entrega nós.'),
+(16, 4, 'No método abaixo, qual é o estado de uma fila vazia após Enfileirar(7)?', 'No caso vazio, o único nó é simultaneamente primeiro e último; as duas referências apontam para ele.', 'codigo', 'public void Enfileirar(int valor)
+{
+    No novo = new No(valor);
+    if (inicio == null)
+    {
+        inicio = novo;
+        fim = novo;
+    }
+    else
+    {
+        fim.Proximo = novo;
+        fim = novo;
+    }
+}', 'Observe as duas atribuições no bloco do caso vazio.'),
+(17, 4, 'Após executar o método em uma fila 4 → 9 → 2, que valor é devolvido e qual é o novo início?', 'O método lê o valor do primeiro nó, avança inicio para o próximo e devolve o valor lido: 4, com 9 no início.', 'codigo', 'public int Desenfileirar()
+{
+    if (inicio == null) throw new InvalidOperationException();
+    int valor = inicio.Valor;
+    inicio = inicio.Proximo;
+    if (inicio == null) fim = null;
+    return valor;
+}', 'Acompanhe o valor salvo antes de atualizar inicio.'),
+(18, 4, 'No trecho abaixo, por que fim.Proximo recebe novo antes de fim ser atualizado?', 'A atribuição liga o antigo último nó ao novo; só depois a referência fim passa a apontar para o último nó atualizado.', 'codigo', 'public void Enfileirar(int valor)
+{
+    No novo = new No(valor);
+    if (fim == null) inicio = novo;
+    else fim.Proximo = novo;
+    fim = novo;
+}', 'Compare a ligação entre nós com a referência externa fim.'),
+(19, 5, 'Com menor número indicando maior prioridade, qual é a ordem de atendimento após inserir A(3), B(1) e C(2)?', 'A fila ordena por prioridade numérica crescente: B(1), C(2), A(3).', 'teorica', NULL, 'Ordene os números de prioridade antes de considerar a ordem de chegada.'),
+(20, 5, 'A(1) chega antes de B(1), e depois chega C(2). Qual ordem respeita prioridade e FIFO no empate?', 'A e B têm prioridade maior que C porque 1 é menor que 2. Entre A e B, a ordem de chegada permanece A antes de B.', 'teorica', NULL, 'Em prioridades iguais, preserve a ordem de inserção.'),
+(21, 5, 'Em uma fila de prioridades encadeada ordenada, de onde se remove o próximo elemento e qual é o custo para localizar esse nó?', 'O próximo atendimento está no início da lista ordenada; a referência inicio permite acessá-lo diretamente, sem busca pela lista.', 'teorica', NULL, 'Pense onde permanece o nó de maior prioridade após cada inserção.'),
+(22, 5, 'Considerando menor número como maior prioridade, onde o novo nó de prioridade 1 entra nesta lista ordenada?', 'Como 1 é menor que 2, o novo nó precede o início atual e passa a ser a referência inicio.', 'codigo', '// inicio aponta para um nó de prioridade 2.
+No novo = new No(7, 1);
+if (inicio == null || novo.Prioridade < inicio.Prioridade)
+{
+    novo.Proximo = inicio;
+    inicio = novo;
+}', 'Compare a prioridade nova com a do primeiro nó.'),
+(23, 5, 'Por que o laço abaixo usa <= ao avançar sobre nós da mesma prioridade?', 'O avanço atravessa também os nós com prioridade igual, inserindo o novo após eles e preservando FIFO no empate.', 'codigo', '// inicio não é nulo e novo não precede inicio.
+No atual = inicio;
+while (atual.Proximo != null &&
+       atual.Proximo.Prioridade <= novo.Prioridade)
+{
+    atual = atual.Proximo;
+}
+novo.Proximo = atual.Proximo;
+atual.Proximo = novo;', 'Observe o que acontece quando Proximo.Prioridade é igual à de novo.'),
+(24, 5, 'Na lista A(1) → B(1) → C(3), onde o trecho insere D(2)?', 'O laço passa por B(1) e para antes de C(3); D(2) fica entre B e C, mantendo ordem crescente de prioridade.', 'codigo', '// novo representa D, com Prioridade = 2.
+No atual = inicio;
+while (atual.Proximo != null &&
+       atual.Proximo.Prioridade <= novo.Prioridade)
+    atual = atual.Proximo;
+novo.Proximo = atual.Proximo;
+atual.Proximo = novo;', 'Acompanhe a condição do laço para o próximo nó.'),
+(25, 6, 'Após Empilhar(10), Empilhar(20) e Empilhar(30) em uma pilha de nós, quais valores saem em duas remoções?', 'Cada empilhamento cria o novo topo; 30 sai primeiro, seguido de 20, conforme LIFO.', 'teorica', NULL, 'Acompanhe qual nó passa a ser o topo após cada inserção.'),
+(26, 6, 'Em uma pilha encadeada, qual ligação permite manter os elementos anteriores ao empilhar um novo nó?', 'O campo Proximo do novo nó aponta para o antigo topo antes de topo receber o novo nó; assim a cadeia anterior permanece acessível.', 'teorica', NULL, 'Considere para onde o novo nó deve apontar antes de mudar topo.'),
+(27, 6, 'Depois de desempilhar o único nó de uma pilha encadeada, qual é o estado correto?', 'O topo avança para Proximo, que é nulo no único nó; a pilha fica vazia com topo nulo.', 'teorica', NULL, 'Observe o campo Proximo de um nó sem sucessor.'),
+(28, 6, 'Se topo aponta para o nó 12 antes deste método, o que ocorre após Empilhar(25)?', 'O novo nó 25 aponta para o antigo topo 12 e se torna o topo; a sequência passa a ser 25 → 12.', 'codigo', 'public void Empilhar(int valor)
+{
+    No novo = new No(valor);
+    novo.Proximo = topo;
+    topo = novo;
+}', 'Leia as atribuições na ordem em que são executadas.'),
+(29, 6, 'Com topo em 9 → 4, qual valor o método retorna e onde topo passa a apontar?', 'O método salva 9, avança topo para o próximo nó 4 e retorna 9. O nó 4 permanece na pilha.', 'codigo', 'public int Desempilhar()
+{
+    if (topo == null) throw new InvalidOperationException();
+    int valor = topo.Valor;
+    topo = topo.Proximo;
+    return valor;
+}', 'Identifique o valor lido antes da mudança da referência topo.'),
+(30, 6, 'O que acontece ao chamar este método quando a pilha encadeada está vazia?', 'Com topo nulo, o método lança InvalidOperationException antes de acessar Valor; nenhum nó é criado.', 'codigo', 'public int ConsultarTopo()
+{
+    if (topo == null) throw new InvalidOperationException();
+    return topo.Valor;
+}', 'Observe a condição verificada antes do acesso ao nó.');
+
+INSERT INTO `quiz_alternativa` (`id_alternativa`, `id_pergunta`, `texto`, `correta`) VALUES
+(37, 13, '8 e 3', 1),
+(38, 13, '5 e 3', 0),
+(39, 13, '3 e 5', 0),
+(40, 13, '8 e 5', 0),
+(41, 14, 'Apenas inicio fica nulo; fim mantém o nó antigo.', 0),
+(42, 14, 'Apenas fim fica nulo; inicio mantém o nó antigo.', 0),
+(43, 14, 'inicio e fim ficam nulos.', 1),
+(44, 14, 'inicio e fim passam a apontar para um novo nó.', 0),
+(45, 15, 'Porque cada novo nó substitui inicio.', 0),
+(46, 15, 'Porque fim localiza a inserção e inicio localiza a remoção.', 1),
+(47, 15, 'Porque os nós ficam ordenados pelo valor.', 0),
+(48, 15, 'Porque Proximo aponta para todos os nós anteriores.', 0),
+(49, 16, 'inicio aponta para novo e fim fica nulo.', 0),
+(50, 16, 'inicio e fim apontam para novo.', 1),
+(51, 16, 'fim aponta para novo e inicio permanece nulo.', 0),
+(52, 16, 'novo.Proximo aponta para inicio.', 0),
+(53, 17, 'Devolve 2; início passa a 9.', 0),
+(54, 17, 'Devolve 4; início passa a 9.', 1),
+(55, 17, 'Devolve 9; início passa a 2.', 0),
+(56, 17, 'Devolve 4; início passa a 2.', 0),
+(57, 18, 'Para ligar o antigo último nó ao novo nó.', 1),
+(58, 18, 'Para remover o primeiro nó.', 0),
+(59, 18, 'Para ordenar os nós pelo valor.', 0),
+(60, 18, 'Para fazer novo apontar para o antigo inicio.', 0),
+(61, 19, 'A, C, B', 0),
+(62, 19, 'B, C, A', 1),
+(63, 19, 'C, B, A', 0),
+(64, 19, 'A, B, C', 0),
+(65, 20, 'B, A, C', 0),
+(66, 20, 'C, A, B', 0),
+(67, 20, 'A, B, C', 1),
+(68, 20, 'A, C, B', 0),
+(69, 21, 'Do fim, após percorrer todos os nós.', 0),
+(70, 21, 'Do início, por acesso direto à referência inicio.', 1),
+(71, 21, 'De uma posição aleatória, por busca binária.', 0),
+(72, 21, 'Do nó de maior valor, após ordenar novamente.', 0),
+(73, 22, 'Depois de todos os nós de prioridade 2.', 0),
+(74, 22, 'Antes do antigo início.', 1),
+(75, 22, 'No fim da lista, sem alterar inicio.', 0),
+(76, 22, 'No lugar do antigo início, descartando-o.', 0),
+(77, 23, 'Para inserir novo antes dos nós de mesma prioridade.', 0),
+(78, 23, 'Para manter novo após quem chegou antes com a mesma prioridade.', 1),
+(79, 23, 'Para inverter a ordem dos nós de prioridade menor.', 0),
+(80, 23, 'Para remover nós de prioridade repetida.', 0),
+(81, 24, 'Antes de A(1).', 0),
+(82, 24, 'Entre A(1) e B(1).', 0),
+(83, 24, 'Entre B(1) e C(3).', 1),
+(84, 24, 'Depois de C(3).', 0),
+(85, 25, '10 e 20', 0),
+(86, 25, '30 e 20', 1),
+(87, 25, '20 e 10', 0),
+(88, 25, '30 e 10', 0),
+(89, 26, 'novo.Proximo aponta para o antigo topo.', 1),
+(90, 26, 'O antigo topo aponta para todos os nós anteriores.', 0),
+(91, 26, 'topo aponta para o último nó da cadeia.', 0),
+(92, 26, 'Todos os nós são copiados para um vetor.', 0),
+(93, 27, 'topo permanece no nó removido.', 0),
+(94, 27, 'topo aponta para um vetor vazio.', 0),
+(95, 27, 'topo fica nulo.', 1),
+(96, 27, 'topo aponta para um novo nó com valor zero.', 0),
+(97, 28, 'topo continua em 12 e 25 vai ao fim.', 0),
+(98, 28, 'topo passa a 25, que aponta para 12.', 1),
+(99, 28, 'topo passa a 25 e o nó 12 é perdido.', 0),
+(100, 28, 'O valor 25 substitui o valor 12 no mesmo nó.', 0),
+(101, 29, 'Retorna 4; topo permanece em 9.', 0),
+(102, 29, 'Retorna 9; topo passa a 4.', 1),
+(103, 29, 'Retorna 9; topo fica nulo.', 0),
+(104, 29, 'Retorna 4; topo fica nulo.', 0),
+(105, 30, 'Retorna zero sem alterar topo.', 0),
+(106, 30, 'Cria um nó de valor zero.', 0),
+(107, 30, 'Lança InvalidOperationException.', 1),
+(108, 30, 'Retorna o valor do último nó removido.', 0);
 
 -- --------------------------------------------------------
 
@@ -397,19 +557,19 @@ ALTER TABLE `transacao_moeda`
 -- AUTO_INCREMENT de tabela `quiz_alternativa`
 --
 ALTER TABLE `quiz_alternativa`
-  MODIFY `id_alternativa` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
+  MODIFY `id_alternativa` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=109;
 
 --
 -- AUTO_INCREMENT de tabela `quiz_assunto`
 --
 ALTER TABLE `quiz_assunto`
-  MODIFY `id_assunto` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id_assunto` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de tabela `quiz_pergunta`
 --
 ALTER TABLE `quiz_pergunta`
-  MODIFY `id_pergunta` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id_pergunta` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT de tabela `quiz_resposta`

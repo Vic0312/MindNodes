@@ -109,10 +109,19 @@ try {
     if ($codigo !== 303 || !str_contains($corpo, 'Saldo insuficiente.') || !str_contains($corpo, '<strong>50</strong>')) throw new RuntimeException('Saldo insuficiente nao tratado.');
     echo "OK: compra repetida e saldo insuficiente sem novo debito\n";
     [$corpo, $codigo] = $pedir('/view/quiz.php?assunto=tad');
+    foreach (['Fila Encadeada FIFO', 'Fila de Prioridades Encadeada FIFO', 'Pilha Encadeada'] as $tituloNovo) {
+        if (!str_contains($corpo, $tituloNovo)) throw new RuntimeException('Assunto novo ausente da lista do Quiz.');
+    }
     if ($codigo !== 200 || !str_contains($corpo, 'public interface IPilha') || !str_contains($corpo, 'void Empilhar(int valor);')
         || !str_contains($corpo, 'Questão 4') || str_contains($corpo, 'Observe que há apenas assinaturas de métodos.')) throw new RuntimeException('Quiz de codigo nao renderizou corretamente.');
     if (!preg_match('~<article class="quiz-card" id="questao-1">.*?</article>~s', $corpo, $primeira) || str_contains($primeira[0], 'codigo-questao')) throw new RuntimeException('Teorica exibiu bloco de codigo.');
     echo "OK: quiz teorico e codigo sem dica automatica\n";
+    foreach (['fila-fifo', 'fila-prioridade', 'pilha-encadeada'] as $slugNovo) {
+        [$paginaNova, $statusNovo] = $pedir('/view/quiz.php?assunto=' . $slugNovo);
+        if ($statusNovo !== 200 || !str_contains($paginaNova, 'Questão 6') || substr_count($paginaNova, 'class="codigo-questao"') !== 3)
+            throw new RuntimeException('Seis perguntas ou tres blocos de codigo ausentes em ' . $slugNovo);
+    }
+    echo "OK: tres novos assuntos com codigo renderizado\n";
     $codigoEspecial = "if (a < b && texto != \"<> &\")\n{\n    Console.WriteLine(texto);\n}";
     $stmt = $db->prepare('UPDATE quiz_pergunta SET codigo = ? WHERE id_pergunta = 10');
     $stmt->bind_param('s', $codigoEspecial); $stmt->execute(); $stmt->close();

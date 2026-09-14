@@ -11,6 +11,9 @@ class QuizHabilidades
         'tad' => 'Um Tipo Abstrato de Dados define operações e comportamento sem exigir uma implementação interna específica.',
         'lista-simples' => 'Em uma lista simplesmente encadeada, cada nó guarda um valor e uma referência para o próximo nó.',
         'lista-dupla' => 'Em uma lista duplamente encadeada, cada nó mantém referências para o próximo e para o anterior.',
+        'fila-fifo' => 'Uma fila encadeada segue FIFO: o primeiro elemento inserido é o primeiro removido. Inserções ocorrem no fim e remoções no início.',
+        'fila-prioridade' => 'Uma fila de prioridade atende primeiro o menor número de prioridade e mantém FIFO entre nós com a mesma prioridade.',
+        'pilha-encadeada' => 'Uma pilha encadeada liga nós por referências e segue LIFO: o último inserido é o primeiro removido, sempre pelo topo.',
     ];
 
     private $quiz;
