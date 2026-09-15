@@ -6,6 +6,7 @@ if (!isset($_SESSION['usuario_id'])) {
     exit();
 }
 $nomeUsuario = $_SESSION['usuario_nome'] ?? 'Usuário';
+require_once __DIR__ . '/partials/multimidia.php';
 $fotoBanco = $_SESSION['usuario_foto'] ?? null;
 $fotoExibicao = '../img/default-img.avif';
 if (!empty($fotoBanco)) {
@@ -136,6 +137,8 @@ function diagramaPilha($valores, $descricao) {
     <link rel="stylesheet" href="../css/estruturas.css">
     <link rel="stylesheet" href="../css/fila_fifo.css">
     <link rel="stylesheet" href="../css/pilha_encadeada.css">
+    <link rel="stylesheet" href="../css/multimidia.css">
+    <script src="../js/multimidia.js" defer></script>
 </head>
 <body>
     <header class="topo">
@@ -159,6 +162,7 @@ function diagramaPilha($valores, $descricao) {
         <nav class="fila-indice" aria-label="Nesta aula">
             <a href="#conceito">Conceito e LIFO</a><a href="#representacao">Nós e topo</a><a href="#empilhar">Empilhar</a><a href="#desempilhar">Desempilhar</a><a href="#consultas">Consultas</a><a href="#implementacao">C# completo</a><a href="#exemplo">Exemplo</a><a href="#complexidade">Complexidade</a><a href="#comparacao">Comparações</a><a href="#erros">Erros</a><a href="#revisao">Revisão</a>
         </nav>
+        <nav class="midia-navegacao" aria-label="Recurso visual"><a href="#midia-pilha-encadeada">Ver LIFO passo a passo e vídeo</a></nav>
         <section class="fila-secao" id="conceito">
             <span class="fila-kicker">01 · Conceito</span><h2>Uma estrutura linear com uma regra de acesso</h2>
             <p>Uma pilha organiza elementos em sequência e concentra inserções, remoções e consultas no <strong>topo</strong>. Ela segue <strong>LIFO</strong>, do inglês <em>Last In, First Out</em>: <strong>último a entrar, primeiro a sair</strong>.</p>
@@ -178,6 +182,7 @@ function diagramaPilha($valores, $descricao) {
             <h3>Classe PilhaEncadeada e estado inicial</h3><div class="fila-codigo"><span>C# · estrutura inicial</span><pre tabindex="0"><code><?php codigoPilha($codigoBase); ?></code></pre></div>
             <p>O campo privado <code>topo</code> concentra o acesso aos nós. O construtor faz <code>topo = null</code>: não há nó algum, portanto a pilha está vazia. Não é necessário manter uma referência de fim.</p>
         </section>
+        <?php renderizarMultimidia('pilha-encadeada'); ?>
         <section class="fila-secao" id="empilhar">
             <span class="fila-kicker">03 · Inserção</span><h2>Empilhar / Push</h2><p>Adiciona um novo elemento no topo, preservando todos os nós anteriores abaixo dele.</p>
             <div class="fila-codigo"><span>C# · Empilhar</span><pre tabindex="0"><code><?php codigoPilha($codigoEmpilhar); ?></code></pre></div>

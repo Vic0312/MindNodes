@@ -49,6 +49,8 @@ try {
     $xpath = new DOMXPath($dom);
     foreach ($xpath->query('//main//a') as $link) {
         $href = $link->getAttribute('href');
+        // Fontes e vídeos externos não são rotas do servidor de teste.
+        if (str_starts_with($href, 'https://')) continue;
         if (str_starts_with($href, '#')) {
             verificar($dom->getElementById(substr($href, 1)) !== null, 'Ancora quebrada: ' . $href);
         } else {

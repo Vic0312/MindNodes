@@ -34,6 +34,7 @@ if (!empty($fotoBanco)) {
 }
 
 $pagina = 'estruturas';
+require_once __DIR__ . '/partials/multimidia.php';
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -43,6 +44,8 @@ $pagina = 'estruturas';
     <title>MindNodes | Estruturas</title>
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/estruturas.css">
+    <link rel="stylesheet" href="../css/multimidia.css">
+    <script src="../js/multimidia.js" defer></script>
 </head>
 <body>
     <header class="topo">
@@ -143,6 +146,19 @@ $pagina = 'estruturas';
         </a>
 
     </section>
+    <nav class="midia-navegacao" aria-label="Recursos visuais das seis estruturas">
+        <a href="#midia-tad">TAD visual</a>
+        <a href="#midia-simples">Lista Simples visual</a>
+        <a href="#midia-dupla">Lista Dupla visual</a>
+        <a href="fila_fifo.php#midia-fila-fifo">Fila FIFO visual</a>
+        <a href="fila_prioridade.php#midia-fila-prioridade">Fila de Prioridades visual</a>
+        <a href="pilha_encadeada.php#midia-pilha-encadeada">Pilha visual</a>
+    </nav>
+    <?php
+    renderizarMultimidia('tad');
+    renderizarMultimidia('simples');
+    renderizarMultimidia('dupla');
+    ?>
 </main>
 </body>
 </html>

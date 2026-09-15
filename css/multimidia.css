@@ -1,0 +1,47 @@
+/* Recursos educacionais autorais; sem dependência de assets do Avatar. */
+.midia-aula { min-width: 0; margin: 28px 0; padding: clamp(16px, 4vw, 36px); background: #fff; color: #243c40; border: 1px solid #d9e2d9; border-radius: 24px; scroll-margin-top: 20px; }
+.midia-aula [hidden] { display: none !important; }
+.midia-aula h2 { margin: 8px 0 18px; font-size: clamp(1.5rem, 3vw, 2.1rem); }
+.midia-aula h3, .midia-aula h4 { margin: 8px 0 12px; }
+.midia-aula p, .midia-aula figcaption { line-height: 1.7; }
+.midia-aula p + p { margin-top: 12px; }
+.midia-etiqueta { font-size: .8rem; text-transform: uppercase; font-weight: 800; color: #356b5f; }
+.midia-aula p, .midia-aula h2, .midia-aula h3, .midia-aula a { overflow-wrap: anywhere; }
+.midia-aula a { color: #275a4f; text-decoration: underline; text-underline-offset: 3px; }
+.midia-controles { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 20px 0; }
+.midia-aula button { max-width: 100%; min-height: 44px; padding: 10px 14px; border: 2px solid #356b5f; border-radius: 10px; background: #356b5f; color: white; cursor: pointer; font: inherit; font-weight: 700; }
+.midia-aula button:disabled { opacity: .55; cursor: default; }
+.midia-aula button[aria-pressed="true"] { text-decoration: underline; background: #243c40; }
+.midia-aula :focus-visible { outline: 3px solid #52796f; outline-offset: 4px; }
+.midia-status { flex-basis: 100%; font-weight: 700; }
+.midia-passo { margin: 18px 0; padding: clamp(12px, 3vw, 24px); border: 1px solid #d6e1d6; border-radius: 16px; background: #f6faf6; }
+.midia-passo figure { margin: 18px 0 0; }
+.midia-passo figcaption { font-weight: 800; }
+.midia-cadeia { display: flex; align-items: center; gap: 12px; max-width: 100%; overflow-x: auto; padding: 18px 4px; }
+.midia-no { flex: 0 0 auto; display: grid; gap: 5px; min-width: 126px; padding: 14px; border: 2px solid #52796f; border-radius: 12px; background: white; text-align: center; }
+.midia-no > strong { font-size: 1.65rem; }
+.midia-no > small { font-size: .72rem; font-weight: 800; }
+.midia-no > span { font-family: Consolas, monospace; font-size: .85rem; }
+.midia-seta { flex: 0 0 auto; font-size: 1.5rem; }
+.midia-vertical { flex-direction: column; }
+.midia-novo { padding: 12px; border: 2px dashed #52796f; border-radius: 10px; }
+.midia-alternativas { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; margin: 16px 0; }
+.midia-alternativas > div { min-width: 0; padding: 16px; border: 1px solid #c8d9cd; border-radius: 12px; background: #eaf2eb; }
+.midia-contrato { margin: 22px 0; text-align: center; }
+.midia-interface { display: grid; gap: 12px; padding: 22px; border: 2px solid #52796f; border-radius: 16px; }
+.midia-contrato > span { display: block; font-size: 2rem; }
+.midia-vetor { display: flex; gap: 6px; flex-wrap: wrap; margin: 20px 0; }
+.midia-vetor > span { display: grid; gap: 8px; padding: 12px; border: 2px solid #52796f; border-radius: 8px; background: white; }
+.midia-vetor b { font-size: 1.5rem; }
+.midia-conclusao { padding: 16px; border-left: 4px solid #52796f; background: #eaf2eb; }
+.midia-video { margin-top: 24px; padding-top: 20px; border-top: 1px solid #c8d9cd; }
+.midia-video button { margin: 16px 0; }
+.midia-player { width: 100%; aspect-ratio: 16 / 9; margin: 16px 0; }
+.midia-player iframe { width: 100%; height: 100%; border: 0; border-radius: 12px; }
+.midia-nota { font-size: .85rem; }
+.midia-navegacao { display: flex; gap: 12px; flex-wrap: wrap; padding: 18px; margin: 24px 0; background: #fff; border-radius: 16px; }
+.midia-navegacao a { color: #275a4f; text-decoration: underline; padding: 8px; }
+@media (prefers-reduced-motion: no-preference) { .midia-aula[data-iniciada] .midia-passo:not([hidden]) { animation: midia-entrada .18s ease-out; } }
+@keyframes midia-entrada { from { opacity: .5; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+@media (max-width: 650px) { .midia-alternativas { grid-template-columns: 1fr; } }
+@media print { .midia-aula .midia-passo[hidden] { display: block !important; } .midia-controles, .midia-video button, .midia-player { display: none !important; } }

@@ -5,6 +5,7 @@ if (!isset($_SESSION['usuario_id'])) {
     exit();
 }
 $nomeUsuario = $_SESSION['usuario_nome'] ?? 'Usuário';
+require_once __DIR__ . '/partials/multimidia.php';
 $fotoBanco = $_SESSION['usuario_foto'] ?? null;
 $fotoExibicao = '../img/default-img.avif';
 if (!empty($fotoBanco)) {
@@ -163,6 +164,8 @@ function codigoFila($codigo) { echo htmlspecialchars($codigo, ENT_QUOTES | ENT_S
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/estruturas.css">
     <link rel="stylesheet" href="../css/fila_fifo.css">
+    <link rel="stylesheet" href="../css/multimidia.css">
+    <script src="../js/multimidia.js" defer></script>
 </head>
 <body>
     <header class="topo">
@@ -190,6 +193,7 @@ function codigoFila($codigo) { echo htmlspecialchars($codigo, ENT_QUOTES | ENT_S
             <a href="#implementacao">Código completo</a><a href="#complexidade">Complexidade</a><a href="#revisao">Revisão</a>
         </nav>
 
+        <nav class="midia-navegacao" aria-label="Recurso visual"><a href="#midia-fila-fifo">Ver FIFO passo a passo e vídeo</a></nav>
         <section id="conceito" class="fila-secao">
             <span class="fila-kicker">01 · Conceito</span><h2>O atendimento segue a ordem de chegada</h2>
             <p>Uma fila é uma estrutura linear: cada elemento aguarda sua vez e o primeiro que entrou é o primeiro a sair. Essa regra é chamada <strong>FIFO</strong>, de <em>First In, First Out</em> — primeiro a entrar, primeiro a sair. Pense em três pessoas que chegam ao atendimento na ordem A, B e C. A ordem de saída será A, depois B, depois C.</p>
@@ -215,6 +219,7 @@ function codigoFila($codigo) { echo htmlspecialchars($codigo, ENT_QUOTES | ENT_S
             <p><code>Valor</code> guarda o inteiro. <code>Proximo</code> é uma referência para outro <code>No</code>; no construtor começa como <code>null</code>, pois o nó ainda não tem sucessor. A classe <code>FilaEncadeada</code> manterá <code>inicio</code> e <code>fim</code>, inicialmente nulos.</p>
         </section>
 
+        <?php renderizarMultimidia('fila-fifo'); ?>
         <section id="operacoes" class="fila-secao">
             <span class="fila-kicker">03 · Operações</span><h2>Como as referências mudam</h2>
             <article class="fila-operacao" id="enfileirar"><h3>Enfileirar / Enqueue <span>inserção no fim</span></h3>

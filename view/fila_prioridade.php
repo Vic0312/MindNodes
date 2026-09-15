@@ -5,6 +5,7 @@ if (!isset($_SESSION['usuario_id'])) {
     exit();
 }
 $nomeUsuario = $_SESSION['usuario_nome'] ?? 'Usuário';
+require_once __DIR__ . '/partials/multimidia.php';
 $fotoBanco = $_SESSION['usuario_foto'] ?? null;
 $fotoExibicao = '../img/default-img.avif';
 if (!empty($fotoBanco)) {
@@ -175,6 +176,8 @@ function codigoPrioridade($codigo) { echo htmlspecialchars($codigo, ENT_QUOTES |
     <link rel="stylesheet" href="../css/estruturas.css">
     <link rel="stylesheet" href="../css/fila_fifo.css">
     <link rel="stylesheet" href="../css/fila_prioridade.css">
+    <link rel="stylesheet" href="../css/multimidia.css">
+    <script src="../js/multimidia.js" defer></script>
 </head>
 <body>
     <header class="topo">
@@ -202,6 +205,7 @@ function codigoPrioridade($codigo) { echo htmlspecialchars($codigo, ENT_QUOTES |
             <a href="#complexidade">Complexidade</a><a href="#revisao">Revisão</a>
         </nav>
 
+        <nav class="midia-navegacao" aria-label="Recurso visual"><a href="#midia-fila-prioridade">Ver prioridade e empate passo a passo</a></nav>
         <section class="fila-secao" id="conceito">
             <span class="fila-kicker">01 · Conceito</span><h2>Prioridade decide; empate respeita a chegada</h2>
             <p>Numa fila FIFO comum, todos são atendidos somente pela ordem de chegada. Nesta fila, cada elemento tem uma <strong>Prioridade</strong>. Adotamos uma convenção única: <strong>menor número = maior prioridade</strong>. Assim, prioridade 1 vem antes de 2, e 2 vem antes de 3. Entre elementos com a <strong>mesma</strong> prioridade, a ordem de chegada continua valendo: isso é FIFO no empate.</p>
@@ -225,6 +229,7 @@ function codigoPrioridade($codigo) { echo htmlspecialchars($codigo, ENT_QUOTES |
             <p>O construtor recebe valor e prioridade; <code>Proximo</code> começa em <code>null</code>. A classe <code>FilaPrioridadeEncadeada</code> precisa apenas de <code>inicio</code>: a inserção procura a posição correta e a remoção sempre ocorre na frente.</p>
         </section>
 
+        <?php renderizarMultimidia('fila-prioridade'); ?>
         <section class="fila-secao" id="insercao">
             <span class="fila-kicker">03 · Operação principal</span><h2>Enfileirar: encontrar a posição sem desfazer FIFO</h2>
             <p><code>Enfileirar(valor, prioridade)</code> cria um nó e o insere na lista ordenada. Se a fila estiver vazia, <code>inicio = null</code>, o novo nó se torna o início. Se o novo nó tiver prioridade numericamente menor que a do atual início, entra antes dele. Nos demais casos, o método percorre os nós até encontrar o último que deve ficar à frente do novo.</p>
