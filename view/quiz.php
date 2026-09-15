@@ -56,34 +56,12 @@ unset($_SESSION['quiz_habilidade_mensagem']);
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/quiz.css">
     <script src="../js/quiz-habilidades.js" defer></script>
+    <link rel="stylesheet" href="../css/navegacao.css">
+    <script src="../js/navegacao.js" defer></script>
 </head>
 
 <body>
-    <header class="topo">
-        <a class="marca" href="../view/home.php">
-            <span class="simbolo-logo">∞</span>
-            <strong>Mind<span>Nodes</span></strong>
-        </a>
-
-        <nav class="menu">
-            <a href="../view/home.php">Início</a>
-            <a href="../view/sobre.php">Sobre</a>
-            <a href="../view/estruturas.php">Estruturas</a>
-            <a href="../view/exemplos.php">Exemplos</a>
-            <a href="../view/simulador.php">Simulador</a>
-            <a class="ativo" href="../view/quiz.php">Quiz</a>
-            <a href="../view/desempenho.php">Desempenho</a>
-            
-        </nav>
-
-        <a class="perfil-usuario" href="../view/perfil.php" title="Perfil de <?php echo htmlspecialchars($nomeUsuario); ?>">
-            <img
-                src="<?php echo htmlspecialchars($fotoExibicao); ?>"
-                alt="Foto de perfil de <?php echo htmlspecialchars($nomeUsuario); ?>"
-                class="foto-perfil-nav"
-            >
-        </a>
-    </header>
+    <?php require __DIR__ . '/partials/header.php'; ?>
 
     <main>
         <section class="banner-interno">

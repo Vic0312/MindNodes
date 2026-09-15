@@ -1,0 +1,26 @@
+/* Navegação compartilhada; seletores isolados dos componentes das aulas. */
+.mn-header { width: min(1180px, calc(100% - 36px)); margin: 18px auto 0; padding: 20px 24px; display: flex; align-items: center; flex-wrap: wrap; gap: 16px; background: #223138; color: #f6f8f4; border: 1px solid #52796f; border-radius: 24px; box-shadow: 0 18px 38px rgba(34,49,56,.18); }
+.mn-header [hidden] { display: none !important; }
+.mn-marca { color: #f6f8f4; font-size: 1.5rem; font-weight: 800; }
+.mn-marca span { color: #a5cab0; }
+.mn-saldo { margin-left: auto; color: #f6f8f4; background: #354f52; border: 1px solid #84a98c; padding: 10px 14px; border-radius: 12px; font-weight: 700; }
+.mn-menu { flex-basis: 100%; min-width: 0; }
+.mn-links { display: flex; flex-wrap: wrap; gap: 8px; }
+.mn-links a, .mn-apoio a, .mn-estruturas a { display: block; color: #f6f8f4; padding: 10px 12px; border-radius: 10px; overflow-wrap: anywhere; }
+.mn-links a:hover, .mn-links .mn-ativo { background: #354f52; }
+.mn-links .mn-ativo { text-decoration: underline; text-underline-offset: 5px; font-weight: 800; }
+.mn-estruturas { margin-top: 12px; border-top: 1px solid #52796f; padding-top: 10px; }
+.mn-estruturas summary { cursor: pointer; padding: 8px 12px; font-weight: 700; }
+.mn-estruturas > div { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.mn-apoio { display: flex; flex-wrap: wrap; font-size: .88rem; }
+.mn-toggle { padding: 10px 14px; border: 1px solid #84a98c; border-radius: 10px; background: #354f52; color: #fff; font: inherit; cursor: pointer; }
+.mn-header :focus-visible { outline: 3px solid #b8dbc2; outline-offset: 3px; }
+.mn-auth-voltar { display: block; text-align: center; margin: 12px 0; color: #275a4f; text-decoration: underline; }
+@media (max-width: 650px) {
+    .mn-header { width: calc(100% - 24px); padding: 16px; gap: 12px; }
+    .mn-marca { flex-basis: 100%; }
+    .mn-saldo { margin-left: 0; font-size: .9rem; }
+    .mn-toggle { margin-left: auto; }
+    .mn-links { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .mn-estruturas > div { grid-template-columns: 1fr; }
+}

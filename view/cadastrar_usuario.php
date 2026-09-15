@@ -35,6 +35,7 @@ $mensagemErro = $errosCadastro[$codigoErro] ?? null;
 <section class="login-background">
 
     <section class="login-container">
+        <a href="home.php">← Voltar à Home</a>
 
         <section class="login-logo">
             <i class="fa-solid fa-circle-nodes"></i>

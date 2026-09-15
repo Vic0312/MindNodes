@@ -52,19 +52,11 @@ foreach ($itens as $item) {
     <title>MindNodes | Meu Avatar</title>
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/avatar.css">
+    <link rel="stylesheet" href="../css/navegacao.css">
+    <script src="../js/navegacao.js" defer></script>
 </head>
 <body>
-    <header class="topo">
-        <a class="marca" href="../index.php" aria-label="MindNodes"><span class="simbolo-logo">∞</span><strong>Mind<span>Nodes</span></strong></a>
-        <nav class="menu" aria-label="Navegação principal">
-            <a href="home.php">Início</a>
-            <a href="estruturas.php">Estruturas</a>
-            <a href="quiz.php">Quiz</a>
-            <a href="desempenho.php">Desempenho</a>
-            <a href="loja.php">Loja</a>
-            <a href="perfil.php">Meu perfil</a>
-        </nav>
-    </header>
+    <?php require __DIR__ . '/partials/header.php'; ?>
 
     <main class="avatar-page">
         <div class="avatar-heading">

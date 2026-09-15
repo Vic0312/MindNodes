@@ -26,6 +26,7 @@ unset($_SESSION['recuperacao_sucesso']);
 <section class="login-background">
 
     <section class="login-container">
+        <a href="home.php">← Voltar à Home</a>
 
         <section class="login-logo">
             <i class="fa-solid fa-circle-nodes"></i>

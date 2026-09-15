@@ -62,7 +62,7 @@ try {
         $dom = documento($pagina);
         $xpath = new DOMXPath($dom);
         verificar($xpath->query('//a[@data-exemplo]')->length === 6, 'Menu incompleto');
-        verificar($xpath->query('//a[@aria-current="page"]')->item(0)->getAttribute('data-exemplo') === $chave, 'Ativo incorreto');
+        verificar($xpath->query('//a[@data-exemplo and @aria-current="page"]')->item(0)->getAttribute('data-exemplo') === $chave, 'Ativo incorreto');
         foreach (['codigo-exemplo' => 'codigo', 'uso-exemplo' => 'uso', 'saida-exemplo' => 'saida'] as $id => $campo) {
             verificar($dom->getElementById($id)->textContent === $exemplo[$campo], 'Texto/escape incorreto: ' . $id);
         }

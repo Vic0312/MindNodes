@@ -2,10 +2,6 @@
 
 session_start();
 
-if (!isset($_SESSION['usuario_id'])) {
-    header("Location: ../view/login.php");
-    exit();
-}
 
 $pagina = "inicio";
 
@@ -44,44 +40,23 @@ if (!empty($fotoBanco)) {
     <title>MindNodes | Início</title>
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/home.css">
+    <link rel="stylesheet" href="../css/navegacao.css">
+    <script src="../js/navegacao.js" defer></script>
 </head>
 <body>
-    <header class="topo">
-        <a class="marca" href="../index.php" aria-label="MindNodes">
-            <span class="simbolo-logo">∞</span>
-            <strong>Mind<span>Nodes</span></strong>
-        </a>
-
-        <nav class="menu">
-            <a class="ativo" href="../view/home.php">Início</a>
-            <a href="../view/sobre.php">Sobre</a>
-            <a href="../view/estruturas.php">Estruturas</a>
-            <a href="../view/exemplos.php">Exemplos</a>
-            <a href="../view/simulador.php">Simulador</a>
-            <a href="../view/quiz.php">Quiz</a>
-            <a href="../view/desempenho.php">Desempenho</a>
-            <a href="../view/loja.php">Loja</a>
-        </nav>
-
-        <a class="perfil-usuario" href="../view/perfil.php" title="Perfil de <?php echo htmlspecialchars($nomeUsuario); ?>">
-            <img
-                src="<?php echo htmlspecialchars($fotoExibicao); ?>"
-                alt="Foto de perfil de <?php echo htmlspecialchars($nomeUsuario); ?>"
-                class="foto-perfil-nav"
-            >
-        </a>
-    </header>
+    <?php require __DIR__ . '/partials/header.php'; ?>
 
     <main>
         <section class="hero">
             <section class="hero-texto">
                 <span class="etiqueta">Ambiente de Ensino de Estruturas de Dados</span>
+                <?php if ($navegacao['autenticado']): ?><p class="home-saudacao">Olá, <?php echo htmlspecialchars($navegacao['nome'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>!</p><?php endif; ?>
 
-                <h1>Aprenda estruturas de dados de um jeito visual e conectado.</h1>
+                <h1>Aprenda Estruturas de Dados de forma visual e interativa.</h1>
 
                 <p>
-                    Estude TAD, listas encadeadas e conceitos essenciais com explicações organizadas,
-                    exemplos em C#, recursos visuais e atividades práticas para reforçar o aprendizado.
+                    Estude conceitos e operações, consulte exemplos em C# e pratique no Quiz.
+                    Ganhe moedas, explore a Loja e personalize seu Avatar com itens e habilidades.
                 </p>
 
                 <section class="acoes">
@@ -112,7 +87,7 @@ if (!empty($fotoBanco)) {
 
         <section class="resumo-plataforma">
             <article>
-                <strong>3</strong>
+                <strong>6</strong>
                 <span>estruturas principais</span>
             </article>
 
@@ -143,35 +118,19 @@ if (!empty($fotoBanco)) {
             </section>
 
             <section class="cards-principais">
-                <article class="card card-branco">
-                    <span class="icone-card">⬡</span>
-                    <h3>TAD</h3>
-                    <p>
-                        Entenda o conceito de Tipo Abstrato de Dados, suas operações e sua importância
-                        para organizar melhor a lógica dos programas.
-                    </p>
-                    <a href="../view/estruturas.php#tad">Explorar conteúdo →</a>
-                </article>
-
-                <article class="card card-verde">
-                    <span class="mini-nos">10 → 20 → 30</span>
-                    <h3>Lista Simplesmente Encadeada</h3>
-                    <p>
-                        Aprenda como cada nó armazena um dado e aponta para o próximo elemento da sequência.
-                    </p>
-                    <a href="../view/estruturas.php#lista-simples">Ver estrutura →</a>
-                </article>
-
-                <article class="card card-branco">
-                    <span class="mini-nos">10 ⇄ 20 ⇄ 30</span>
-                    <h3>Lista Duplamente Encadeada</h3>
-                    <p>
-                        Veja como a navegação em duas direções facilita remoções, inserções e percursos.
-                    </p>
-                    <a href="../view/estruturas.php#lista-dupla">Estudar agora →</a>
-                </article>
+                <article class="card card-branco"><h3>Conteúdos</h3><p>Aprenda os conceitos e operações das principais estruturas estudadas.</p><a href="estruturas.php">Estudar estruturas →</a></article>
+                <article class="card card-verde"><h3>Exemplos em C#</h3><p>Veja implementações práticas das estruturas ensinadas.</p><a href="exemplos.php">Ver exemplos →</a></article>
+                <article class="card card-branco"><h3>Quiz</h3><p>Teste seus conhecimentos com questões teóricas e de código.</p><a href="<?php echo $navegacao['autenticado'] ? 'quiz.php' : 'login.php'; ?>">Praticar →</a></article>
+                <article class="card card-branco"><h3>Moedas e personalização</h3><p>Ganhe moedas respondendo ao Quiz, use-as na Loja e personalize seu Avatar. Equipe itens com habilidades para usar durante o Quiz.</p><a href="<?php echo $navegacao['autenticado'] ? 'avatar.php' : 'cadastrar_usuario.php'; ?>">Conhecer a personalização →</a></article>
             </section>
         </section>
+        <section class="home-atalhos" aria-labelledby="home-estruturas">
+            <h2 id="home-estruturas">O que você pode aprender</h2>
+            <div><?php foreach ($navegacao['estruturas'] as $nome => $destino): ?><a href="<?php echo $destino; ?>"><?php echo $nome; ?></a><?php endforeach; ?></div>
+        </section>
+        <?php if ($navegacao['autenticado']): ?>
+        <section class="home-atalhos" aria-labelledby="home-continuar"><h2 id="home-continuar">Continuar no MindNodes</h2><div><a href="quiz.php">Quiz</a><a href="avatar.php">Meu Avatar</a><a href="loja.php">Loja</a><a href="desempenho.php">Meu Desempenho</a></div></section>
+        <?php endif; ?>
 
         <section class="bloco-aprendizado">
             <section class="bloco-texto">

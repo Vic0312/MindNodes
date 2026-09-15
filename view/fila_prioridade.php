@@ -178,20 +178,11 @@ function codigoPrioridade($codigo) { echo htmlspecialchars($codigo, ENT_QUOTES |
     <link rel="stylesheet" href="../css/fila_prioridade.css">
     <link rel="stylesheet" href="../css/multimidia.css">
     <script src="../js/multimidia.js" defer></script>
+    <link rel="stylesheet" href="../css/navegacao.css">
+    <script src="../js/navegacao.js" defer></script>
 </head>
 <body>
-    <header class="topo">
-        <a class="marca" href="../view/home.php"><span class="simbolo-logo">∞</span><strong>Mind<span>Nodes</span></strong></a>
-        <nav class="menu" aria-label="Navegação principal">
-            <a href="../view/home.php">Início</a><a href="../view/sobre.php">Sobre</a>
-            <a class="ativo" href="../view/estruturas.php">Estruturas</a><a href="../view/exemplos.php">Exemplos</a>
-            <a href="../view/simulador.php">Simulador</a><a href="../view/quiz.php">Quiz</a>
-            <a href="../view/desempenho.php">Desempenho</a>
-        </nav>
-        <a class="perfil-usuario" href="../view/perfil.php" title="Perfil de <?php echo htmlspecialchars($nomeUsuario, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>">
-            <img src="<?php echo htmlspecialchars($fotoExibicao, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>" alt="Foto de perfil de <?php echo htmlspecialchars($nomeUsuario, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>" class="foto-perfil-nav">
-        </a>
-    </header>
+    <?php require __DIR__ . '/partials/header.php'; ?>
     <main class="aula-fila aula-prioridade">
         <section class="banner-interno fila-hero">
             <span class="etiqueta">Estruturas de Dados · Aula</span>

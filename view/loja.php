@@ -34,14 +34,11 @@ try {
     <title>MindNodes | Loja</title>
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/loja.css">
+    <link rel="stylesheet" href="../css/navegacao.css">
+    <script src="../js/navegacao.js" defer></script>
 </head>
 <body>
-<header class="topo">
-    <a class="marca" href="../index.php" aria-label="MindNodes"><span class="simbolo-logo">∞</span><strong>Mind<span>Nodes</span></strong></a>
-    <nav class="menu" aria-label="Navegação principal">
-        <a href="home.php">Início</a><a href="estruturas.php">Estruturas</a><a href="quiz.php">Quiz</a><a href="desempenho.php">Desempenho</a><a class="ativo" href="loja.php">Loja</a><a href="perfil.php">Meu perfil</a>
-    </nav>
-</header>
+<?php require __DIR__ . '/partials/header.php'; ?>
 <main class="loja-page">
     <section class="loja-hero">
         <div><span class="loja-eyebrow">Coleção MindNodes</span><h1>Loja</h1><p>Escolha peças para o seu Avatar. Depois da compra, equipe-as em Meu Avatar.</p></div>

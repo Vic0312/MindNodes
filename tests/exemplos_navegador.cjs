@@ -68,8 +68,8 @@ const assert = require('node:assert/strict');
                         titulo: document.getElementById('titulo-codigo').textContent === exemplo.titulo,
                         texto: document.getElementById('codigo-exemplo').textContent === exemplo.codigo && document.getElementById('uso-exemplo').textContent === exemplo.uso && document.getElementById('saida-exemplo').textContent === exemplo.saida,
                         pre: [...document.querySelectorAll('pre')].every(e => getComputedStyle(e).overflowX === 'auto' && getComputedStyle(e.querySelector('code')).whiteSpace === 'pre' && e.tabIndex === 0),
-                        ativo: document.querySelectorAll('[aria-current="page"]').length === 1 && document.querySelector('[aria-current="page"]').dataset.exemplo === '${slug}',
-                        sublinhado: getComputedStyle(document.querySelector('[aria-current="page"]')).textDecorationLine.includes('underline'),
+                        ativo: document.querySelectorAll('[data-exemplo][aria-current="page"]').length === 1 && document.querySelector('[data-exemplo][aria-current="page"]').dataset.exemplo === '${slug}',
+                        sublinhado: getComputedStyle(document.querySelector('[data-exemplo][aria-current="page"]')).textDecorationLine.includes('underline'),
                         links: document.getElementById('teoria-exemplo').getAttribute('href') === exemplo.teoria && document.getElementById('quiz-exemplo').getAttribute('href') === 'quiz.php?assunto=' + exemplo.quiz,
                         url: new URLSearchParams(location.search).get('estrutura') === '${slug}'
                     };
@@ -80,15 +80,15 @@ const assert = require('node:assert/strict');
             console.log(`PASSOU: seis seleções a ${largura}px; conteúdo, links, estado ativo e rolagem do código.`);
         }
         await avaliar('history.back()');
-        await esperar('document.querySelector("[aria-current=page]").dataset.exemplo === "fila-prioridade"');
+        await esperar('document.querySelector("[data-exemplo][aria-current=page]").dataset.exemplo === "fila-prioridade"');
         await avaliar('history.forward()');
-        await esperar('document.querySelector("[aria-current=page]").dataset.exemplo === "pilha-encadeada"');
+        await esperar('document.querySelector("[data-exemplo][aria-current=page]").dataset.exemplo === "pilha-encadeada"');
         await avaliar('document.querySelector("[data-exemplo=simples]").focus()');
         await enviar('Input.dispatchKeyEvent', { type: 'keyDown', key: 'Enter', code: 'Enter', windowsVirtualKeyCode: 13 });
         await enviar('Input.dispatchKeyEvent', { type: 'keyUp', key: 'Enter', code: 'Enter', windowsVirtualKeyCode: 13 });
-        await esperar('document.querySelector("[aria-current=page]").dataset.exemplo === "simples"');
+        await esperar('document.querySelector("[data-exemplo][aria-current=page]").dataset.exemplo === "simples"');
         await enviar('Page.reload');
-        await esperar('document.readyState === "complete" && document.querySelector("[aria-current=page]")?.dataset.exemplo === "simples"');
+        await esperar('document.readyState === "complete" && document.querySelector("[data-exemplo][aria-current=page]")?.dataset.exemplo === "simples"');
         assert.equal(erros.length, 0, JSON.stringify(erros));
         console.log('PASSOU: teclado, voltar/avançar, recarregar seleção e ausência de erros JavaScript.');
         await enviar('Browser.close');

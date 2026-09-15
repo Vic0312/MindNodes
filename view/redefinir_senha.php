@@ -31,6 +31,7 @@ unset($_SESSION['recuperacao_erro']);
 <body class="login-body">
 <section class="login-background">
     <section class="login-container">
+        <a href="home.php">← Voltar à Home</a>
         <section class="login-logo">
             <i class="fa-solid fa-circle-nodes"></i>
             <h1>Mind<span>Nodes</span></h1>
