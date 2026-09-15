@@ -136,6 +136,12 @@ $pagina = 'estruturas';
             <span>Estudar Fila de Prioridades →</span>
         </a>
 
+        <a class="conteudo-link" id="pilha-encadeada" href="../view/pilha_encadeada.php">
+            <h2>Pilha Encadeada</h2>
+            <p>Entenda LIFO, os nós e a referência topo. Aprenda a empilhar, desempilhar e consultar com exemplos completos em C#.</p>
+            <span>Estudar Pilha Encadeada →</span>
+        </a>
+
     </section>
 </main>
 </body>

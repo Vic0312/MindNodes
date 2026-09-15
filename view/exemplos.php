@@ -78,6 +78,7 @@ $pagina = 'exemplos';
                 <a class="ativo" href="#" data-exemplo="tad">TAD - Tipo Abstrato de Dados</a>
                 <a href="#" data-exemplo="simples">Lista Simplesmente Encadeada</a>
                 <a href="#" data-exemplo="dupla">Lista Duplamente Encadeada</a>
+                <a href="../view/pilha_encadeada.php">Pilha Encadeada · aula completa</a>
             </aside>
 
             <section class="codigo-box">
@@ -198,7 +199,7 @@ public class No
             }
         };
 
-        const links = document.querySelectorAll(".menu-lateral a");
+        const links = document.querySelectorAll(".menu-lateral a[data-exemplo]");
         const titulo = document.getElementById("titulo-codigo");
         const codigo = document.getElementById("codigo-exemplo");
         const textoExplicacao = document.getElementById("texto-explicacao");

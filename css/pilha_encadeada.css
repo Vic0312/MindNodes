@@ -1,0 +1,9 @@
+/* Reutiliza o padrão educacional das filas; ajustes exclusivos desta aula. */
+.aula-pilha .pilha-diagrama { display: flex; flex-direction: column; align-items: center; gap: 8px; min-width: 0; margin: 22px 0; padding: 20px; border-radius: 18px; background: #eaf2eb; color: #243c40; text-align: center; }
+.aula-pilha .pilha-diagrama figcaption { max-width: 48ch; margin-bottom: 10px; line-height: 1.6; }
+.aula-pilha .pilha-diagrama .fila-no { width: min(100%, 180px); min-width: 0; }
+.aula-pilha .fila-secao a:not(.fila-cta) { color: #275a4f; text-decoration: underline; text-underline-offset: 3px; }
+.aula-pilha .fila-secao { overflow-wrap: anywhere; }
+.aula-pilha pre { overflow-wrap: normal; }
+.aula-pilha pre:focus-visible, .aula-pilha .fila-tabela:focus-visible { outline: 3px solid #52796f; outline-offset: 3px; }
+@media (max-width: 520px) { .aula-pilha .pilha-diagrama { padding: 14px; } }
