@@ -127,7 +127,8 @@
 
 .area-codigo {
     display: grid;
-    grid-template-columns: 220px 1fr 330px;
+    grid-template-columns: 220px minmax(0, 1fr);
+    align-items: start;
     gap: 18px;
     margin: 28px 0;
 }
@@ -158,9 +159,13 @@
 .menu-lateral .ativo {
     background: linear-gradient(135deg, #52796F, #84A98C);
     color: var(--white);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    font-weight: 700;
 }
 
 .codigo-box {
+    min-width: 0;
     overflow: hidden;
     background: linear-gradient(135deg, #2F3E46, #354F52);
     color: #F6F8F4;
@@ -182,6 +187,19 @@ pre {
     line-height: 1.7;
     color: #CAD2C5;
 }
+
+.codigo-box code { font-family: Consolas, 'Courier New', monospace; white-space: pre; tab-size: 4; }
+.codigo-box pre { max-width: 100%; font-size: .92rem; }
+.exemplo-resumo { padding: 20px; line-height: 1.7; }
+.exemplo-resumo h3 { margin-top: 18px; }
+.exemplo-resumo ul, .explicacao-card ul { padding-left: 22px; line-height: 1.7; }
+.exemplo-nota { margin-top: 18px; font-size: .88rem; }
+.codigo-rotulo { padding: 14px 20px; background: rgba(255,255,255,.06); }
+.explicacao-card { grid-column: 2; min-width: 0; }
+.exemplo-acoes { display: flex; flex-wrap: wrap; gap: 12px; }
+.exemplo-acoes a { padding: 12px 16px; border-radius: 12px; background: #354f52; color: #fff; font-weight: 700; }
+.area-codigo a:focus-visible, .area-codigo pre:focus-visible { outline: 3px solid #84a98c; outline-offset: 3px; }
+.area-codigo h2, .area-codigo p, .area-codigo li, .area-codigo a { overflow-wrap: anywhere; }
 
 .quiz-card {
     padding: 24px;
@@ -230,7 +248,11 @@ pre {
     .area-codigo {
         grid-template-columns: 1fr;
     }
+    .explicacao-card { grid-column: auto; }
+    .menu-lateral { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+
+@media (max-width: 580px) { .menu-lateral { grid-template-columns: 1fr; } .codigo-box pre { padding: 16px; } }
 
 @media (max-width: 980px) {
     .topo {

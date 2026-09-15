@@ -34,6 +34,13 @@ if (!empty($fotoBanco)) {
 }
 
 $pagina = 'exemplos';
+require __DIR__ . '/partials/exemplos_conteudo.php';
+$estrutura = $_GET['estrutura'] ?? 'tad';
+if (!is_string($estrutura) || !isset($exemplos[$estrutura])) $estrutura = 'tad';
+$exemplo = $exemplos[$estrutura];
+function textoExemplo($texto) {
+    echo htmlspecialchars($texto, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+}
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -43,6 +50,7 @@ $pagina = 'exemplos';
     <title>MindNodes | Exemplos em C#</title>
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/exemplos.css">
+    <script src="../js/exemplos.js" defer></script>
 </head>
 <body>
     <header class="topo">
@@ -74,187 +82,42 @@ $pagina = 'exemplos';
         </section>
 
         <section class="area-codigo">
-            <aside class="menu-lateral">
-                <a class="ativo" href="#" data-exemplo="tad">TAD - Tipo Abstrato de Dados</a>
-                <a href="#" data-exemplo="simples">Lista Simplesmente Encadeada</a>
-                <a href="#" data-exemplo="dupla">Lista Duplamente Encadeada</a>
-                <a href="../view/pilha_encadeada.php">Pilha Encadeada · aula completa</a>
-            </aside>
+            <nav class="menu-lateral" aria-label="Exemplos por estrutura">
+                <?php foreach ($exemplos as $chave => $item): ?>
+                    <a href="?estrutura=<?php textoExemplo($chave); ?>" data-exemplo="<?php textoExemplo($chave); ?>"<?php if ($estrutura === $chave): ?> class="ativo" aria-current="page"<?php endif; ?>><?php textoExemplo($item['titulo']); ?></a>
+                <?php endforeach; ?>
+            </nav>
 
-            <section class="codigo-box">
-                <h2 id="titulo-codigo">TAD - Tipo Abstrato de Dados</h2>
-
-<pre><code id="codigo-exemplo">// Exemplo de TAD em C#
-public class Pilha
-{
-    private int[] elementos;
-    private int topo;
-
-    public Pilha(int tamanho)
-    {
-        elementos = new int[tamanho];
-        topo = -1;
-    }
-
-    public void Empilhar(int valor)
-    {
-        topo++;
-        elementos[topo] = valor;
-    }
-
-    public int Desempilhar()
-    {
-        int valor = elementos[topo];
-        topo--;
-
-        return valor;
-    }
-}</code></pre>
+            <section class="codigo-box" aria-labelledby="titulo-codigo">
+                <h2 id="titulo-codigo"><?php textoExemplo($exemplo['titulo']); ?></h2>
+                <div class="exemplo-resumo">
+                    <p id="texto-explicacao"><?php textoExemplo($exemplo['descricao']); ?></p>
+                    <h3>Operações demonstradas</h3>
+                    <ul id="operacoes-exemplo"><?php foreach ($exemplo['operacoes'] as $operacao): ?><li><?php textoExemplo($operacao); ?></li><?php endforeach; ?></ul>
+                    <p class="exemplo-nota">Cada exemplo é independente e tem sua própria classe No, quando necessária. Para executar localmente, reúna a implementação e a classe Programa no mesmo arquivo. Os exemplos usam referências no estilo tradicional de C#; com análise de nulidade habilitada, use No? nas referências que podem receber null.</p>
+                </div>
+                <h3 class="codigo-rotulo">Implementação C#</h3>
+                <pre tabindex="0" aria-label="Implementação C#"><code id="codigo-exemplo"><?php textoExemplo($exemplo['codigo']); ?></code></pre>
+                <h3 class="codigo-rotulo">Exemplo de uso · Programa.Main</h3>
+                <pre tabindex="0" aria-label="Exemplo de uso C#"><code id="uso-exemplo"><?php textoExemplo($exemplo['uso']); ?></code></pre>
+                <h3 class="codigo-rotulo">Saída esperada</h3>
+                <pre tabindex="0" aria-label="Saída esperada"><code id="saida-exemplo"><?php textoExemplo($exemplo['saida']); ?></code></pre>
+                <p class="exemplo-resumo" id="execucao-exemplo"><?php textoExemplo($exemplo['execucao']); ?></p>
             </section>
 
-            <section class="quiz-card explicacao-card">
-                <h2>Entenda o exemplo</h2>
-
-                <p id="texto-explicacao">
-                    O TAD mostra o que a estrutura faz, sem obrigar o usuário a saber como ela funciona por dentro.
-                </p>
-
-                <strong id="dica-explicacao">
-                    Exemplo: quem usa Empilhar e Desempilhar não precisa saber como os dados estão guardados internamente.
-                </strong>
+            <section class="quiz-card explicacao-card" aria-labelledby="observar-titulo">
+                <h2 id="observar-titulo">O que observar</h2>
+                <ul id="observar-exemplo"><?php foreach ($exemplo['observar'] as $observacao): ?><li><?php textoExemplo($observacao); ?></li><?php endforeach; ?></ul>
+                <h3>Complexidade resumida</h3>
+                <p id="complexidade-exemplo"><?php textoExemplo($exemplo['complexidade']); ?></p>
+                <p>n representa a quantidade de elementos armazenados.</p>
+                <div class="exemplo-acoes">
+                    <a id="teoria-exemplo" href="<?php textoExemplo($exemplo['teoria']); ?>">Ver conteúdo</a>
+                    <a id="quiz-exemplo" href="quiz.php?assunto=<?php textoExemplo($exemplo['quiz']); ?>">Praticar no Quiz</a>
+                </div>
             </section>
         </section>
     </main>
-
-    <script>
-        const exemplos = {
-            tad: {
-                titulo: "TAD - Tipo Abstrato de Dados",
-                codigo: `// Exemplo de TAD em C#
-public class Pilha
-{
-    private int[] elementos;
-    private int topo;
-
-    public Pilha(int tamanho)
-    {
-        elementos = new int[tamanho];
-        topo = -1;
-    }
-
-    public void Empilhar(int valor)
-    {
-        topo++;
-        elementos[topo] = valor;
-    }
-
-    public int Desempilhar()
-    {
-        int valor = elementos[topo];
-        topo--;
-
-        return valor;
-    }
-}`,
-                explicacao: "O TAD, ou Tipo Abstrato de Dados, representa uma estrutura pelo seu comportamento, ou seja, pelas operações que ela oferece. Nesse exemplo, a classe Pilha permite empilhar e desempilhar valores, sem que quem usa a classe precise entender todos os detalhes internos de armazenamento.",
-                dica: "Exemplo: quem usa os métodos Empilhar e Desempilhar só precisa saber que eles adicionam e removem elementos da pilha. A forma como os dados são guardados dentro do vetor fica escondida na implementação."
-            },
-
-            simples: {
-                titulo: "Lista Simplesmente Encadeada",
-                codigo: `// Nó da Lista Simplesmente Encadeada
-public class No
-{
-    public int Valor;
-    public No Proximo;
-
-    public No(int valor)
-    {
-        Valor = valor;
-        Proximo = null;
-    }
-}`,
-                explicacao: "A lista simplesmente encadeada é formada por nós, e cada nó guarda um valor e uma referência para o próximo elemento da lista. Isso permite ligar vários dados em sequência, sem que eles precisem estar lado a lado na memória.",
-                dica: "Ideia principal: cada nó conhece apenas o próximo nó. Por isso, a navegação acontece em uma única direção, do início até o final da lista."
-            },
-
-            dupla: {
-                titulo: "Lista Duplamente Encadeada",
-                codigo: `// Nó da Lista Duplamente Encadeada
-public class No
-{
-    public int Valor;
-    public No Proximo;
-    public No Anterior;
-
-    public No(int valor)
-    {
-        Valor = valor;
-        Proximo = null;
-        Anterior = null;
-    }
-}`,
-                explicacao: "A lista duplamente encadeada também é formada por nós, mas cada nó possui uma referência para o próximo elemento e outra para o elemento anterior. Dessa forma, a lista se torna mais flexível, permitindo percorrer os dados nos dois sentidos.",
-                dica: "Ideia principal: como cada nó sabe quem vem antes e quem vem depois, é possível avançar e voltar dentro da lista com mais facilidade."
-            }
-        };
-
-        const links = document.querySelectorAll(".menu-lateral a[data-exemplo]");
-        const titulo = document.getElementById("titulo-codigo");
-        const codigo = document.getElementById("codigo-exemplo");
-        const textoExplicacao = document.getElementById("texto-explicacao");
-        const dicaExplicacao = document.getElementById("dica-explicacao");
-
-        const parametro =
-new URLSearchParams(window.location.search);
-
-const estrutura =
-parametro.get("estrutura");
-
-if (estrutura && exemplos[estrutura]) {
-
-    titulo.textContent =
-    exemplos[estrutura].titulo;
-
-    codigo.textContent =
-    exemplos[estrutura].codigo;
-
-    textoExplicacao.textContent =
-    exemplos[estrutura].explicacao;
-
-    dicaExplicacao.textContent =
-    exemplos[estrutura].dica;
-
-    links.forEach(item=>{
-
-        item.classList.remove("ativo");
-
-        if(
-            item.dataset.exemplo
-            === estrutura
-        ){
-            item.classList.add("ativo");
-        }
-
-    });
-
-}
-
-        links.forEach(link => {
-            link.addEventListener("click", function(event) {
-                event.preventDefault();
-
-                links.forEach(item => item.classList.remove("ativo"));
-                this.classList.add("ativo");
-
-                const tipo = this.getAttribute("data-exemplo");
-
-                titulo.textContent = exemplos[tipo].titulo;
-                codigo.textContent = exemplos[tipo].codigo;
-                textoExplicacao.textContent = exemplos[tipo].explicacao;
-                dicaExplicacao.textContent = exemplos[tipo].dica;
-            });
-        });
-    </script>
+    <script type="application/json" id="dados-exemplos"><?php echo json_encode($exemplos, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR); ?></script>
 </body>
 </html>
