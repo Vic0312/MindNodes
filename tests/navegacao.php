@@ -71,6 +71,17 @@ try {
         }
     };
     $verSaldo();
+    [$desempenho, $codigo] = $pedir('/view/desempenho.php?tentativa=3&id_usuario=2');
+    if ($codigo !== 200 || !str_contains($desempenho, 'Desempenho por assunto')
+        || !str_contains($desempenho, 'Moedas ganhas em Quizzes')
+        || !str_contains($desempenho, 'Resultado:')
+        || substr_count($desempenho, 'class="desempenho-assunto-card"') !== 6) throw new RuntimeException('Desempenho com historico incorreto');
+    [$indevido, $codigo] = $pedir('/view/desempenho.php?tentativa=4');
+    if ($codigo !== 200 || !str_contains($indevido, 'Tentativa não encontrada')
+        || str_contains($indevido, 'Resultado:')) throw new RuntimeException('Revisao alheia exposta');
+    [$inexistente, $codigo] = $pedir('/view/desempenho.php?tentativa=999999');
+    if ($codigo !== 200 || !str_contains($inexistente, 'Tentativa não encontrada')) throw new RuntimeException('Tentativa inexistente nao tratada');
+    echo "OK: desempenho HTTP, seis assuntos, revisao propria, acesso negado e tentativa inexistente.\n";
     [$home] = $pedir('/view/home.php');
     if (!str_contains($home, 'Olá, Maria!')) throw new RuntimeException('Nome incorreto na Home');
     $dom = new DOMDocument(); @$dom->loadHTML('<?xml encoding="UTF-8">' . $home); $xp = new DOMXPath($dom);
@@ -135,6 +146,10 @@ try {
     if (!str_ends_with($destino, '/view/login.php')) throw new RuntimeException('Redefinicao falhou');
     [, , $destino] = $pedir('/processamento/processamento.php', ['inputEmailLog' => 'teste.nav@example.com', 'inputSenhaLog' => 'NovaSenha123']);
     if (!str_ends_with($destino, '/view/home.php')) throw new RuntimeException('Nova senha nao autenticou');
+    [$semHistorico, $codigo] = $pedir('/view/desempenho.php');
+    if ($codigo !== 200 || !str_contains($semHistorico, 'Você ainda não realizou nenhum Quiz.')
+        || !str_contains($semHistorico, 'Começar um Quiz')
+        || !str_contains($semHistorico, '0%')) throw new RuntimeException('Estado vazio do desempenho incorreto');
     echo "OK: logout, cadastro, recuperacao, redefinicao e login.\n";
     $pedir('/processamento/logout.php');
     $pedir('/processamento/processamento.php', ['inputEmailLog' => 'maria@gmail.com', 'inputSenhaLog' => '1234']);

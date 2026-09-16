@@ -2,7 +2,7 @@
 
 session_start();
 
-if (!isset($_SESSION['usuario_id'])) {
+if (empty($_SESSION['estaLogado']) || !isset($_SESSION['usuario_id'])) {
     header("Location: ../view/login.php");
     exit();
 }
@@ -37,19 +37,23 @@ require_once __DIR__ . '/../controller/QuizController.php';
 
 $pagina = 'desempenho';
 $controlador = new QuizController();
-$idUsuario = $_SESSION['usuario_id'];
-$desempenho = $controlador->buscarDesempenhoUsuario($idUsuario);
+$desempenho = $controlador->buscarMeuDesempenho();
 $resumo = $desempenho['resumo'];
+$assuntos = $desempenho['assuntos'];
 $tentativas = $desempenho['tentativas'];
 $tentativaSelecionada = null;
+$tentativaInvalida = false;
 
 if (isset($_GET['tentativa'])) {
-    $tentativaSelecionada = $controlador->buscarTentativaQuiz($_GET['tentativa'], $idUsuario);
+    $tentativaSelecionada = $controlador->buscarMinhaTentativa($_GET['tentativa']);
+    $tentativaInvalida = !$tentativaSelecionada;
 }
 
-$totalPerguntas = (int) (isset($resumo['total_perguntas']) ? $resumo['total_perguntas'] : 0);
-$totalAcertos = (int) (isset($resumo['total_acertos']) ? $resumo['total_acertos'] : 0);
-$aproveitamento = $totalPerguntas > 0 ? round(($totalAcertos / $totalPerguntas) * 100) : 0;
+$totalPerguntas = (int) $resumo['total_perguntas'];
+$totalAcertos = (int) $resumo['total_acertos'];
+$formatarPercentual = static function ($acertos, $total) {
+    return $total > 0 ? number_format($acertos / $total * 100, 1, ',', '.') . '%' : '0%';
+};
 
 ?>
 <!DOCTYPE html>
@@ -70,24 +74,59 @@ $aproveitamento = $totalPerguntas > 0 ? round(($totalAcertos / $totalPerguntas) 
         <section class="banner-interno">
             <span class="etiqueta">Meus Resultados</span>
             <h1>Acompanhe seu <span>desempenho</span></h1>
-            <p>Veja seu aproveitamento geral, histórico de tentativas e uma revisão detalhada dos seus erros.</p>
+            <p>Veja seus resultados por assunto, acompanhe suas tentativas e revise suas respostas.</p>
         </section>
 
         <section class="resumo-desempenho">
             <article>
-                <span>Tentativas</span>
+                <span>Quizzes realizados</span>
                 <strong><?php echo (int) (isset($resumo['total_tentativas']) ? $resumo['total_tentativas'] : 0); ?></strong>
             </article>
 
             <article>
-                <span>Acertos</span>
-                <strong><?php echo $totalAcertos; ?>/<?php echo $totalPerguntas; ?></strong>
+                <span>Questões respondidas</span>
+                <strong><?php echo $totalPerguntas; ?></strong>
             </article>
 
             <article>
-                <span>Aproveitamento</span>
-                <strong><?php echo $aproveitamento; ?>%</strong>
+                <span>Acertos</span>
+                <strong><?php echo $totalAcertos; ?></strong>
             </article>
+
+            <article>
+                <span>Taxa geral de acertos</span>
+                <strong><?php echo $formatarPercentual($totalAcertos, $totalPerguntas); ?></strong>
+            </article>
+
+            <article>
+                <span>Moedas ganhas em Quizzes</span>
+                <strong><?php echo (int) $resumo['moedas_ganhas']; ?> <span aria-hidden="true">🪙</span></strong>
+            </article>
+        </section>
+
+        <section class="desempenho-assuntos" aria-labelledby="titulo-assuntos">
+            <div class="desempenho-secao-topo">
+                <div><span class="subtitulo-secao">Por assunto</span><h2 id="titulo-assuntos">Desempenho por assunto</h2></div>
+                <a class="botao primario" href="quiz.php">Praticar no Quiz</a>
+            </div>
+            <div class="desempenho-assuntos-grid">
+                <?php foreach ($assuntos as $assunto): ?>
+                    <?php $praticado = (int) $assunto['total_tentativas'] > 0; ?>
+                    <article class="desempenho-assunto-card">
+                        <h3><?php echo htmlspecialchars($assunto['titulo'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?></h3>
+                        <?php if ($praticado): ?>
+                            <?php $percentualAssunto = $formatarPercentual((int) $assunto['total_acertos'], (int) $assunto['total_perguntas']); ?>
+                            <p class="desempenho-assunto-taxa"><?php echo $percentualAssunto; ?> de aproveitamento</p>
+                            <div class="desempenho-barra" role="img" aria-label="Aproveitamento: <?php echo $percentualAssunto; ?>"><span style="width: <?php echo (int) round((int) $assunto['total_perguntas'] > 0 ? (int) $assunto['total_acertos'] / (int) $assunto['total_perguntas'] * 100 : 0); ?>%"></span></div>
+                            <p><?php echo (int) $assunto['total_tentativas']; ?> tentativas · <?php echo (int) $assunto['total_perguntas']; ?> questões · <?php echo (int) $assunto['total_acertos']; ?> acertos</p>
+                            <p>+<?php echo (int) $assunto['moedas_ganhas']; ?> moedas ganhas</p>
+                        <?php else: ?>
+                            <p>Ainda não praticado.</p>
+                            <a href="quiz.php?assunto=<?php echo rawurlencode($assunto['slug']); ?>">Praticar este assunto</a>
+                        <?php endif; ?>
+                    </article>
+                <?php endforeach; ?>
+            </div>
         </section>
 
         <section class="desempenho-layout">
@@ -99,36 +138,32 @@ $aproveitamento = $totalPerguntas > 0 ? round(($totalAcertos / $totalPerguntas) 
                     <section class="lista-tentativas">
                         <?php foreach ($tentativas as $tentativa): ?>
                             <?php
-                                $percentual = (int) $tentativa['total_perguntas'] > 0
-                                    ? round(((int) $tentativa['total_acertos'] / (int) $tentativa['total_perguntas']) * 100)
-                                    : 0;
+                                $percentual = $formatarPercentual((int) $tentativa['total_acertos'], (int) $tentativa['total_perguntas']);
                             ?>
 
                             <a
-                                class="<?php echo isset($_GET['tentativa']) && (int) $_GET['tentativa'] === (int) $tentativa['id_tentativa'] ? 'ativo' : ''; ?>"
+                                class="<?php echo $tentativaSelecionada && (int) $tentativaSelecionada['id_tentativa'] === (int) $tentativa['id_tentativa'] ? 'ativo' : ''; ?>"
                                 href="../view/desempenho.php?tentativa=<?php echo (int) $tentativa['id_tentativa']; ?>"
                             >
                                 <div>
                                     <strong><?php echo htmlspecialchars($tentativa['titulo']); ?></strong>
-                                    <span><?php echo date('d/m/Y H:i', strtotime($tentativa['data_tentativa'])); ?></span>
+                                    <span><?php echo date('d/m/Y', strtotime($tentativa['data_tentativa'])); ?> às <?php echo date('H:i', strtotime($tentativa['data_tentativa'])); ?></span>
                                 </div>
 
-                                <b><?php echo (int) $tentativa['total_acertos']; ?>/<?php echo (int) $tentativa['total_perguntas']; ?> · <?php echo $percentual; ?>% · +<?php echo (int) $tentativa['moedas_ganhas']; ?> moedas</b>
+                                <b><?php echo (int) $tentativa['total_acertos']; ?>/<?php echo (int) $tentativa['total_perguntas']; ?> acertos · <?php echo $percentual; ?><br>+<?php echo (int) $tentativa['moedas_ganhas']; ?> moedas <span class="revisar-link">Revisar tentativa</span></b>
                             </a>
                         <?php endforeach; ?>
                     </section>
                 <?php else: ?>
-                    <p class="texto-vazio">Você ainda não finalizou nenhum quiz.</p>
-                    <a class="botao primario" href="../view/quiz.php">Responder primeiro quiz</a>
+                    <p class="texto-vazio">Você ainda não realizou nenhum Quiz.</p>
+                    <a class="botao primario" href="quiz.php">Começar um Quiz</a>
                 <?php endif; ?>
             </section>
 
             <section class="revisao-card">
                 <?php if ($tentativaSelecionada): ?>
                     <?php
-                        $percentualTentativa = (int) $tentativaSelecionada['total_perguntas'] > 0
-                            ? round(((int) $tentativaSelecionada['total_acertos'] / (int) $tentativaSelecionada['total_perguntas']) * 100)
-                            : 0;
+                        $percentualTentativa = $formatarPercentual((int) $tentativaSelecionada['total_acertos'], (int) $tentativaSelecionada['total_perguntas']);
                     ?>
 
                     <span class="subtitulo-secao">Revisão</span>
@@ -136,7 +171,7 @@ $aproveitamento = $totalPerguntas > 0 ? round(($totalAcertos / $totalPerguntas) 
                     <p class="resultado-final">
                         Resultado: <?php echo (int) $tentativaSelecionada['total_acertos']; ?>
                         de <?php echo (int) $tentativaSelecionada['total_perguntas']; ?> acertos
-                        (<?php echo $percentualTentativa; ?>%).
+                        (<?php echo $percentualTentativa; ?>).
                     </p>
                     <p class="recompensa-quiz">+<?php echo (int) $tentativaSelecionada['moedas_ganhas']; ?> moedas ganhas</p>
 
@@ -165,6 +200,12 @@ $aproveitamento = $totalPerguntas > 0 ? round(($totalAcertos / $totalPerguntas) 
                                 <small><?php echo htmlspecialchars($resposta['explicacao']); ?></small>
                             </article>
                         <?php endforeach; ?>
+                    </section>
+                <?php elseif ($tentativaInvalida): ?>
+                    <section class="estado-inicial" role="status">
+                        <span class="subtitulo-secao">Revisão</span>
+                        <h2>Tentativa não encontrada</h2>
+                        <p>Esta tentativa não está disponível para sua conta.</p>
                     </section>
                 <?php else: ?>
                     <section class="estado-inicial">

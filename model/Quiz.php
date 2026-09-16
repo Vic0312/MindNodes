@@ -149,13 +149,17 @@ class Quiz
     public function buscarDesempenho($idUsuario)
     {
         $idUsuario = (int) $idUsuario;
-        $consulta = mysqli_prepare($this->conexao, 'SELECT COUNT(*) AS total_tentativas, COALESCE(SUM(total_perguntas), 0) AS total_perguntas, COALESCE(SUM(total_acertos), 0) AS total_acertos FROM quiz_tentativa WHERE id_usuario = ?');
+        $consulta = mysqli_prepare($this->conexao, 'SELECT COUNT(*) AS total_tentativas, COALESCE(SUM(total_perguntas), 0) AS total_perguntas, COALESCE(SUM(total_acertos), 0) AS total_acertos, COALESCE(SUM(moedas_ganhas), 0) AS moedas_ganhas FROM quiz_tentativa WHERE id_usuario = ?');
         mysqli_stmt_bind_param($consulta, 'i', $idUsuario); mysqli_stmt_execute($consulta);
         $resumo = mysqli_fetch_assoc(mysqli_stmt_get_result($consulta));
-        $sql = 'SELECT qt.id_tentativa, qt.total_perguntas, qt.total_acertos, qt.moedas_ganhas, qt.data_tentativa, qa.titulo, qa.slug FROM quiz_tentativa qt INNER JOIN quiz_assunto qa ON qa.id_assunto = qt.id_assunto WHERE qt.id_usuario = ? ORDER BY qt.data_tentativa DESC';
+        $sql = 'SELECT qa.id_assunto, qa.titulo, qa.slug, COUNT(qt.id_tentativa) AS total_tentativas, COALESCE(SUM(qt.total_perguntas), 0) AS total_perguntas, COALESCE(SUM(qt.total_acertos), 0) AS total_acertos, COALESCE(SUM(qt.moedas_ganhas), 0) AS moedas_ganhas FROM quiz_assunto qa LEFT JOIN quiz_tentativa qt ON qt.id_assunto = qa.id_assunto AND qt.id_usuario = ? GROUP BY qa.id_assunto, qa.titulo, qa.slug ORDER BY qa.id_assunto';
         $consulta = mysqli_prepare($this->conexao, $sql); mysqli_stmt_bind_param($consulta, 'i', $idUsuario); mysqli_stmt_execute($consulta);
         $resultado = mysqli_stmt_get_result($consulta);
-        return ['resumo' => $resumo, 'tentativas' => $resultado ? mysqli_fetch_all($resultado, MYSQLI_ASSOC) : []];
+        $assuntos = $resultado ? mysqli_fetch_all($resultado, MYSQLI_ASSOC) : [];
+        $sql = 'SELECT qt.id_tentativa, qt.total_perguntas, qt.total_acertos, qt.moedas_ganhas, qt.data_tentativa, qa.titulo, qa.slug FROM quiz_tentativa qt INNER JOIN quiz_assunto qa ON qa.id_assunto = qt.id_assunto WHERE qt.id_usuario = ? ORDER BY qt.data_tentativa DESC, qt.id_tentativa DESC';
+        $consulta = mysqli_prepare($this->conexao, $sql); mysqli_stmt_bind_param($consulta, 'i', $idUsuario); mysqli_stmt_execute($consulta);
+        $resultado = mysqli_stmt_get_result($consulta);
+        return ['resumo' => $resumo, 'assuntos' => $assuntos, 'tentativas' => $resultado ? mysqli_fetch_all($resultado, MYSQLI_ASSOC) : []];
     }
 
     public function buscarTentativa($idTentativa, $idUsuario)

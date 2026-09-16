@@ -61,7 +61,7 @@ const assert = require('node:assert/strict');
             else await enviar('Network.clearBrowserCookies');
             for (const largura of [320, 375, 768, 1280]) {
                 await enviar('Emulation.setDeviceMetricsOverride', { width: largura, height: 900, deviceScaleFactor: 1, mobile: largura < 768 });
-                for (const pagina of (autenticado ? ['home', 'perfil'] : ['home'])) {
+                for (const pagina of (autenticado ? ['home', 'perfil', 'desempenho'] : ['home'])) {
                     await enviar('Page.navigate', { url: base + '/view/' + pagina + '.php' });
                     await esperar(`document.readyState === 'complete' && location.pathname.endsWith('/${pagina}.php') && !!document.querySelector('.mn-header')`);
                     if (largura <= 650) {
@@ -84,6 +84,10 @@ const assert = require('node:assert/strict');
                     assert.equal(estado.ativo, pagina + '.php');
                     assert(estado.foco.includes('underline'));
                     assert.equal(estado.senha, '');
+                    if (pagina === 'desempenho') {
+                        assert.equal(await avaliar('document.querySelectorAll(".desempenho-assunto-card").length'), 6);
+                        assert(await avaliar('!!document.querySelector(".resumo-desempenho")'));
+                    }
                     if (autenticado) {
                         assert.equal(estado.saldo, saldo + ' moedas');
                         assert(estado.links.includes('Sair') && estado.links.includes('Avatar') && !estado.links.includes('Login'));

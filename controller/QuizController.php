@@ -26,4 +26,10 @@ class QuizController
     public function salvarTentativaQuiz($id, $slug, $respostas) { return $this->quizModel->salvarTentativa($id, $slug, $respostas); }
     public function buscarDesempenhoUsuario($id) { return $this->quizModel->buscarDesempenho($id); }
     public function buscarTentativaQuiz($tentativa, $usuario) { return $this->quizModel->buscarTentativa($tentativa, $usuario); }
+    public function buscarMeuDesempenho() { return $this->quizModel->buscarDesempenho($this->usuarioAtual()); }
+    public function buscarMinhaTentativa($tentativa) {
+        $usuario = $this->usuarioAtual();
+        if ((!is_string($tentativa) && !is_int($tentativa)) || !preg_match('/^[1-9][0-9]*$/D', (string) $tentativa)) return false;
+        return $this->quizModel->buscarTentativa((int) $tentativa, $usuario);
+    }
 }
