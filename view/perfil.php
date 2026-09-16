@@ -10,6 +10,7 @@ if (!isset($_SESSION['usuario_id'])) {
 $pagina = "perfil";
 
 $usuarioId = $_SESSION['usuario_id'];
+if (empty($_SESSION['perfil_csrf'])) $_SESSION['perfil_csrf'] = bin2hex(random_bytes(32));
 require_once __DIR__ . '/../controller/UsuarioController.php';
 $usuarioController = new UsuarioController();
 $dadosUsuario = $usuarioController->buscarPerfil($usuarioId);
@@ -85,6 +86,8 @@ $mensagemErro = $_GET['erro'] ?? null;
                         echo "Não foi possível enviar a imagem. Tente novamente.";
                     } elseif ($mensagemErro === "campos") {
                         echo "Preencha nome e e-mail corretamente.";
+                    } elseif ($mensagemErro === "sessao") {
+                        echo "Sessão inválida. Atualize a página e tente novamente.";
                     } else {
                         echo "Não foi possível atualizar o perfil. Verifique os dados e tente novamente.";
                     }
@@ -124,6 +127,7 @@ $mensagemErro = $_GET['erro'] ?? null;
 
                 <form method="POST" action="../processamento/processamento.php" enctype="multipart/form-data">
                     <input type="hidden" name="acao" value="editarPerfil">
+                    <input type="hidden" name="csrf" value="<?php echo htmlspecialchars($_SESSION['perfil_csrf'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>">
 
                     <section class="campo-upload">
                         <label for="inputFotoPerfil">Alterar foto</label>

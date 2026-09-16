@@ -42,9 +42,20 @@ $raizTemporaria = realpath(sys_get_temp_dir());
 $pasta = $raizTemporaria . DIRECTORY_SEPARATOR . 'mindnodes_csharp_' . bin2hex(random_bytes(8));
 if (!mkdir($pasta)) throw new RuntimeException('Pasta temporaria indisponivel.');
 try {
-    file_put_contents($pasta . '/Teste.csproj', '<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net10.0</TargetFramework><Nullable>disable</Nullable></PropertyGroup></Project>');
+    $dotnet = 'C:\\Program Files\\dotnet\\dotnet.exe';
+    $versao = proc_open([$dotnet, '--version'], [0 => ['pipe', 'r'], 1 => ['pipe', 'w'], 2 => ['pipe', 'w']], $versaoPipes);
+    if (!is_resource($versao)) throw new RuntimeException('SDK .NET nao iniciou.');
+    fclose($versaoPipes[0]);
+    $numeroVersao = trim(stream_get_contents($versaoPipes[1]));
+    fclose($versaoPipes[1]);
+    fclose($versaoPipes[2]);
+    if (proc_close($versao) !== 0 || !preg_match('/^([0-9]+)\.[0-9]+\.[0-9]+/', $numeroVersao, $partesVersao)) {
+        throw new RuntimeException('Nao foi possivel identificar o SDK .NET instalado.');
+    }
+    $framework = 'net' . $partesVersao[1] . '.0';
+    file_put_contents($pasta . '/Teste.csproj', '<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><OutputType>Exe</OutputType><TargetFramework>' . $framework . '</TargetFramework><Nullable>disable</Nullable></PropertyGroup></Project>');
     file_put_contents($pasta . '/Program.cs', $codigo . "\n" . $teste . "\n");
-    $processo = proc_open(['C:\\Program Files\\dotnet\\dotnet.exe', 'run', '--project', $pasta . '/Teste.csproj', '--no-launch-profile'],
+    $processo = proc_open([$dotnet, 'run', '--project', $pasta . '/Teste.csproj', '--no-launch-profile'],
         [0 => ['pipe', 'r'], 1 => ['pipe', 'w'], 2 => ['pipe', 'w']], $pipes);
     if (!is_resource($processo)) throw new RuntimeException('SDK .NET nao iniciou.');
     fclose($pipes[0]);

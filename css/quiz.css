@@ -390,7 +390,9 @@ main {
 .painel-dica[hidden],.painel-resumo[hidden] { display: none; }
 .poderes-feedback:empty { display: none; }
 .poderes-feedback { margin: 12px 0 0; font-weight: 700; }
-.quiz-card label.alternativa-eliminada { opacity: .48; text-decoration: line-through; background: #e7eae7; cursor: not-allowed; }
+.quiz-card label.alternativa-eliminada,.quiz-card label.alternativa-eliminada:hover { background: #e7eae7; color: #52645a; cursor: not-allowed; }
+.quiz-card label.alternativa-eliminada span { min-width: 0; overflow-wrap: anywhere; }
+.quiz-card label.alternativa-eliminada::after { content: "Eliminada"; flex: 0 0 auto; margin-left: auto; padding: 3px 7px; border: 1px solid #809184; border-radius: 6px; font-size: .72rem; font-weight: 800; text-transform: uppercase; }
 
 .quiz-card h2,
 .quiz-card h3 {

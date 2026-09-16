@@ -15,7 +15,7 @@ function cadeiaMultimidia($passo, $tipo) {
             <div class="midia-no">
                 <small>VALOR</small><strong><?php textoMultimidia($valor); ?></strong>
                 <?php if (isset($passo['prioridades'])): ?><b>Prioridade P<?php textoMultimidia($passo['prioridades'][$posicao]); ?></b><?php endif; ?>
-                <?php if ($tipo === 'dupla'): ?><span>Anterior → <?php textoMultimidia($passo['nos'][$posicao - 1] ?? 'null'); ?></span><?php endif; ?>
+                <?php if ($tipo === 'dupla'): ?><span>Anterior ← <?php textoMultimidia($passo['nos'][$posicao - 1] ?? 'null'); ?></span><?php endif; ?>
                 <span>Proximo <?php echo $vertical ? '↓' : '→'; ?> <?php textoMultimidia($passo['nos'][$posicao + 1] ?? 'null'); ?></span>
             </div>
         <?php endforeach; ?>

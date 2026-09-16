@@ -1,0 +1,16 @@
+# Dados gerados durante o uso da aplicação
+/uploads/usuarios/*
+
+# Configuração local e arquivos temporários
+.env
+.env.*
+*.log
+*.tmp
+*.bak
+*~
+.DS_Store
+Thumbs.db
+
+# Preferências locais de editores
+.idea/
+.vscode/

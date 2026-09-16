@@ -60,6 +60,11 @@ try {
     if ($codigo !== 302 || !str_ends_with($destino, '/view/home.php')) throw new RuntimeException('Entrada publica quebrada');
     echo "OK: visitante, entrada publica, menu e rotas protegidas.\n";
 
+    [$corpo, $codigo, $destino] = $pedir('/processamento/processamento.php', ['inputEmailLog' => ['invalido'], 'inputSenhaLog' => 'x']);
+    if ($codigo !== 302 || !str_contains($destino, 'login.php?erro=1') || str_contains($corpo, 'Fatal error')) throw new RuntimeException('Login com entrada malformada exibiu erro interno');
+    [, $codigo, $destino] = $pedir('/processamento/processamento.php', ['inputEmailLog' => "' OR 1=1 --", 'inputSenhaLog' => 'x']);
+    if ($codigo !== 302 || !str_contains($destino, 'login.php?erro=1')) throw new RuntimeException('Login aceitou entrada SQL maliciosa');
+
     [, $codigo] = $pedir('/processamento/processamento.php', ['inputEmailLog' => 'maria@gmail.com', 'inputSenhaLog' => '1234']);
     if ($codigo !== 302) throw new RuntimeException('Login falhou');
     $saldoBanco = fn() => (int) $db->query('SELECT moedas FROM usuario WHERE id_usuario = 1')->fetch_assoc()['moedas'];
@@ -99,9 +104,16 @@ try {
     [$perfil] = $pedir('/view/perfil.php');
     $hash = $db->query('SELECT senha FROM usuario WHERE id_usuario = 1')->fetch_assoc()['senha'];
     if (str_contains($perfil, $hash) || !str_contains($perfil, 'maria@gmail.com')) throw new RuntimeException('Dados do perfil incorretos');
-    $edicao = ['acao' => 'editarPerfil', 'inputNomePerfil' => 'Maria <Teste>', 'inputSobrenomePerfil' => 'Brito', 'inputEmailPerfil' => 'maria@gmail.com', 'inputTelefonePerfil' => '18997289078', 'inputSenhaPerfil' => ''];
+    if (!preg_match('~name="csrf" value="([a-f0-9]{64})"~', $perfil, $tokenPerfil)) throw new RuntimeException('Token CSRF do perfil ausente');
+    $edicao = ['acao' => 'editarPerfil', 'csrf' => $tokenPerfil[1], 'id_usuario' => 2, 'inputNomePerfil' => 'Maria <Teste>', 'inputSobrenomePerfil' => 'Brito', 'inputEmailPerfil' => 'maria@gmail.com', 'inputTelefonePerfil' => '18997289078', 'inputSenhaPerfil' => ''];
+    [, $codigo, $destino] = $pedir('/processamento/processamento.php', array_diff_key($edicao, ['csrf' => true]));
+    if ($codigo !== 303 || !str_contains($destino, 'erro=sessao')
+        || $db->query('SELECT nome FROM usuario WHERE id_usuario = 1')->fetch_assoc()['nome'] !== 'Maria') throw new RuntimeException('Perfil aceitou POST sem CSRF');
+    [, $codigo, $destino] = $pedir('/processamento/processamento.php', array_merge($edicao, ['inputNomePerfil' => ['invalido']]));
+    if ($codigo !== 303 || !str_contains($destino, 'erro=campos')) throw new RuntimeException('Perfil aceitou entrada malformada');
     [, $codigo, $destino] = $pedir('/processamento/processamento.php', $edicao);
     if ($codigo !== 302 || !str_contains($destino, 'sucesso=1')) throw new RuntimeException('Edicao falhou');
+    if ($db->query('SELECT nome FROM usuario WHERE id_usuario = 2')->fetch_assoc()['nome'] !== 'Bruno') throw new RuntimeException('Perfil aceitou ID de outro usuario');
     [$perfil] = $pedir('/view/perfil.php?sucesso=1');
     if (!str_contains($perfil, 'Maria &lt;Teste&gt;') || str_contains($perfil, 'Maria <Teste>') || !str_contains($perfil, 'Perfil atualizado com sucesso.')) throw new RuntimeException('Escape/flash perfil falhou');
     [, , $destino] = $pedir('/processamento/processamento.php', array_merge($edicao, ['inputEmailPerfil' => 'invalido']));
@@ -133,6 +145,8 @@ try {
     [, $codigo] = $pedir('/processamento/logout.php');
     [, $protegido] = $pedir('/view/perfil.php');
     if ($codigo !== 302 || $protegido !== 302) throw new RuntimeException('Logout falhou');
+    [, $codigo, $destino] = $pedir('/processamento/processamento.php', ['inputNome' => ['invalido'], 'inputSobrenome' => 'Teste', 'inputCPF' => '12345678901', 'inputDataNasc' => '2000-01-01', 'inputTelefone' => '11999999999', 'inputEmail' => 'tipo@example.com', 'inputSenha' => 'Senha123!', 'inputConfirmarSenha' => 'Senha123!']);
+    if ($codigo !== 302 || !str_contains($destino, 'erro=campos')) throw new RuntimeException('Cadastro aceitou entrada malformada');
     $cadastro = ['inputNome' => 'Teste', 'inputSobrenome' => 'Navegacao', 'inputCPF' => '98765432100', 'inputDataNasc' => '2000-01-01', 'inputTelefone' => '11999999999', 'inputEmail' => 'teste.nav@example.com', 'inputSenha' => 'TesteSenha123', 'inputConfirmarSenha' => 'TesteSenha123'];
     [, , $destino] = $pedir('/processamento/processamento.php', $cadastro);
     if (!str_contains($destino, 'cadastro=1')) throw new RuntimeException('Cadastro falhou: ' . $destino);

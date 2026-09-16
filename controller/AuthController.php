@@ -5,14 +5,22 @@ class AuthController
 {
     private $usuarioModel;
     public function __construct($usuarioModel = null) { $this->usuarioModel = $usuarioModel ?: new Usuario(); }
+    private function negarLogin()
+    {
+        unset($_SESSION['usuario_id'], $_SESSION['usuario_nome'], $_SESSION['usuario_sobrenome'],
+            $_SESSION['usuario_email'], $_SESSION['usuario_telefone'], $_SESSION['usuario_foto'],
+            $_SESSION['login_sucesso'], $_SESSION['quiz_tentativa_atual'],
+            $_SESSION['perfil_csrf'], $_SESSION['loja_csrf'], $_SESSION['avatar_csrf']);
+        $_SESSION['estaLogado'] = false;
+        return false;
+    }
     public function efetuarLogin($email, $senha)
     {
         $email = strtolower(trim($email));
         $usuario = $this->usuarioModel->buscarPorEmail($email);
 
         if (!$usuario) {
-            $_SESSION['estaLogado'] = false;
-            return false;
+            return $this->negarLogin();
         }
 
         $senhaArmazenada = (string) $usuario['senha'];
@@ -27,8 +35,7 @@ class AuthController
         }
 
         if (!$senhaValida) {
-            $_SESSION['estaLogado'] = false;
-            return false;
+            return $this->negarLogin();
         }
 
         session_regenerate_id(true);

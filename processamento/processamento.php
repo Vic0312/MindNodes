@@ -167,6 +167,19 @@ if (isset($_POST['acao']) && $_POST['acao'] === 'editarPerfil') {
         exit();
     }
 
+    if (!is_string($_POST['csrf'] ?? null) || !isset($_SESSION['perfil_csrf'])
+        || !hash_equals($_SESSION['perfil_csrf'], $_POST['csrf'])) {
+        header('Location: ../view/perfil.php?erro=sessao', true, 303);
+        exit();
+    }
+
+    foreach (['inputNomePerfil', 'inputSobrenomePerfil', 'inputEmailPerfil', 'inputTelefonePerfil', 'inputSenhaPerfil'] as $campo) {
+        if (isset($_POST[$campo]) && !is_string($_POST[$campo])) {
+            header('Location: ../view/perfil.php?erro=campos', true, 303);
+            exit();
+        }
+    }
+
     $nome = trim(isset($_POST['inputNomePerfil']) ? $_POST['inputNomePerfil'] : '');
     $sobrenome = trim(isset($_POST['inputSobrenomePerfil']) ? $_POST['inputSobrenomePerfil'] : '');
     $email = trim(isset($_POST['inputEmailPerfil']) ? $_POST['inputEmailPerfil'] : '');
@@ -238,6 +251,10 @@ if (isset($_POST['acao']) && $_POST['acao'] === 'editarPerfil') {
 }
 
 if (isset($_POST['inputEmailLog']) && isset($_POST['inputSenhaLog'])) {
+    if (!is_string($_POST['inputEmailLog']) || !is_string($_POST['inputSenhaLog'])) {
+        header('Location: ../view/login.php?erro=1', true, 302);
+        exit();
+    }
     $email = trim($_POST['inputEmailLog']);
     $senha = trim($_POST['inputSenhaLog']);
 
@@ -262,6 +279,12 @@ if (
     isset($_POST['inputSenha']) &&
     isset($_POST['inputConfirmarSenha'])
 ) {
+    foreach (['inputNome', 'inputSobrenome', 'inputCPF', 'inputDataNasc', 'inputTelefone', 'inputEmail', 'inputSenha', 'inputConfirmarSenha'] as $campo) {
+        if (!is_string($_POST[$campo])) {
+            header('Location: ../view/cadastrar_usuario.php?erro=campos', true, 302);
+            exit();
+        }
+    }
     $nome = trim($_POST['inputNome']);
     $sobrenome = trim($_POST['inputSobrenome']);
     $cpf = trim($_POST['inputCPF']);

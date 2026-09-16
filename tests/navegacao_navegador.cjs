@@ -24,9 +24,14 @@ const assert = require('node:assert/strict');
         let id = 0;
         const pendentes = new Map();
         const erros = [];
+        const assetsFaltando = [];
         ws.onmessage = e => {
             const resposta = JSON.parse(e.data);
             if (resposta.method === 'Runtime.exceptionThrown') erros.push(resposta.params);
+            if (resposta.method === 'Network.responseReceived') {
+                const recurso = resposta.params.response;
+                if (recurso.status >= 400 && /\/(?:css|js|img)\//.test(recurso.url)) assetsFaltando.push(`${recurso.status} ${recurso.url}`);
+            }
             if (pendentes.has(resposta.id)) {
                 const { resolve, reject, timer } = pendentes.get(resposta.id);
                 clearTimeout(timer);
@@ -61,7 +66,9 @@ const assert = require('node:assert/strict');
             else await enviar('Network.clearBrowserCookies');
             for (const largura of [320, 375, 768, 1280]) {
                 await enviar('Emulation.setDeviceMetricsOverride', { width: largura, height: 900, deviceScaleFactor: 1, mobile: largura < 768 });
-                for (const pagina of (autenticado ? ['home', 'perfil', 'desempenho'] : ['home'])) {
+                for (const pagina of (autenticado
+                    ? ['home', 'perfil', 'desempenho', 'estruturas', 'exemplos', 'quiz', 'loja', 'avatar', 'fila_fifo', 'fila_prioridade', 'pilha_encadeada']
+                    : ['home'])) {
                     await enviar('Page.navigate', { url: base + '/view/' + pagina + '.php' });
                     await esperar(`document.readyState === 'complete' && location.pathname.endsWith('/${pagina}.php') && !!document.querySelector('.mn-header')`);
                     if (largura <= 650) {
@@ -81,7 +88,7 @@ const assert = require('node:assert/strict');
                     }))()`);
                     assert(estado.documento <= estado.largura, `${pagina} ${largura}: ${JSON.stringify(estado)}`);
                     assert.equal(estado.estruturas, 6);
-                    assert.equal(estado.ativo, pagina + '.php');
+                    assert.equal(estado.ativo, (['fila_fifo', 'fila_prioridade', 'pilha_encadeada'].includes(pagina) ? 'estruturas' : pagina) + '.php');
                     assert(estado.foco.includes('underline'));
                     assert.equal(estado.senha, '');
                     if (pagina === 'desempenho') {
@@ -100,7 +107,13 @@ const assert = require('node:assert/strict');
                         assert(await avaliar('document.getElementById("mn-menu").hidden && document.activeElement.classList.contains("mn-toggle")'));
                     }
                 }
-                console.log(`OK: ${autenticado ? 'logado Home/Perfil' : 'visitante Home'} ${largura}px, menu, saldo, estruturas e teclado.`);
+                if (!autenticado) {
+                    await enviar('Page.navigate', { url: base + '/view/login.php' });
+                    await esperar('document.readyState === "complete" && location.pathname.endsWith("/login.php")');
+                    const login = await avaliar('({ largura: innerWidth, documento: document.documentElement.scrollWidth, formulario: !!document.querySelector("form[action]") })');
+                    assert(login.documento <= login.largura && login.formulario, `login ${largura}: ${JSON.stringify(login)}`);
+                }
+                console.log(`OK: ${autenticado ? 'paginas privadas' : 'Home/Login visitante'} ${largura}px, menu, saldo, estruturas e teclado.`);
             }
         }
         await enviar('Emulation.setScriptExecutionDisabled', { value: true });
@@ -108,6 +121,7 @@ const assert = require('node:assert/strict');
         await esperar('document.readyState === "complete" && !!document.querySelector(".mn-header")');
         assert(await avaliar('!document.getElementById("mn-menu").hidden'));
         assert.equal(erros.length, 0, JSON.stringify(erros));
+        assert.equal(assetsFaltando.length, 0, `Assets indisponíveis: ${assetsFaltando.join(', ')}`);
         console.log('OK: menu acessível sem JavaScript e nenhuma exceção JS.');
         await enviar('Browser.close');
     } finally {

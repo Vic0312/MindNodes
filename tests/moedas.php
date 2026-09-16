@@ -58,6 +58,17 @@ try {
     $auth = new AuthController($usuario);
     verificar($auth->cadastrarUsuario('98765432100', 'Teste', 'Moeda', '2000-01-01', '11999999999', 'moeda@example.test', 'Senha123!', null)['sucesso'], 'regressao cadastro');
     $id = (int) $usuario->buscarPorEmail('moeda@example.test')['id_usuario'];
+    verificar(password_verify('Senha123!', $usuario->buscarPorEmail('moeda@example.test')['senha']), 'cadastro armazena hash');
+    verificar($auth->validarCadastro('98765432100', 'Outro', 'Teste', '2000-01-01', '11999999999', 'outro@example.test', 'Senha123!', 'Senha123!') === 'cpf_duplicado', 'cadastro rejeita CPF duplicado');
+    verificar($auth->validarCadastro('98765432101', 'Outro', 'Teste', '2000-01-01', '11999999999', 'moeda@example.test', 'Senha123!', 'Senha123!') === 'email_duplicado', 'cadastro rejeita email duplicado');
+    verificar($auth->validarCadastro('98765432101', 'Outro', 'Teste', '2000-01-01', '11999999999', 'outro@example.test', 'curta', 'curta') === 'senha', 'cadastro rejeita senha curta');
+    verificar($auth->validarCadastro('98765432101', 'Outro', 'Teste', '2000-01-01', '11999999999', 'outro@example.test', 'Senha123!', 'Diferente123!') === 'confirmacao', 'cadastro rejeita confirmacao diferente');
+    $sessaoAntes = session_id();
+    verificar((bool) $auth->efetuarLogin('maria@gmail.com', '1234') && session_id() !== $sessaoAntes
+        && password_verify('1234', $usuario->buscarPorEmail('maria@gmail.com')['senha']), 'login legado migra hash e renova sessao');
+    verificar(!$auth->efetuarLogin('inexistente@example.test', 'x') && empty($_SESSION['usuario_id'])
+        && !$auth->efetuarLogin('maria@gmail.com', 'errada') && empty($_SESSION['usuario_id']),
+        'login invalido nao preserva identidade autenticada');
     $moeda = new MoedaController(new Moeda($db));
     verificar($moeda->obterSaldo($id) === 0, '1 saldo zero');
     verificar($moeda->creditar($id, 50, 'bonus', ' credito ') === 50, '2 credito 50');
@@ -87,10 +98,10 @@ try {
     verificar($ids === $ordenados && count($moeda->listarHistorico($id, 2)) === 2, '13 ordem e limite');
     sqlTeste($db, 'UPDATE transacao_moeda SET data_transacao = ? WHERE id_transacao = ?', 'si', '2000-01-01 00:00:00', $ids[0]);
     verificar($moeda->listarHistorico($id)[2]['id_transacao'] === $ids[0], '13 prioridade da data');
-    foreach ([0, -1, 1.5, true, [], '1e2', '1 OR 1=1', 2147483648] as $invalido) {
+    foreach ([0, -1, null, 'texto', 1.5, true, [], '1e2', '1 OR 1=1', 2147483648] as $invalido) {
         rejeitar(fn() => $moeda->obterSaldo($invalido), InvalidArgumentException::class, 'id invalido');
         rejeitar(fn() => $moeda->creditar($id, $invalido, 'bonus'), InvalidArgumentException::class, 'valor invalido');
-        rejeitar(fn() => $moeda->listarHistorico($id, $invalido), InvalidArgumentException::class, 'limite invalido');
+        if ($invalido !== null) rejeitar(fn() => $moeda->listarHistorico($id, $invalido), InvalidArgumentException::class, 'limite invalido');
     }
     rejeitar(fn() => $moeda->creditar($id, 1, 'admin'), InvalidArgumentException::class, 'origem invalida');
     foreach ([[], str_repeat('a', 256), "\xFF", "a\0b"] as $descricao) {
@@ -127,8 +138,17 @@ try {
     $perfil = new UsuarioController($usuario);
     verificar($perfil->editarPerfilUsuario($id, 'Novo', 'Moeda', 'moeda@example.test', '11999999999', '', null) && $perfil->buscarPerfil($id)['nome'] === 'Novo', 'regressao perfil');
     verificar($auth->iniciarRecuperacao('98765432100', 'moeda@example.test', '2000-01-01', 'invalido') === 'sessao', 'regressao CSRF recuperacao');
+    $tokenRecuperacao = AuthController::tokenRecuperacao();
+    verificar($auth->iniciarRecuperacao('00000000000', 'moeda@example.test', '2000-01-01', $tokenRecuperacao) === 'dados'
+        && $auth->iniciarRecuperacao('98765432100', 'errado@example.test', '2000-01-01', $tokenRecuperacao) === 'dados'
+        && $auth->iniciarRecuperacao('98765432100', 'moeda@example.test', '1999-01-01', $tokenRecuperacao) === 'dados',
+        'recuperacao rejeita CPF, email e data incorretos');
     verificar($auth->iniciarRecuperacao('98765432100', 'moeda@example.test', '2000-01-01', AuthController::tokenRecuperacao()) === null, 'regressao recuperacao');
+    $_SESSION['recuperacao_expira'] = time() - 1;
+    verificar(!AuthController::recuperacaoValida() && $auth->redefinirSenha('NovaSenha123!', 'NovaSenha123!', AuthController::tokenRecuperacao()) === 'sessao', 'recuperacao expirada negada');
+    verificar($auth->iniciarRecuperacao('98765432100', 'moeda@example.test', '2000-01-01', AuthController::tokenRecuperacao()) === null, 'recuperacao reiniciada');
     verificar($auth->redefinirSenha('NovaSenha123!', 'NovaSenha123!', AuthController::tokenRecuperacao()) === null, 'regressao redefinicao');
+    verificar(!AuthController::recuperacaoValida() && password_verify('NovaSenha123!', $usuario->buscarPorEmail('moeda@example.test')['senha']), 'nova senha em hash e autorizacao encerrada');
     verificar(!$auth->efetuarLogin('moeda@example.test', 'Senha123!') && (bool) $auth->efetuarLogin('moeda@example.test', 'NovaSenha123!'), 'regressao nova senha');
     $quiz = new QuizController(new Quiz($db));
     $respostas = [];

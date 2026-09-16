@@ -44,7 +44,7 @@ $multimidia = [
             ['titulo' => '4. Desenfileirar()', 'texto' => 'Guarda 10 e move inicio para inicio.Proximo. Sai o primeiro inserido, sem percorrer a cadeia.', 'nos' => [20, 30], 'rotulo' => 'INÍCIO → 20 · FIM → 30 · sai: 10'],
             ['titulo' => '5. Remover os dois restantes', 'texto' => 'Saem 20 e depois 30. Ao remover 30, inicio torna-se null e fim também recebe null. A próxima inserção começa uma nova cadeia.', 'nos' => [], 'rotulo' => 'INÍCIO = null · FIM = null'],
         ],
-        'conclusao' => 'Entrada: 10, 20, 30. Saída: 10, 20, 30. Enfileirar e Desenfileirar são O(1) nesta implementação.',
+        'conclusao' => 'Entrada: 10, 20, 30. Saída: 10, 20, 30. Enfileirar, Desenfileirar e Frente são O(1); o espaço é O(n).',
         'video' => ['id' => 'ragDjmJ7OUM', 'titulo' => 'Estruturas de Dados — Fila (Lista Encadeada) · LIBRAS', 'autor' => 'UNIVESP · Ulisses Martins Dias', 'orientacao' => 'Observe as referências das extremidades e relacione a retirada com FIFO. Esta versão inclui interpretação em Libras; a notação do vídeo pode diferir do C# da aula.', 'fonte' => 'https://www.youtube.com/watch?v=ragDjmJ7OUM'],
     ],
     'fila-prioridade' => [
@@ -57,7 +57,7 @@ $multimidia = [
             ['titulo' => '4. Enfileirar(40, 3)', 'texto' => 'P3 fica após P1 e P2. A cadeia ordenada define a sequência de atendimento.', 'nos' => [20, 10, 30, 40], 'prioridades' => [1, 2, 2, 3], 'rotulo' => 'ORDEM: 20 P1 → 10 P2 → 30 P2 → 40 P3'],
             ['titulo' => '5. Desenfileirar()', 'texto' => 'Sai 20 (P1). O novo início é 10 (P2), que ainda permanece antes de 30 (P2).', 'nos' => [10, 30, 40], 'prioridades' => [2, 2, 3], 'rotulo' => 'INÍCIO → 10 (P2) · sai: 20 (P1)'],
         ],
-        'conclusao' => 'Inserção ordenada: O(n) no pior caso. Remoção do início: O(1). Prioridade primeiro; FIFO entre iguais.',
+        'conclusao' => 'Inserção ordenada: O(n) no pior caso. Remoção do início e consulta à frente: O(1). Espaço: O(n). Menor número tem maior prioridade; FIFO entre iguais.',
     ],
     'pilha-encadeada' => [
         'titulo' => 'Pilha Encadeada: acompanhe o topo', 'tipo' => 'pilha',
@@ -70,7 +70,7 @@ $multimidia = [
             ['titulo' => '5. Topo()', 'texto' => 'Consulta 20 sem retirar nenhum nó. A cadeia permanece igual à do passo anterior.', 'nos' => [20, 10], 'rotulo' => 'CONSULTA: 20 · sem remoção'],
             ['titulo' => '6. Remover até esvaziar', 'texto' => 'Ao desempilhar novamente, saem 20 e depois 10. O último Proximo é null, então topo também se torna null.', 'nos' => [], 'rotulo' => 'TOPO = null'],
         ],
-        'conclusao' => 'Entrada: 10, 20, 30. Saída: 30, 20, 10. Push, Pop e Topo são O(1), sem percorrer a cadeia.',
+        'conclusao' => 'Entrada: 10, 20, 30. Saída: 30, 20, 10. Push, Pop e Topo são O(1), sem percorrer a cadeia; o espaço é O(n).',
         'video' => ['id' => 'Xlkh6-10ILw', 'titulo' => 'Estruturas de Dados — Pilha (Lista Encadeada)', 'autor' => 'UNIVESP · Ulisses Martins Dias', 'orientacao' => 'Observe a inserção e a retirada na mesma extremidade. Relacione as referências do vídeo com o campo topo usado nos exemplos C#.', 'fonte' => 'https://www.youtube.com/watch?v=Xlkh6-10ILw'],
     ],
 ];

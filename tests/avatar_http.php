@@ -115,6 +115,9 @@ try {
     if (!str_contains($corpo, 'Você não possui esse item.')) throw new RuntimeException('Item de terceiro nao foi negado.');
     echo "OK: propriedade validada com usuario da sessao\n";
     $db->query('INSERT INTO usuario_item (id_usuario, id_item) VALUES (1, 4)');
+    [$corpo, $codigo] = $pedir('/processamento/processamento.php', ['acao' => 'equiparAvatar', 'id_item' => 4]);
+    if ($codigo !== 303 || (int) $db->query('SELECT id_cabelo FROM avatar_usuario WHERE id_usuario = 1')->fetch_assoc()['id_cabelo'] !== 1)
+        throw new RuntimeException('Avatar aceitou POST sem CSRF.');
     [$corpo, $codigo] = $pedir('/processamento/processamento.php', ['acao' => 'equiparAvatar', 'csrf' => $token, 'id_item' => 4]);
     if ($codigo !== 303) throw new RuntimeException('POST valido sem 303.');
     [$corpo, $codigo] = $pedir('/view/avatar.php');
@@ -133,6 +136,10 @@ try {
     if (!preg_match('~name="csrf" value="([a-f0-9]{64})"~', $corpo, $partes)) throw new RuntimeException('CSRF da Loja ausente.');
     $tokenLoja = $partes[1];
     echo "OK: loja autenticada e saldo\n";
+    [$corpo, $codigo] = $pedir('/processamento/processamento.php', ['acao' => 'comprarItem', 'id_item' => 6]);
+    if ($codigo !== 303 || (int) $db->query('SELECT moedas FROM usuario WHERE id_usuario = 1')->fetch_assoc()['moedas'] !== 200
+        || (int) $db->query('SELECT COUNT(*) AS total FROM usuario_item WHERE id_usuario = 1 AND id_item = 6')->fetch_assoc()['total'] !== 0)
+        throw new RuntimeException('Loja aceitou POST sem CSRF.');
     [$corpo, $codigo] = $pedir('/processamento/processamento.php', ['acao' => 'comprarItem', 'csrf' => $tokenLoja, 'id_item' => 6, 'preco' => 1, 'id_usuario' => 2]);
     if ($codigo !== 303) throw new RuntimeException('Compra sem PRG.');
     [$corpo, $codigo] = $pedir('/view/loja.php');
