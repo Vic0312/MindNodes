@@ -77,7 +77,11 @@ foreach ($itens as $item) {
                     <div class="avatar-preview" role="img" aria-label="Avatar Node com <?= avatarEscapar($avatar['roupa']['nome']) ?>, <?= avatarEscapar($avatar['rosto']['nome']) ?> e <?= avatarEscapar($avatar['cabelo']['nome']) ?>">
                         <?php foreach (['base', 'roupa', 'rosto', 'cabelo', 'acessorio'] as $camada): ?>
                             <?php if ($avatar[$camada] !== null && avatarUrl($avatar[$camada]['imagem']) !== ''): ?>
-                                <img class="avatar-layer avatar-<?= avatarEscapar($camada) ?>" src="<?= avatarEscapar(avatarUrl($avatar[$camada]['imagem'])) ?>" alt="" aria-hidden="true">
+                                <img class="avatar-layer avatar-<?= avatarEscapar($camada) ?>" 
+                                    data-item-id="<?= (int)($avatar[$camada]['id_item'] ?? 0) ?>"
+                                    src="<?= avatarEscapar(avatarUrl($avatar[$camada]['imagem'])) ?>" 
+                                    alt="" 
+                                    aria-hidden="true">
                             <?php endif; ?>
                         <?php endforeach; ?>
                     </div>
