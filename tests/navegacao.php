@@ -47,7 +47,7 @@ try {
     [$corpo, $codigo] = $pedir('/view/home.php');
     if ($codigo !== 200 || str_contains($corpo, 'Warning') || str_contains($corpo, 'data-saldo-navegacao')) throw new RuntimeException('Home visitante incorreta');
     foreach (['Home', 'Conteúdos', 'Exemplos', 'Login', 'Cadastro'] as $texto) if (!str_contains($corpo, '>' . $texto . '</a>')) throw new RuntimeException('Menu visitante: ' . $texto);
-    $protegidas = ['perfil', 'quiz', 'desempenho', 'loja', 'avatar', 'estruturas', 'exemplos', 'fila_fifo', 'fila_prioridade', 'pilha_encadeada', 'simulador'];
+    $protegidas = ['perfil', 'quiz', 'desempenho', 'loja', 'avatar', 'estruturas', 'exemplos', 'fila_fifo', 'fila_prioridade', 'pilha_encadeada', 'simulador', 'arvores', 'simulador_arvores'];
     foreach ($protegidas as $rota) {
         [, $codigo] = $pedir('/view/' . $rota . '.php');
         if ($codigo !== 302) throw new RuntimeException('Rota desprotegida: ' . $rota);
@@ -90,7 +90,7 @@ try {
     [$home] = $pedir('/view/home.php');
     if (!str_contains($home, 'Olá, Maria!')) throw new RuntimeException('Nome incorreto na Home');
     $dom = new DOMDocument(); @$dom->loadHTML('<?xml encoding="UTF-8">' . $home); $xp = new DOMXPath($dom);
-    if ($xp->query('//details[@class="mn-estruturas"]//a')->length !== 6) throw new RuntimeException('Faltam estruturas');
+    if ($xp->query('//details[@class="mn-estruturas"]//a')->length !== 10) throw new RuntimeException('Faltam estruturas');
     foreach ($xp->query('//header//a') as $link) {
         $href = $link->getAttribute('href');
         if (str_contains($href, 'logout')) continue;

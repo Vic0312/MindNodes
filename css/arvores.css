@@ -1,0 +1,27 @@
+.modulo-arvores { padding-bottom: 48px; }
+.modulo-arvores .fila-indice [aria-current="page"] { background: #e7f1e8; outline: 2px solid #52796f; }
+.modulo-arvores .arvore-link { color: #275a4f; text-decoration: underline; display: inline-block; padding: 12px 0; }
+.modulo-arvores .arvore-esquema { max-width: 100%; overflow: auto; padding: 20px; margin: 18px 0; border-radius: 14px; background: #eaf2eb; color: #243c40; font-family: Consolas, monospace; line-height: 1.8; }
+.modulo-arvores li { margin: 10px 0 10px 22px; }
+.modulo-arvores .arvore-controles { display: flex; flex-wrap: wrap; gap: 12px; align-items: end; margin: 18px 0; min-width: 0; }
+.modulo-arvores .arvore-controles label { display: grid; gap: 6px; font-weight: 600; min-width: 0; }
+.modulo-arvores input, .modulo-arvores select, .modulo-arvores button { font: inherit; border-radius: 12px; padding: 11px 14px; max-width: 100%; }
+.modulo-arvores input, .modulo-arvores select { border: 1px solid #52796f; background: #fff; color: #2f3e46; width: 190px; }
+.modulo-arvores button { border: 1px solid #356b5f; background: #356b5f; color: #fff; font-weight: 700; cursor: pointer; }
+.modulo-arvores button:hover:not(:disabled) { background: #244b43; }
+.modulo-arvores button:disabled { background: #e4ece5; color: #53665b; border-color: #b7c8bc; cursor: not-allowed; }
+.modulo-arvores :focus-visible { outline: 3px solid #52796f; outline-offset: 3px; }
+.modulo-arvores .arvore-convencoes, .modulo-arvores .arvore-aviso { margin: 16px 0; padding: 18px; background: #eaf2eb; border-left: 4px solid #52796f; border-radius: 12px; }
+.modulo-arvores summary { cursor: pointer; font-weight: 700; }
+.modulo-arvores .arvore-viewport { max-width: 100%; max-height: 620px; overflow: auto; border: 1px solid #c7d8cb; border-radius: 16px; background: #f6f8f4; }
+.modulo-arvores svg { display: block; width: 100%; min-height: 180px; }
+.modulo-arvores svg line { stroke: #52796f; stroke-width: 2; }
+.modulo-arvores svg text { fill: #243c40; font: 14px Poppins, Arial, sans-serif; }
+.modulo-arvores svg .arvore-no rect { fill: white; stroke: #52796f; stroke-width: 2; }
+.modulo-arvores svg .arvore-folha rect { stroke-dasharray: 5 3; }
+.modulo-arvores svg .arvore-visitado rect { stroke: #243c40; stroke-width: 4; fill: #cad2c5; }
+.modulo-arvores svg .arvore-resultado rect { fill: #354f52; stroke-width: 4; }
+.modulo-arvores svg .arvore-resultado .arvore-valor { fill: #fff; font-weight: 700; }
+.modulo-arvores #arvore-passos [aria-current="step"] { font-weight: 800; background: #eaf2eb; padding: 8px; border-left: 4px solid #52796f; }
+.modulo-arvores #arvore-metricas { margin-top: 16px; }
+@media (max-width: 580px) { .modulo-arvores .arvore-controles label { width: 100%; } .modulo-arvores input, .modulo-arvores select { width: 100%; } .modulo-arvores .fila-secao { padding: 20px 14px; } }

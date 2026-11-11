@@ -54,6 +54,7 @@ $pagina = 'simulador';
         <span class="etiqueta">Simulador</span>
         <h1>Visualize os <span>nós conectados</span></h1>
         <p>Área reservada para simular inserção, remoção e percurso nas listas.</p>
+        <a class="botao" href="simulador_arvores.php">Explorar simuladores de Árvores →</a>
     </section>
     
     <section class="simulador-area">

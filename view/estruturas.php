@@ -130,7 +130,17 @@ require_once __DIR__ . '/partials/multimidia.php';
         </a>
 
     </section>
-    <nav class="midia-navegacao" aria-label="Recursos visuais das seis estruturas">
+    <section class="conteudos" aria-label="Conteúdos de árvores">
+        <?php require __DIR__ . '/partials/arvores_conteudo.php'; ?>
+        <?php foreach ($arvores as $tipoArvore => $conteudoArvore): ?>
+        <a class="conteudo-link" href="arvores.php?tipo=<?php echo $tipoArvore; ?>">
+            <h2><?php echo htmlspecialchars($conteudoArvore['nome'], ENT_QUOTES, 'UTF-8'); ?></h2>
+            <p><?php echo htmlspecialchars($conteudoArvore['resumo'], ENT_QUOTES, 'UTF-8'); ?></p>
+            <span>Estudar esta árvore →</span>
+        </a>
+        <?php endforeach; ?>
+    </section>
+    <nav class="midia-navegacao" aria-label="Recursos visuais das seis estruturas lineares e TAD">
         <a href="#midia-tad">TAD visual</a>
         <a href="#midia-simples">Lista Simples visual</a>
         <a href="#midia-dupla">Lista Dupla visual</a>

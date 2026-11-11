@@ -3,7 +3,7 @@ require_once __DIR__ . '/../../controller/NavegacaoController.php';
 // A Loja já consultou o saldo pela camada de moedas: reutiliza esse resultado.
 $navegacao = NavegacaoController::carregar(basename($_SERVER['SCRIPT_NAME'] ?? '') === 'loja.php' ? ($dados['saldo'] ?? null) : null);
 $paginaNavegacao = basename($_SERVER['SCRIPT_NAME'] ?? 'home.php', '.php');
-if (in_array($paginaNavegacao, ['fila_fifo', 'fila_prioridade', 'pilha_encadeada'], true)) $paginaNavegacao = 'estruturas';
+if (in_array($paginaNavegacao, ['fila_fifo', 'fila_prioridade', 'pilha_encadeada', 'arvores', 'simulador_arvores'], true)) $paginaNavegacao = 'estruturas';
 $linksNavegacao = ['home' => 'Home', 'estruturas' => 'Conteúdos', 'exemplos' => 'Exemplos'];
 if ($navegacao['autenticado']) {
     $linksNavegacao += ['quiz' => 'Quiz', 'desempenho' => 'Desempenho', 'loja' => 'Loja', 'avatar' => 'Avatar', 'perfil' => 'Perfil'];
@@ -28,6 +28,6 @@ if ($navegacao['autenticado']) {
             <summary>Estruturas ensinadas</summary>
             <div><?php foreach ($navegacao['estruturas'] as $rotulo => $destino): ?><a href="<?php echo $destino; ?>"><?php echo $rotulo; ?></a><?php endforeach; ?></div>
         </details>
-        <div class="mn-apoio"><a href="sobre.php">Sobre o MindNodes</a><a href="simulador.php">Simulador</a></div>
+        <div class="mn-apoio"><a href="sobre.php">Sobre o MindNodes</a><a href="simulador.php">Simulador</a><a href="simulador_arvores.php">Simuladores de Árvores</a></div>
     </nav>
 </header>

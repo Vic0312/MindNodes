@@ -87,7 +87,7 @@ const assert = require('node:assert/strict');
                         foco: getComputedStyle(document.querySelector('.mn-ativo')).textDecorationLine
                     }))()`);
                     assert(estado.documento <= estado.largura, `${pagina} ${largura}: ${JSON.stringify(estado)}`);
-                    assert.equal(estado.estruturas, 6);
+                    assert.equal(estado.estruturas, 10);
                     assert.equal(estado.ativo, (['fila_fifo', 'fila_prioridade', 'pilha_encadeada'].includes(pagina) ? 'estruturas' : pagina) + '.php');
                     assert(estado.foco.includes('underline'));
                     assert.equal(estado.senha, '');

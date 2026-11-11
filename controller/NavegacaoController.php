@@ -29,6 +29,10 @@ class NavegacaoController
                 'Fila Encadeada FIFO' => 'fila_fifo.php',
                 'Fila de Prioridades Encadeada FIFO' => 'fila_prioridade.php',
                 'Pilha Encadeada' => 'pilha_encadeada.php',
+                'Árvore Binária' => 'arvores.php?tipo=binaria',
+                'Árvore Trie' => 'arvores.php?tipo=trie',
+                'Árvore Patricia' => 'arvores.php?tipo=patricia',
+                'Árvore AVL' => 'arvores.php?tipo=avl',
             ],
         ];
     }
